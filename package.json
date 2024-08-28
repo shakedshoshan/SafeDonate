@@ -1,0 +1,12 @@
+{
+  "name": "safedonate",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently --prefix name --prefix-colors bgBlue.bold,bgGreen.bold \"npm run start:client\" \"npm run start:server\"",
+    "start:client": "cd client && npm run dev",
+    "start:server": "cd server && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
