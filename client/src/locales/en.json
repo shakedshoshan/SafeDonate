@@ -1,0 +1,16 @@
+{
+    "app_name": "SafeDonate",
+    "welcome_message": "Welcome to SafeDonate",
+    "login": "Login",
+    "signup": "Sign Up",
+    "search": "Search",
+    "support": "Support",
+    "email": "Email",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "no_account": "Don't have an account? Sign Up",
+    "have_account": "Already have an account? Login",
+    "password_mismatch": "Passwords do not match",
+    "back": "Back"
+  }
+  

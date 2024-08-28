@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 10px;
+}
+
+/* index.css */
+.content {
+  padding-top: 80px; /* Adjust based on the header height */
+}
+
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+form {
+  margin-top: 20px;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

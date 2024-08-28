@@ -1,0 +1,53 @@
+/* Header.css */
+.header {
+  width: 100%; /* Full width */
+  background-color: white; /* Background color */
+  color: blue; /* Text color */
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure header stays on top */
+}
+
+.header-container {
+  display: flex; /* Use flexbox for layout */
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Center items vertically */
+}
+
+.header-title a {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.header-logo {
+  height: 150px; /* Reduced height to make the logo smaller */
+  margin-right: 10px; /* Adjust margin as needed */
+}
+
+.header-nav {
+  display: flex; /* Use flexbox for layout */
+  align-items: center; /* Center items vertically */
+}
+
+.header-nav .search-bar {
+  width: 400px; /* Adjust width as needed */
+  padding: 10px;
+  margin-right: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white; /* White background for the search bar */
+}
+
+.header-nav .header-button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: blue;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.header-nav .header-button:hover {
+  background-color: darkblue;
+}

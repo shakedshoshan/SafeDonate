@@ -1,0 +1,16 @@
+{
+    "app_name": "תרומה בטוחה",
+    "welcome_message": "ברוכים הבאים לתרומה בטוחה",
+    "login": "התחברות",
+    "signup": "הרשמה",
+    "search": "חיפוש",
+    "support": "תמיכה",
+    "email": "אימייל",
+    "password": "סיסמה",
+    "confirm_password": "אשר סיסמה",
+    "no_account": "אין לך חשבון? הירשם",
+    "have_account": "כבר יש לך חשבון? התחברות",
+    "password_mismatch": "הסיסמאות אינן תואמות",
+    "back": "חזרה"
+  }
+  
