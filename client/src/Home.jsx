@@ -25,20 +25,26 @@ const Home = () => {
           throw new Error(`Http error! status: ${response.status}`);
         }
         const jsonData = await response.json();
-        setData(jsonData.result.records);
+        
+        const filteredData = jsonData.result.records.filter(
+          (association) =>
+            association["סטטוס עמותה"] === "רשומה" ||
+            association["סטטוס עמותה"] === "פעילה"
+        );
+        setData(filteredData);
 
         // fetch user info from token
         const token = Cookies.get("token");
         console.log(token)
         if(token){
           const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token: token })
-                if (tokenResponse.status === 200) {
-                  setUser(tokenResponse.data);
-                } else {
-                  setError(error);
-                  console.log("Bad request. You have problem with token verifacation.");
-                }
-              }
+            if (tokenResponse.status === 200) {
+              setUser(tokenResponse.data);
+            } else {
+              setError(error);
+              console.log("Bad request. You have problem with token verifacation.");
+            }
+        }
         setLoading(false);
       } catch (error) {
         setError(error);

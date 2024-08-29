@@ -17,11 +17,12 @@ module.exports.verifyToken = async function verifyToken(req, res) {
     //res.status(200).send({data: decoded}); 
     //res.json({ message: 'Token is valid' });
   }catch(e){
-    res.status(401).json({ message: 'Token is not valid' });
+    res.status(404).json({ message: 'Token is not valid' });
   }
 
   // get user info
   try {
+    console.log(decoded)
     const user = await User.findById(decoded.id);
     
     if (!user) return res.status(404).send({ message: 'user not found' });
