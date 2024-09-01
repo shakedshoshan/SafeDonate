@@ -26,29 +26,29 @@ mongoose
       console.log(`App is listening to port: ${PORT}`);
     });
 
-     // Handle termination signals
-     const shutdown = (signal) => {
-      console.log(`Received ${signal}. Closing server...`);
-      server.close(() => {
-        console.log('Server closed');
-        process.exit(0);
-      });
-    };
+    //  // Handle termination signals
+    //  const shutdown = (signal) => {
+    //   console.log(`Received ${signal}. Closing server...`);
+    //   server.close(() => {
+    //     console.log('Server closed');
+    //     process.exit(0);
+    //   });
+    // };
 
-    // Listen for termination signals
-    process.on('SIGINT', () => shutdown('SIGINT'));
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    // // Listen for termination signals
+    // process.on('SIGINT', () => shutdown('SIGINT'));
+    // process.on('SIGTERM', () => shutdown('SIGTERM'));
 
-    // Handle uncaught exceptions
-    process.on('uncaughtException', (err) => {
-      console.error('Uncaught Exception:', err);
-      shutdown('uncaughtException');
-    });
+    // // Handle uncaught exceptions
+    // process.on('uncaughtException', (err) => {
+    //   console.error('Uncaught Exception:', err);
+    //   shutdown('uncaughtException');
+    // });
   })
   .catch((error) => {
     console.log(error);
     console.error('Error connecting to database:', error);
-    process.exit(1);
+    //process.exit(1);
   });
 
 // Routes

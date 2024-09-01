@@ -5,7 +5,7 @@ const AssociationCard = ({association, userId}) => {
     
     // const name = encodeURIComponent(association["שם עמותה בעברית"]); // Ensures the name is URL-safe
     const id = association._id
-    const name = association["שם עמותה בעברית"] 
+    const name = association["שם עמותה בעברית"]
     const adress = association["כתובת - ישוב"]
     let target = association["מטרות עמותה"] ? association["מטרות עמותה"] : "לא מוגדר" 
     target = target.replaceAll("~", ".\n");

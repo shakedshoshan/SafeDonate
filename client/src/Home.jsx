@@ -19,7 +19,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=100"
+          "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=200"
         );
         if (!response.ok) {
           throw new Error(`Http error! status: ${response.status}`);

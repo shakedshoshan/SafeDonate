@@ -9,30 +9,43 @@ const createToken = (id) => {
 
 // verify token validity
 module.exports.verifyToken = async function verifyToken(req, res) {
-
   const token = req.body.token;
+  
   let decoded;
   try{
     decoded = jwt.verify(token, process.env.jwtSecret);
+    console.log(decoded);
     //res.status(200).send({data: decoded}); 
     //res.json({ message: 'Token is valid' });
-  }catch(e){
-    res.status(404).json({ message: 'Token is not valid' });
-  }
 
-  // get user info
-  try {
-    console.log(decoded)
     const user = await User.findById(decoded.id);
-    
-    if (!user) return res.status(404).send({ message: 'user not found' });
+    if (!user) {
+      return res.status(404).send({ message: 'user not found' });
+    } 
     return res.status(200).send(user);   
-
-  } catch (error) {
-    console.error(error.message);   
-
-    res.status(500).send({ message: error.message });
+  
+  }catch(e){
+    if(e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token is not valid'});
+    } else {
+      console.error(e.message);
+      return res.status(500).send({ message: e.message });
+    }
+   
   }
+  
+  // try {
+  //   console.log(decoded)
+  //   const user = await User.findById(decoded.id);
+    
+  //   if (!user) return res.status(404).send({ message: 'user not found' });
+  //   return res.status(200).send(user);   
+
+  // } catch (error) {
+  //   console.error(error.message);   
+
+  //   res.status(500).send({ message: error.message });
+  // }
 }
 
 // Function to handle user signup
