@@ -2,117 +2,207 @@ const User = require('../models/userModel.js'); // Assuming userModel.js exports
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 
-
+// Create JWT token
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.jwtSecret, { expiresIn: '2h' });
 }
 
 // verify token validity
 module.exports.verifyToken = async function verifyToken(req, res) {
-  const token = req.body.token;
-  
-  let decoded;
+  const { token } = req.body;
+
   try{
-    decoded = jwt.verify(token, process.env.jwtSecret);
-    console.log(decoded);
-    //res.status(200).send({data: decoded}); 
-    //res.json({ message: 'Token is valid' });
-
+    const decoded = jwt.verify(token, process.env.jwtSecret);
     const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(404).send({ message: 'user not found' });
-    } 
-    return res.status(200).send(user);   
-  
-  }catch(e){
-    if(e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token is not valid'});
-    } else {
-      console.error(e.message);
-      return res.status(500).send({ message: e.message });
-    }
-   
-  }
-  
-  // try {
-  //   console.log(decoded)
-  //   const user = await User.findById(decoded.id);
     
-  //   if (!user) return res.status(404).send({ message: 'user not found' });
-  //   return res.status(200).send(user);   
-
-  // } catch (error) {
-  //   console.error(error.message);   
-
-  //   res.status(500).send({ message: error.message });
-  // }
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    } 
+    return res.status(200).json(user);   
+  
+  } catch(error) {
+    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token expired'});
+    } 
+    return res.status(401).json({ message: 'Token is not valid' });
+  }
 }
 
-// Function to handle user signup
+// User signup
 module.exports.signup = async function signup(req, res) {
   try {
     const { email, password } = req.body;
 
     // Check for required fields
     if (!email || !password) {
-      return res.status(400).json({ message: 'Send all required fields: name and password' });
+      return res.status(400).json({ message: 'Missing email or password' });
     }
 
     // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'Username is unavailable' });
+      return res.status(400).json({ message: 'Email is already in use' });
     }
 
     // Create new user
     const newUser = await User.create({ email, password });
 
     const token = createToken(newUser._id);
-    res.cookie("userData", token, {httpOnly: true, maxAge:3*24*60*60});  // Set JWT as an HTTP-only cookie (before sending response)
+    //res.cookie("token", token, {httpOnly: true, maxAge: 3 * 1000});
+    res.cookie("token", token, {httpOnly: true, maxAge: 3 * 24 * 60 * 60});  // 3 days
 
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("token", token, { httpOnly: false, maxAge: 60 * 60 })
-    );
-    console.log("Succesful signup");
-    res.status(200).json({ token });
+    // res.setHeader(
+    //   "Set-Cookie",
+    //   cookie.serialize("token", token, { httpOnly: false, maxAge: 3*24*60*60 })
+    // );
+    //console.log("Succesful signup");
+    return res.status(200).json({ token });
   } catch (error) {
-    console.error('Error in user signup:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Signup Error: ', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 }
 
-// Function to handle user login
+// User login
 module.exports.login = async function login(req, res) {
   try {
     const { email, password } = req.body;
 
     // Check for required fields
     if (!email || !password) {
-      return res.status(400).json({ message: 'Send all required fields: name and password' });
+      return res.status(400).json({ message: 'Missing email or password' });
     }
 
     // Check for existing user
-    const existingUser = await User.findOne({ email, password });
-    if (!existingUser) {
-      return res.status(400).json({ message: 'User Not exists' });
+    const user = await User.findOne({ email, password });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     // Create JWT
-    const token = createToken(existingUser._id);
-    res.cookie("userData", token, {httpOnly: true, maxAge:3*24*60*60});  // Set JWT as an HTTP-only cookie (before sending response)
+    const token = createToken(user._id);
+    //res.cookie("token", token, { httpOnly: true, maxAge: 3 * 1000 });  // 3 seconds
+    res.cookie("token", token, { httpOnly: true, maxAge: 3 * 24 * 60 * 60 });  // 3 days
 
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("token", token, { httpOnly: false, maxAge: 60 * 60 })
-    );
-    console.log("Succesful login");
-    res.status(200).json({ token });
+    //console.log("Succesful login");
+    return res.status(200).json({ token });
   } catch (error) {
-    console.error('Error in user registration:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Login Error: ', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 }
+
+// // Create JWT token
+// const createToken = (id) => {
+//   return jwt.sign({ id }, process.env.jwtSecret, { expiresIn: '2h' });
+// }
+
+// // verify token validity
+// module.exports.verifyToken = async function verifyToken(req, res) {
+//   const token = req.body.token;
+  
+//   let decoded;
+//   try{
+//     decoded = jwt.verify(token, process.env.jwtSecret);
+//     console.log(decoded);
+//     //res.status(200).send({data: decoded}); 
+//     //res.json({ message: 'Token is valid' });
+
+//     const user = await User.findById(decoded.id);
+//     if (!user) {
+//       return res.status(404).send({ message: 'user not found' });
+//     } 
+//     return res.status(200).send(user);   
+  
+//   }catch(e){
+//     if(e.name === 'JsonWebTokenError' || e.name === 'TokenExpiredError') {
+//       return res.status(401).json({ message: 'Token is not valid'});
+//     } else {
+//       console.error(e.message);
+//       return res.status(500).send({ message: e.message });
+//     }
+   
+//   }
+  
+//   // try {
+//   //   console.log(decoded)
+//   //   const user = await User.findById(decoded.id);
+    
+//   //   if (!user) return res.status(404).send({ message: 'user not found' });
+//   //   return res.status(200).send(user);   
+
+//   // } catch (error) {
+//   //   console.error(error.message);   
+
+//   //   res.status(500).send({ message: error.message });
+//   // }
+// }
+
+// // Function to handle user signup
+// module.exports.signup = async function signup(req, res) {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Check for required fields
+//     if (!email || !password) {
+//       return res.status(400).json({ message: 'Send all required fields: name and password' });
+//     }
+
+//     // Check for existing user
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: 'Username is unavailable' });
+//     }
+
+//     // Create new user
+//     const newUser = await User.create({ email, password });
+
+//     const token = createToken(newUser._id);
+//     res.cookie("userData", token, {httpOnly: true, maxAge:3*24*60*60});  // Set JWT as an HTTP-only cookie (before sending response)
+
+//     res.setHeader(
+//       "Set-Cookie",
+//       cookie.serialize("token", token, { httpOnly: false, maxAge: 3*24*60*60 })
+//     );
+//     console.log("Succesful signup");
+//     res.status(200).json({ token });
+//   } catch (error) {
+//     console.error('Error in user signup:', error);
+//     return res.status(500).json({ message: 'Internal server error' });
+//   }
+// }
+
+// // Function to handle user login
+// module.exports.login = async function login(req, res) {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Check for required fields
+//     if (!email || !password) {
+//       return res.status(400).json({ message: 'Send all required fields: name and password' });
+//     }
+
+//     // Check for existing user
+//     const existingUser = await User.findOne({ email, password });
+//     if (!existingUser) {
+//       return res.status(400).json({ message: 'User Not exists' });
+//     }
+
+//     // Create JWT
+//     const token = createToken(existingUser._id);
+//     res.cookie("userData", token, {httpOnly: true, maxAge:3*24*60*60});  // Set JWT as an HTTP-only cookie (before sending response)
+
+//     res.setHeader(
+//       "Set-Cookie",
+//       cookie.serialize("token", token, { httpOnly: false, maxAge: 60 * 60 })
+//     );
+//     console.log("Succesful login");
+//     res.status(200).json({ token });
+//   } catch (error) {
+//     console.error('Error in user registration:', error);
+//     return res.status(500).json({ message: 'Internal server error' });
+//   }
+// }
 
 // Function to get all users
 module.exports.getAllUsers = async function getAllUsers(req, res) {

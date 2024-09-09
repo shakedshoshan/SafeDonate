@@ -100,65 +100,28 @@
     background-color: #e60099;
 }
 
-/* .association-page {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.association-page .donation-button {
-    background-color: #ff007f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-}
-
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.popup-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-    width: 90%;
-    max-width: 500px;
-}
-
-.close-popup {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.donation-form {
-    background-color: #c499b8;
-}
-
-.submit-donation {
-    background-color: #ff007f;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-} */
+/* ScrapedLinks.css */
+.scraped-links-list {
+    list-style-type: none;  /* Remove bullet points from the list */
+    padding: 0;
+  }
+  
+  .scraped-link-item {
+    margin-bottom: 10px;  /* Add space between links */
+  }
+  
+  .clickable-link {
+    text-decoration: none;  /* Remove the default underline */
+    color: #104d8e;         /* A standard clickable link color (blue) */
+    font-weight: bold;      /* Bold text to make it more prominent */
+    cursor: pointer;        /* Change cursor to pointer to indicate it's clickable */
+    transition: color 0.3s ease, background-color 0.3s ease;  /* Smooth transition */
+    text-decoration: underline;
+  }
+  
+  /* Hover effect to indicate it's clickable */
+  .clickable-link:hover {
+    color: #0056b3;   
+    background-color: #f0f0f0; 
+    text-decoration: underline; 
+  }

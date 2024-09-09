@@ -18,7 +18,13 @@ const AssociationCard = ({association, userId}) => {
                     <div>מטרות עמותה: {target}</div>
                 </Link>
                 <div className="flex justify-end ml-2">
-                    <FavoriteButton association={association} userId={userId}/>
+                    {userId ? (
+                            <FavoriteButton association={association} userId={userId}/>) 
+                            :
+                            (
+                                <div> </div>
+                            )} 
+                    {/* <FavoriteButton association={association} userId={userId}/> */}
                 </div>
         </div>
     )

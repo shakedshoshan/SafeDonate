@@ -16,7 +16,27 @@ const Home = () => {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUserInfo = async () => {
+      const token = Cookies.get("token");
+      if (token) {
+        try {
+          const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token });
+          if (tokenResponse.status === 200) {
+            setUser(tokenResponse.data);
+          } else {
+            console.log("Token verification failed.");
+            Cookies.remove("token");
+            setUser(null);
+          }
+        } catch (error) {
+          console.error("Error verifying token:", error);
+          Cookies.remove("token");
+          setUser(null);
+        }
+      }
+    };
+  
+    const fetchAssociationData = async () => {
       try {
         const response = await fetch(
           "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=200"
@@ -32,27 +52,60 @@ const Home = () => {
             association["סטטוס עמותה"] === "פעילה"
         );
         setData(filteredData);
-
-        // fetch user info from token
-        const token = Cookies.get("token");
-        console.log(token)
-        if(token){
-          const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token: token })
-            if (tokenResponse.status === 200) {
-              setUser(tokenResponse.data);
-            } else {
-              setError(error);
-              console.log("Bad request. You have problem with token verifacation.");
-            }
-        }
-        setLoading(false);
       } catch (error) {
         setError(error);
+      } finally {
         setLoading(false);
       }
     };
-    fetchData();
+  
+    // Execute both functions on page load
+    fetchUserInfo();   // User token verification
+    fetchAssociationData();  // Fetch associations data
+  
   }, []);
+  
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+
+  //       // fetch user info from token
+  //       const token = Cookies.get("token");
+  //       console.log(token)
+  //       if(token){
+  //         const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token: token })
+  //           if (tokenResponse.status === 200) {
+  //             setUser(tokenResponse.data);
+  //           } else {
+  //             setError(error);
+  //             console.log("Bad request. You have problem with token verifacation.");
+  //           }
+  //       }
+
+  //       const response = await fetch(
+  //         "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=200"
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error(`Http error! status: ${response.status}`);
+  //       }
+  //       const jsonData = await response.json();
+        
+  //       const filteredData = jsonData.result.records.filter(
+  //         (association) =>
+  //           association["סטטוס עמותה"] === "רשומה" ||
+  //           association["סטטוס עמותה"] === "פעילה"
+  //       );
+  //       setData(filteredData);
+
+  //       setLoading(false);
+  //     } catch (error) {
+  //       setError(error);
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
   const getWelcomeMessage = () => {
     return i18n.language === "he"
       ? "ברוכים הבאים ל SafeDonate"

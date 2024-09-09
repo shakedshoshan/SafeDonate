@@ -7,16 +7,16 @@ const FavoriteButton = ({ association, userId }) => {
 
     useEffect(() => {
       const checkFavoriteExistence = async () => {
-        try {
-          const response = await axios.post(`http://localhost:3000/users/updateExist/${userId}`, { Association: aName });
-          const isFavorite = response.data; // Assuming response.data indicates existence
-    
-          //console.log(`Association "${aName}" is ${isFavorite ? 'already a favorite' : 'not a favorite'}`);
-          setFavorite(isFavorite);
-        } catch (error) {
-          console.error('Error checking favorite status:', error);
-          // Consider handling errors gracefully, e.g., displaying an error message
-        }
+          try {
+            const response = await axios.post(`http://localhost:3000/users/updateExist/${userId}`, { Association: aName });
+            const isFavorite = response.data; // Assuming response.data indicates existence
+      
+            //console.log(`Association "${aName}" is ${isFavorite ? 'already a favorite' : 'not a favorite'}`);
+            setFavorite(isFavorite);
+          } catch (error) {
+            console.error('Error checking favorite status:', error);
+            // Consider handling errors gracefully, e.g., displaying an error message
+          }
       };
     
       checkFavoriteExistence();
