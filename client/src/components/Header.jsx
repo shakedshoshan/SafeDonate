@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import "../styles/Header.css"; // Adjusted path for CSS
 import logo from "../assets/logo.png"; // Updated to the new logo.png
 
-const Header = ({ handleLogin, handleSignUp }) => {
+const Header = ({ handleLogin, handleSignUp, userProfile }) => {
   const { t, i18n } = useTranslation();
   const [isEnglish, setIsEnglish] = useState(i18n.language === "en");
 
@@ -13,6 +13,7 @@ const Header = ({ handleLogin, handleSignUp }) => {
     i18n.changeLanguage(newLanguage);
     setIsEnglish(!isEnglish);
   };
+
 
   return (
     <header className="header">
@@ -30,6 +31,9 @@ const Header = ({ handleLogin, handleSignUp }) => {
           </button>
           <button className="header-button" onClick={handleSignUp}>
             {t("signup")}
+          </button>
+          <button className="header-button" onClick={userProfile}>
+            {t("profile")}
           </button>
           <button className="header-button" onClick={toggleLanguage}>
             {isEnglish ? "EN / HE" : "HE / EN"}

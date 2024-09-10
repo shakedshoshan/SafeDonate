@@ -218,19 +218,6 @@ const AssociationPage = () => {
                               </li>
                             ))}
                           </ul>
-                            // negativeInfo.map((info, index) => (
-                            // <div key={index}>
-                            //     <h2>{info.title}</h2>
-                            //     <p>Keyword matched: {info.keyword}</p>
-                            //     <a href={info.url} target="_blank" rel="noopener noreferrer">
-                            //         Read more
-                            //     </a>
-                            //     {/* <p>{info.snippet}</p>
-                            //     <a href={info.link} target="_blank" rel="noopener noreferrer">
-                            //         Read more
-                            //     </a> */}
-                            // </div>
-                            // ))
                         ) : (
                             <p>No negative information found.</p>
                         )}

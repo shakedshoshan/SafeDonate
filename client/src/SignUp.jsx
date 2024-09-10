@@ -19,17 +19,17 @@ const SignUp = () => {
       alert(t("password_mismatch"));
       return;
     }
-    // Add signup logic here
+    // Signup logic
     const response = await axios.post("http://localhost:3000/users/signup", { email: email, password: password })
-              if (response.status === 200) {
-                const token = response.data.token;
-                const expires = new Date(Date.now() + 3600000); // 1 hour from now
-                document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
-                document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
-                navigate("/", { state: { id: email } }); 
-              } else {
-                console.log("Bad request. Please check your credentials.");
-              }
+      if (response.status === 200) {
+        const token = response.data.token;
+        const expires = new Date(Date.now() + 3600000); // 1 hour from now
+        document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
+        document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
+        navigate("/", { state: { id: email } }); 
+      } else {
+        console.log("Bad request. Please check your credentials.");
+      }
 
 
     console.log("Email:", email, "Password:", password);

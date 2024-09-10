@@ -17,6 +17,8 @@ userRouter.post('/updateExist/:id', userController.existUserFavorite);
 userRouter.put('/updateAdd/:id', userController.addUserFavorite);
 userRouter.put('/updateRemove/:id', userController.removeUserFavorite);
 
+userRouter.delete('/deleteUserById/:id', userController.deleteUserById )
+
 
 
 module.exports = userRouter;

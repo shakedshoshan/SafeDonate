@@ -65,6 +65,41 @@ const Home = () => {
   
   }, []);
   
+  const getWelcomeMessage = () => {
+    return i18n.language === "he"
+      ? "ברוכים הבאים ל SafeDonate"
+      : t("welcome_message");
+  };
+
+  return (
+    <div className="home">
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : (
+        <div>
+          <h3>{user?.email} is connected</h3>
+          <h1 className="home-title p-12 text-4xl  font-extrabold">{getWelcomeMessage()} {user?.email}</h1>
+          <div>
+            <AssociationCrusel dataList={data} userId={user?._id}/>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Home;
+
+
+  {/* <div className="grid-container"> */}
+            {/* {data.map((name, index) => (
+              <div key={index} className="grid-item clickable-tab cursor-pointer hover:scale-105 transition">
+                {name} 
+              </div>
+            ))} */}
+            {/* <GoogleCustomSearch /> */}
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -106,36 +141,3 @@ const Home = () => {
   //   };
   //   fetchData();
   // }, []);
-  const getWelcomeMessage = () => {
-    return i18n.language === "he"
-      ? "ברוכים הבאים ל SafeDonate"
-      : t("welcome_message");
-  };
-
-  return (
-    <div className="home">
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error.message}</p>
-      ) : (
-        <div>
-          <h3>{user?.email} is connected</h3>
-          <h1 className="home-title p-12 text-4xl  font-extrabold">{getWelcomeMessage()} {user?.email}</h1>
-          <div>
-          {/* <div className="grid-container"> */}
-            {/* {data.map((name, index) => (
-              <div key={index} className="grid-item clickable-tab cursor-pointer hover:scale-105 transition">
-                {name} 
-              </div>
-            ))} */}
-            {/* <GoogleCustomSearch /> */}
-            <AssociationCrusel dataList={data} userId={user?._id}/>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Home;

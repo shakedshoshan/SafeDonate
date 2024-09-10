@@ -3,13 +3,13 @@ import axios from "axios"
 
 const FavoriteButton = ({ association, userId }) => {
     const [favorite, setFavorite] = useState(false);
-    const aName= association["שם עמותה בעברית"]
+    const aName = association["שם עמותה בעברית"]
 
     useEffect(() => {
       const checkFavoriteExistence = async () => {
           try {
             const response = await axios.post(`http://localhost:3000/users/updateExist/${userId}`, { Association: aName });
-            const isFavorite = response.data; // Assuming response.data indicates existence
+            const isFavorite = response.data;
       
             //console.log(`Association "${aName}" is ${isFavorite ? 'already a favorite' : 'not a favorite'}`);
             setFavorite(isFavorite);

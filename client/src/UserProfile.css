@@ -1,0 +1,72 @@
+.user-profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* .profile-section, .donation-history-section {
+    margin-bottom: 20px;
+  } */
+   
+  .profile-section {
+    margin-bottom: 20px;
+  }
+
+  .user-info, .edit-info {
+    margin-bottom: 10px;
+  }
+  
+  button {
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .logout-button {
+    background-color: #dc3545;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333;
+  }
+
+  .delete-button {
+    background-color: #ff4d4d; /* Red color for delete action */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #cc0000; /* Darker red on hover */
+  }
+  
+  .delete-button:focus {
+    outline: none;
+  }
+
+  .error {
+    color: red;
+    font-size: 14px;
+  }
+  
+  .success {
+    color: green;
+    font-size: 14px;
+  }
+  
+  h1, h2 {
+    color: #333;
+  }
+  
