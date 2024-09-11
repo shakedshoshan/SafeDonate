@@ -1,22 +1,37 @@
-// src/components/Header.jsx
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import "../styles/Header.css"; // Adjusted path for CSS
-import logo from "../assets/logo.png"; // Updated to the new logo.png
+import "../styles/Header.css";
+import logo from "../assets/logo.png";
+import debounce from "lodash.debounce"; // Ensure lodash.debounce is installed
 
-const Header = ({ handleLogin, handleSignUp, userProfile }) => {
+const Header = ({ handleLogin, handleSignUp, userProfile, onSearch }) => {
   const { t, i18n } = useTranslation();
-  const [isEnglish, setIsEnglish] = useState(i18n.language === "en");
+  const [searchInput, setSearchInput] = useState("");
 
-  const toggleLanguage = () => {
-    const newLanguage = isEnglish ? "he" : "en";
-    i18n.changeLanguage(newLanguage);
-    setIsEnglish(!isEnglish);
+  const debouncedSearch = useCallback(
+    debounce((nextValue) => onSearch(nextValue), 300),
+    [] // Dependency array
+  );
+
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+    debouncedSearch(e.target.value);
   };
 
+  const handleSearchClick = () => {
+    console.log("Search button clicked with input:", searchInput);
+    onSearch(searchInput);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      console.log("Enter pressed with input:", searchInput);
+      onSearch(searchInput);
+    }
+  };
 
   return (
-    <header className="header">
+    <header className="header" aria-label="Main header">
       <div className="header-container">
         <div className="header-title">
           <a href="/">
@@ -24,19 +39,42 @@ const Header = ({ handleLogin, handleSignUp, userProfile }) => {
           </a>
         </div>
         <div className="header-nav">
-          <input type="text" placeholder={t("search")} className="search-bar" />
-          <button className="header-button">{t("support")}</button>
-          <button className="header-button" onClick={handleLogin}>
+          <input
+            type="text"
+            placeholder={t("search")}
+            aria-label="Search NPOs"
+            className="search-bar"
+            value={searchInput}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+          />
+          <button
+            onClick={handleSearchClick}
+            className="header-button"
+            aria-label="Search"
+          >
+            {t("חיפוש")}
+          </button>
+          <button
+            className="header-button"
+            onClick={handleLogin}
+            aria-label="Login"
+          >
             {t("login")}
           </button>
-          <button className="header-button" onClick={handleSignUp}>
+          <button
+            className="header-button"
+            onClick={handleSignUp}
+            aria-label="Sign Up"
+          >
             {t("signup")}
           </button>
-          <button className="header-button" onClick={userProfile}>
+          <button
+            className="header-button"
+            onClick={userProfile}
+            aria-label="User Profile"
+          >
             {t("profile")}
-          </button>
-          <button className="header-button" onClick={toggleLanguage}>
-            {isEnglish ? "EN / HE" : "HE / EN"}
           </button>
         </div>
       </div>
