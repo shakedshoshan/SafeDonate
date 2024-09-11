@@ -69,14 +69,33 @@ const Home = ({ searchTerm }) => {
 
   useEffect(() => {
     if (searchTerm) {
-      const results = data.filter(
+      // Filter NPOs by name first
+      const nameMatches = data.filter(
         (association) =>
           association["שם עמותה בעברית"] &&
           association["שם עמותה בעברית"].includes(searchTerm)
       );
-      setFilteredData(results);
+
+      // Filter NPOs by cause, excluding the ones already matched by name
+      const causeMatches = data.filter(
+        (association) =>
+          !nameMatches.includes(association) && // Ensure no duplicates
+          association["מטרות עמותה"] &&
+          association["מטרות עמותה"].includes(searchTerm)
+      );
+
+      const numberMatches = data.filter(
+        (association) =>
+          !nameMatches.includes(association) &&
+          !causeMatches.includes(association) &&
+          association["מספר עמותה"] &&
+          association["מספר עמותה"].toString().includes(searchTerm)
+      );
+
+      // Merge the results: nameMatches first, then causeMatches, then numberMatches
+      setFilteredData([...nameMatches, ...causeMatches, ...numberMatches]);
     } else {
-      setFilteredData(data);
+      setFilteredData(data); // Show all data if no search term
     }
   }, [searchTerm, data]);
 
