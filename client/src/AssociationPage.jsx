@@ -16,6 +16,8 @@ const AssociationPage = () => {
   const [donationAmount, setDonationAmount] = useState("");
   const [addDedication, setAddDedication] = useState(false);
   const [dedicationText, setDedicationText] = useState("");
+  const [negativeInfo, setNegativeInfo] = useState([]);
+  const [hasNegativeInfo, setHasNegativeInfo] = useState(false);
 
   useEffect(() => {
     const fetchAssociation = async () => {
@@ -72,6 +74,19 @@ const AssociationPage = () => {
       } catch (error) {
         setError(error);
         setLoading(false);
+      }
+    };
+
+    const fetchNegativeInfo = async (associationNumber) => {
+      try {
+        const response3 = await axios.get(
+          `http://localhost:3000/scrape/${associationNumber}`
+        );
+        setNegativeInfo(response3.data);
+        setHasNegativeInfo(response3.data.length > 0); // Set flag based on scraping results
+      } catch (error) {
+        setError("Error fetching negative information");
+        console.error(error);
       }
     };
 
@@ -145,6 +160,26 @@ const AssociationPage = () => {
             <p className="npo-goals">
               {association["מטרות עמותה"] || "No goals available"}
             </p>
+
+            {/* Negative Info Section */}
+            <div className="negative-info">
+              <h3>
+                {hasNegativeInfo ? (
+                  <span style={{ color: "red" }}>
+                    העמותה מצאה מעורבת בהליכים פליליים
+                  </span>
+                ) : (
+                  <span style={{ color: "green" }}>
+                    העמותה לא הייתה מעורבת בהליכים פליליים
+                  </span>
+                )}
+              </h3>
+              <p>
+                <strong>Disclaimer:</strong> The information displayed is
+                scraped from public sources and may not be entirely accurate or
+                up-to-date.
+              </p>
+            </div>
           </div>
 
           {/* Donation Popup */}
