@@ -17,23 +17,26 @@ const Home = ({ searchTerm }) => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = Cookies.get("token");
-      if (token) {
-        try {
-          const tokenResponse = await axios.post(
-            "http://localhost:3000/users/getToken",
-            { token }
-          );
-          if (tokenResponse.status === 200) {
-            setUser(tokenResponse.data);
-          } else {
-            throw new Error("Token verification failed.");
-          }
-        } catch (error) {
-          console.error("Error verifying token:", error);
-          Cookies.remove("token");
-          setUser(null);
-          setError(error.toString());
+      if (!token) {
+        console.log("No token found, user is not authenticated.");
+        setUser(null); // Clear user state if no token
+        return;
+      }
+      try {
+        const tokenResponse = await axios.post(
+          "http://localhost:3000/users/getToken",
+          { token }
+        );
+        if (tokenResponse.status === 200) {
+          setUser(tokenResponse.data);
+        } else {
+          throw new Error("Token verification failed.");
         }
+      } catch (error) {
+        console.error("Error verifying token:", error);
+        Cookies.remove("token");
+        setUser(null);
+        setError(error.toString());
       }
     };
 

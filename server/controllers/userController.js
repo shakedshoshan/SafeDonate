@@ -22,9 +22,9 @@ module.exports.verifyToken = async function verifyToken(req, res) {
   
   } catch(error) {
     if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token expired'});
+      return res.status(200).json({ user: null, message: 'Token expired or invalid' }); // Return 200 with null user
     } 
-    return res.status(401).json({ message: 'Token is not valid' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 

@@ -3,7 +3,7 @@ import FavoriteButton from "./components/FavoriteButton.jsx"
 import { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
 import axios from "axios";
-import './AssociationPage.css'; 
+import './AssociationPage.css';
 
 
 const AssociationPage = () => {
@@ -25,39 +25,40 @@ const AssociationPage = () => {
 
     useEffect(() => {
         const fetchAssociation = async () => {
-            try{
+            try {
                 // fetch user info from token
                 const token = Cookies.get("token");
                 //console.log(token)
-                if(token){
+                if (token) {
                     const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token })
-                    
+
                     if (tokenResponse.status === 200) {
                         setHasCookie(true);
                         setUser(tokenResponse.data);
-                        console.log(tokenResponse.data) 
-                        
+                        console.log(tokenResponse.data)
+
                         const response = await fetch(
                             `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
                         );
-    
-                        if(!response.ok) {
+
+                        if (!response.ok) {
                             throw new Error(`Http error! status: ${response.status}`);
                         }
-                        
+
                         const jsonData = await response.json();
                         if (jsonData.result.records.length > 0) {
                             const associationData = jsonData.result.records[0];
                             setAssociation(associationData)
-    
-                            const associationNumber = associationData['מספר עמותה'];
-                            
+
+                            //const associationNumber = associationData['מספר עמותה'];
+                            const associationNumber = 580570950;
+
                             // Fetch approvals and negative info in parallel
                             await fetchApprovals(associationNumber);
                             await fetchNegativeInfo(associationNumber);
                         } else {
                             setError('No association found');
-                        } 
+                        }
                     } else {
                         setHasCookie(false);
                         console.log("Token verification failed.");
@@ -67,35 +68,35 @@ const AssociationPage = () => {
                     setHasCookie(false);
                     console.log("No token found.");
                 }
-                
+
                 // console.log(hasCookie)
                 // if (hasCookie) {
                 //     console.log("hi") 
-                    
 
-                    // const associationNumber = associationData['מספר עמותה'];
-        
-                    // console.log(associationNumber);
-                    
-                    // // fetch approvals of the association
-                    // await fetchApprovals(associationNumber);
 
-                    // //web scraping
-                    // await fetchNegativeInfo(associationNumber);
-  
+                // const associationNumber = associationData['מספר עמותה'];
+
+                // console.log(associationNumber);
+
+                // // fetch approvals of the association
+                // await fetchApprovals(associationNumber);
+
+                // //web scraping
+                // await fetchNegativeInfo(associationNumber);
+
                 setLoading(false);
             } catch (error) {
                 setError(error);
                 setLoading(false);
             }
         };
-       
+
         const fetchApprovals = async (associationNumber) => {
-            try{
+            try {
                 const response2 = await fetch(
                     `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
                 );
-                if(!response2.ok) {
+                if (!response2.ok) {
                     throw new Error(`Http error! status: ${response2.status}`);
                 }
                 //console.log("hello3")
@@ -141,7 +142,7 @@ const AssociationPage = () => {
 
     return (
         <div>
-            {hasCookie ? ( 
+            {hasCookie ? (
                 <div>
                     {association ? (
                         <>
@@ -152,7 +153,7 @@ const AssociationPage = () => {
                     ) : (
                         <p>Association data not available.</p>
                     )}
-                                   
+
                     <h2>מידע נוסף</h2>
                     {approvals.length > 0 ? (
                         <table>
@@ -176,13 +177,13 @@ const AssociationPage = () => {
                     ) : (
                         <p>No approvals data available.</p>
                     )}
-                    
+
                     <div className="flex justify-end ml-2">
                         {user?._id && (
-                            <FavoriteButton association={association} userId={user._id}/>
-                        )} 
+                            <FavoriteButton association={association} userId={user._id} />
+                        )}
                     </div>
-                    
+
                     <div>
                         <button onClick={handleOpenModal} className="donate-button">לתרומה</button>
                         {showModal && (
@@ -205,19 +206,19 @@ const AssociationPage = () => {
                             </div>
                         )}
                     </div>
-                    
+
                     <div>
                         <h1>Negative Information</h1>
                         {negativeInfo.length > 0 ? (
-                            <ul>
-                            {negativeInfo.map((result, index) => (
-                              <li key={index} className="scraped-link-item">
-                                <a href={result.url} target="_blank" rel="noopener noreferrer" className="clickable-link">
-                                  {result.title} - ({result.keyword})
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
+                            negativeInfo.map((info, index) => (
+                                <div key={index}>
+                                    <h2>{info.title}</h2>
+                                    <p>{info.snippet}</p>
+                                    <a href={info.link} target="_blank" rel="noopener noreferrer">
+                                        Read more
+                                    </a>
+                                </div>
+                            ))
                         ) : (
                             <p>No negative information found.</p>
                         )}
@@ -232,7 +233,7 @@ const AssociationPage = () => {
         </div>
     );
 };
-   
+
 //     return (
 //         <div>
 //             {hasCookie ? ( 
