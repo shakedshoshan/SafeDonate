@@ -5,29 +5,13 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 puppeteer.use(StealthPlugin()); // Enable stealth mode
-
 // const keywords = ['הליכים משפטיים', 'הליכים', 'פלילי', 'פירוק', 'עמותה'];
-const keywords = ['עמותה', 'הליכים'];
+//const keywords = ['פלילי', 'פירוק', 'הליכים'];
+const keywords = ['פלילי', 'פירוק', 'הליכים'];
+//const keywords = ['פירוק'];
 
 // Delay function to mimic human-like browsing behavior
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Retry function for handling retries with exponential backoff
-const retry = async (fn, retries = 3, delayMs = 3000) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            return await fn();
-        } catch (err) {
-            if (i < retries - 1) {
-                console.warn(`Retrying... (${i + 1}/${retries})`);
-                await delay(delayMs * (i + 1)); // Exponential backoff
-            } else {
-                throw err;
-            }
-        }
-    }
-};
-
 
 // Function to scrape Google search results for a given association number and keywords
 const scrapeGoogle = async (associationNumber) => {
@@ -59,7 +43,7 @@ const scrapeGoogle = async (associationNumber) => {
             });
 
             // Navigate to the Google search page and wait for content to load
-            await retry(() => page.goto(searchUrl, { waitUntil: "domcontentloaded" }), 3, 5000);
+            await page.goto(searchUrl, { waitUntil: "domcontentloaded" });
             console.log(`Navigated to: ${searchUrl}`);
 
             const isCaptcha = await page.$('form[action="/sorry/index"]');
@@ -75,19 +59,29 @@ const scrapeGoogle = async (associationNumber) => {
                 return Array.from(document.querySelectorAll(".g")).map((el) => {
                     const titleEl = el.querySelector("h3");  // Titles inside <h3> tags
                     const linkEl = el.querySelector('a');    // Links inside <a> tags
+                    const contentEl = el.querySelector(".Hdw6tb");  // Snippet/content area
                     return {
                         title: titleEl ? titleEl.textContent : "No title found",
                         link: linkEl ? linkEl.href : "No link found",
+                        content: contentEl ? contentEl.textContent : "No content found"
                     };
                 });
             });
 
-            console.log(`Results for keyword '${keyword}':`, searchResults);
+            //console.log(`Results for keyword '${keyword}':`, searchResults);
 
-            // Store the results
+             // Filter results where the associationNumber and keyword are found in the title or content
+        const filteredResults = searchResults.filter(result =>
+            (result.title.includes(associationNumber) || result.content.includes(associationNumber)) &&
+            (result.title.includes(keyword) || result.content.includes(keyword))
+          );
+
+          console.log(`Filtered Results for keyword '${keyword}':`, filteredResults);
+
+            // Store the filtered results
             results.push({
                 keyword,
-                searchResults
+                filteredResults
             });
 
             // Close the page after each search
@@ -102,6 +96,7 @@ const scrapeGoogle = async (associationNumber) => {
         if (browser) {
             await browser.close();
             console.log("finish scraping")
+            console.log(results)
         }
     }
     return results;

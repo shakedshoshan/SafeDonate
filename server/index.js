@@ -37,6 +37,7 @@ mongoose
 // Routes
 app.get('/scrape/:associationNumber', async (req, res) => {
   const associationNumber = req.params.associationNumber;
+  //const associationNumber = 580007086//580570950;
   console.log('Starting scraping process for association number:', associationNumber);
 
   try {
