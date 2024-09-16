@@ -131,7 +131,9 @@ const Header = ({
           <button className="header-tab">{t("חיפוש קטגוריות")}</button>
 
           {/* About Us */}
-          <button className="header-tab">{t("קצת עלינו")}</button>
+          <button className="header-tab" onClick={() => navigate("/about-us")}>
+            {t("קצת עלינו")}
+          </button>
 
           {/* Profile Picture or Initials */}
           <div

@@ -1,35 +1,50 @@
-/* NotFound.css */
-.not-found-container {
+/* Full-page center alignment */
+.notfound-page {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh; /* Full height of the viewport */
+    align-items: center;
+    height: 100vh;
+    background-color: #e6f7ff; /* Light blue background */
+  }
+  
+  /* Container for the NotFound message */
+  .notfound-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
   }
   
-  .not-found-container h1 {
-    font-size: 2rem;
+  /* Fun "Oops" title styling */
+  .notfound-title {
+    font-size: 36px;
+    background: linear-gradient(90deg, #ff5e57, #ffbb00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+  }
+  
+  /* Message about not finding what was searched */
+  .notfound-message {
+    font-size: 18px;
     color: #333;
+    margin-bottom: 20px;
   }
   
-  .not-found-container p {
-    font-size: 1.2rem;
-    color: #666;
-  }
-  
-  .not-found-container button {
-    padding: 10px 20px;
-    font-size: 1rem;
+  /* Home button styling */
+  .home-button {
+    background: linear-gradient(90deg, #104d8e, #3d9bc6);
     color: white;
-    background-color: #007bff;
+    padding: 12px 24px;
     border: none;
-    border-radius: 5px;
+    border-radius: 30px;
+    font-size: 16px;
     cursor: pointer;
-    margin-top: 20px;
+    transition: background-color 0.3s ease;
   }
   
-  .not-found-container button:hover {
-    background-color: #0056b3;
+  .home-button:hover {
+    background-color: #2f7bbf; /* Darker blue on hover */
   }
   
