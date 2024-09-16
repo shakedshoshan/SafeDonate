@@ -20,6 +20,7 @@ const AssociationPage = () => {
   const [categoryCounts, setCategoryCounts] = useState({});
   const [expandedCategory, setExpandedCategory] = useState(null);
   const [hasCookie, setHasCookie] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   // Fetch association data
   useEffect(() => {
@@ -120,6 +121,10 @@ const AssociationPage = () => {
     setShowModal(false);
   };
 
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(
@@ -159,6 +164,13 @@ const AssociationPage = () => {
 
             <button className="donate-button" onClick={handleOpenModal}>
               לתרומה
+            </button>
+            <button
+              className={`favorite-button ${isFavorite ? "liked" : ""}`}
+              onClick={toggleFavorite}
+            >
+              {isFavorite ? "מועדפים" : "הוסף למועדפים"}
+              <span className="heart-icon">{isFavorite ? "❤️" : "🤍"}</span>
             </button>
           </div>
 

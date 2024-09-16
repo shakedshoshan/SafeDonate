@@ -325,3 +325,33 @@
     color: #666;
     text-align: left;
 }
+
+.favorite-button {
+    background-color: #3d9bc6;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .favorite-button .heart-icon {
+    font-size: 1.5rem;
+    margin-left: 10px;
+  }
+  
+  .favorite-button:hover {
+    background-color: #217ca6;
+  }
+  
+  .favorite-button.liked {
+    background-color: #ff6b6b;
+  }
