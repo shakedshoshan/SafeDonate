@@ -20,6 +20,7 @@
   .notfound-title {
     font-size: 36px;
     background: linear-gradient(90deg, #ff5e57, #ffbb00);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 20px;
