@@ -73,15 +73,14 @@
 
 /* Left Section for NPO Goals */
 .goals-headline {
-    font-size: 2rem;  /* Bigger font size for the headline */
-    font-weight: bold;  /* Bold font */
-    text-decoration: underline;  /* Underlined */
-    color: #f7f8fa;  /* Blue color (main color) */
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #104d8e;
     margin-bottom: 20px;
-    text-align: center;
-    background: linear-gradient(90deg, #104d8e, #00c853); /* Blue to green gradient */
+    background: linear-gradient(90deg, #104d8e, #00c853); /* Gradient */
     padding: 10px;
-    border-radius: 10px; /* Slightly rounded corners for aesthetic */
+    border-radius: 10px;
 }
 
 /* Left Section for NPO Goals */
@@ -93,12 +92,12 @@
 /* Goals Text Styling */
 .npo-goals {
     font-size: 1.25rem;
-    color: #666;  /* Lighter color for the paragraph */
+    color: #666;
     line-height: 1.6;
     margin-bottom: 30px;
 }
 
-/* Vertical Line */
+/* Separator Line */
 .separator {
     height: 100%;
     width: 1px;
@@ -106,6 +105,119 @@
     margin-left: 20px;
 }
 
+/* Approvals Section */
+.approvals-section {
+    margin-top: 40px;
+}
+
+.approvals-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+/* Table Styles */
+.category-content {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: #f9f9f9;
+  }
+  
+  .category-content th, .category-content td {
+    padding: 12px 20px;  /* Adding padding for better readability */
+    text-align: left;
+    border-bottom: 1px solid #ddd;  /* Add borders for a clean look */
+  }
+  
+  .category-content th {
+    background-color: #104d8e; /* Darker blue for the table header */
+    color: white;
+  }
+  
+  .category-content td a {
+    color: #217ca6; /* Blue for links */
+    text-decoration: none;
+  }
+  
+  .category-content td a:hover {
+    text-decoration: underline;  /* Underline links on hover */
+  }
+  
+  /* Scrollable Content */
+  .scrollable-content {
+    max-height: 150px;  /* Limit the height for scrolling */
+    overflow-y: auto;   /* Enable vertical scrolling */
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ccc; /* Border for scrollable content */
+    border-radius: 5px;
+  }
+  
+  .scrollable-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .scrollable-content::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+  }
+  
+  .scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+
+  
+.approvals-table th,
+.approvals-table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.approvals-table th {
+    background-color: #3d9bc6;
+    color: white;
+    font-weight: bold;
+}
+
+/* Negative Info Section */
+.negative-info-summary {
+    margin-top: 30px;
+  }
+  
+  /* Category header style (clickable section) */
+  .category-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #104d8e;
+    cursor: pointer;
+    padding: 10px 0;
+    transition: background-color 0.3s ease;
+  }
+  
+  .category-header:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Category content style (hidden by default, shown when expanded) */
+  .category-content {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+    border-left: 3px solid #104d8e;
+  }
+  
+  /* Link styles */
+  .category-content a {
+    color: #217ca6;
+    text-decoration: underline;
+    font-size: 1.1rem;
+  }
+  
+  .category-content a:hover {
+    color: #0056b3;
+  }
 /* Popup Overlay */
 .popup-overlay {
     position: fixed;
@@ -113,7 +225,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Dark background for popup overlay */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -129,7 +241,7 @@
     max-width: 90%;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     position: relative;
-    text-align: right; /* RTL styling */
+    text-align: right;
 }
 
 /* Title with Lock Symbol */
@@ -138,7 +250,7 @@
     font-weight: bold;
     display: flex;
     align-items: center;
-    color: #104d8e;  /* Blue */
+    color: #104d8e;
     margin-bottom: 20px;
 }
 
@@ -175,7 +287,7 @@
 }
 
 .dedication-text {
-    display: none; /* Initially hidden */
+    display: none;
     width: 100%;
     padding: 10px;
     margin-top: 10px;
@@ -183,14 +295,13 @@
     border-radius: 5px;
 }
 
-/* Show text area when checkbox is checked */
 .show-dedication .dedication-text {
     display: block;
 }
 
 /* Donation Button */
 .submit-donation {
-    background-color: #104d8e; /* Main Blue Color */
+    background-color: #104d8e;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -200,12 +311,11 @@
     font-size: 1.2rem;
     text-align: center;
     width: 100%;
-    transition: background-color 0.3s ease;
     margin-top: 20px;
 }
 
 .submit-donation:hover {
-    background-color: #0056b3;  /* Slightly darker blue on hover */
+    background-color: #0056b3;
 }
 
 /* Donation Summary */

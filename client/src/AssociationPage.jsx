@@ -2,13 +2,12 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import './AssociationPage.css';
-
+import "./AssociationPage.css";
 
 const AssociationPage = () => {
   const { id } = useParams();
   const [association, setAssociation] = useState(null);
-  const [approvals, setApprovals] = useState(null);
+  const [approvals, setApprovals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
@@ -18,115 +17,101 @@ const AssociationPage = () => {
   const [addDedication, setAddDedication] = useState(false);
   const [dedicationText, setDedicationText] = useState("");
   const [negativeInfo, setNegativeInfo] = useState([]);
-  const [hasScrapingData, setHasScrapingData] = useState(false);
+  const [categoryCounts, setCategoryCounts] = useState({});
+  const [expandedCategory, setExpandedCategory] = useState(null);
   const [hasCookie, setHasCookie] = useState(false);
 
-    useEffect(() => {
-        const fetchAssociation = async () => {
-            try{
-                // fetch user info from token
-                const token = Cookies.get("token");
-                //console.log(token)
-                if(token){
-                    const tokenResponse = await axios.post("http://localhost:3000/users/getToken", { token })
-                    
-                    if (tokenResponse.status === 200) {
-                        setHasCookie(true);
-                        setUser(tokenResponse.data);
-                        console.log(tokenResponse.data) 
-                        
-                        const response = await fetch(
-                            `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
-                        );
-    
-                        if(!response.ok) {
-                            throw new Error(`Http error! status: ${response.status}`);
-                        }
-                        
-                        const jsonData = await response.json();
-                        if (jsonData.result.records.length > 0) {
-                            const associationData = jsonData.result.records[0];
-                            setAssociation(associationData)
-    
-                            const associationNumber = associationData['מספר עמותה'];
-                            
-                            // Fetch approvals and negative info in parallel
-                            await fetchApprovals(associationNumber);
-                            await fetchNegativeInfo(associationNumber);
-                        } else {
-                            setError('No association found');
-                        } 
-                    } else {
-                        setHasCookie(false);
-                        console.log("Token verification failed.");
-                    }
-                } else {
-                    //setError(error);
-                    setHasCookie(false);
-                    console.log("No token found.");
-                }
-                
-                // console.log(hasCookie)
-                // if (hasCookie) {
-                //     console.log("hi") 
-                    
-
-                    // const associationNumber = associationData['מספר עמותה'];
-        
-                    // console.log(associationNumber);
-                    
-                    // // fetch approvals of the association
-                    // await fetchApprovals(associationNumber);
-
-                    // //web scraping
-                    // await fetchNegativeInfo(associationNumber);
-  
-                setLoading(false);
-            } catch (error) {
-                setError(error);
-                setLoading(false);
-            }
-        };
-       
-        const fetchApprovals = async (associationNumber) => {
-            try{
-                const response2 = await fetch(
-                    `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
-                );
-                if(!response2.ok) {
-                    throw new Error(`Http error! status: ${response2.status}`);
-                }
-                //console.log("hello3")
-                const jsonData2 = await response2.json();
-                const sortedData = jsonData2.result.records.sort((a, b) => {
-                    const yearA = parseInt(a["שנת האישור"], 10);
-                    const yearB = parseInt(b["שנת האישור"], 10);
-                    return yearB - yearA;
-                });
-                setApprovals(sortedData)
-            } catch (error) {
-                setError(error);
-                setLoading(false);
-            }
-        };
-
-    const fetchNegativeInfo = async (associationNumber) => {
-        console.log('Fetching negative information for association:', associationNumber);
+  // Fetch association data
+  useEffect(() => {
+    const fetchAssociation = async () => {
       try {
-        const response3 = await axios.get(
-          `http://localhost:3000/scrape/${associationNumber}`
-        );
-        setNegativeInfo(response3.data);
-        setHasScrapingData(response3.data.length > 0); // Set flag based on scraping results
+        const token = Cookies.get("token");
+        if (token) {
+          const tokenResponse = await axios.post(
+            "http://localhost:3000/users/getToken",
+            { token }
+          );
+          if (tokenResponse.status === 200) {
+            setHasCookie(true);
+            setUser(tokenResponse.data);
+
+            // Fetch the association data by ID
+            const response = await axios.get(
+              `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
+            );
+
+            if (response.data.result.records.length > 0) {
+              const associationData = response.data.result.records[0];
+              setAssociation(associationData);
+
+              const associationNumber = associationData["מספר עמותה"];
+              await fetchApprovals(associationNumber);
+              await fetchNegativeInfo(associationNumber);
+            } else {
+              setError("No association found");
+            }
+          }
+        } else {
+          setHasCookie(false);
+        }
+        setLoading(false);
       } catch (error) {
-        setError("Error fetching negative information");
-        console.error(error);
+        setError(error);
+        setLoading(false);
       }
     };
 
-    fetchAssociation();
+    // Fetch approvals by association number
+    const fetchApprovals = async (associationNumber) => {
+      try {
+        const response = await axios.get(
+          `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
+        );
+        const sortedData = response.data.result.records.sort((a, b) => {
+          const yearA = parseInt(a["שנת האישור"], 10);
+          const yearB = parseInt(b["שנת האישור"], 10);
+          return yearB - yearA;
+        });
+        setApprovals(sortedData);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    // Fetch negative information (scraping results)
+    const fetchNegativeInfo = async (associationNumber) => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/scrape/${associationNumber}`
+        );
+        const data = response.data;
+
+        // Filter the results by categories (פלילי, פירוק, הליכים)
+        const categories = ["פלילי", "פירוק", "הליכים"];
+        const counts = {};
+        categories.forEach((category) => {
+          counts[category] = data.filter(
+            (item) => item.keyword === category
+          ).length;
+        });
+
+        setCategoryCounts(counts); // Save counts
+        setNegativeInfo(data); // Save negative info
+      } catch (error) {
+        setError("Error fetching negative information");
+      }
+    };
+
+    fetchAssociation(); // Start fetching the association data
   }, [id]);
 
+  // Expand/collapse category
+  const toggleCategory = (category) => {
+    setExpandedCategory(expandedCategory === category ? null : category);
+  };
+
+  // Modal handlers
   const handleOpenModal = () => {
     setShowModal(true);
   };
@@ -182,38 +167,210 @@ const AssociationPage = () => {
 
           {/* Left Section for Goals */}
           <div className="left-section">
-            <h2>
-              {approvals && approvals.length > 0 ? (
-                <span style={{ color: "green" }}>העמותה מאושרת</span>
-              ) : (
-                <span style={{ color: "red" }}>העמותה אינה מאושרת</span>
-              )}
-            </h2>
-
             <h2 className="goals-headline">מטרות העמותה</h2>
             <p className="npo-goals">
               {association["מטרות עמותה"] || "No goals available"}
             </p>
 
             {/* Negative Info Section */}
-            <div className="negative-info">
-              <h3>
-                {hasScrapingData ? (
-                  <span style={{ color: "red" }}>
-                    העמותה מצאה מעורבת בהליכים פליליים
-                  </span>
-                ) : (
-                  <span style={{ color: "green" }}>
-                    העמותה לא הייתה מעורבת בהליכים פליליים
-                  </span>
-                )}
-              </h3>
-              <p>
-                <strong>Disclaimer:</strong> The information displayed is
-                scraped from public sources and may not be entirely accurate or
-                up-to-date.
-              </p>
+            <div className="negative-info-summary">
+              {negativeInfo.filter((item) => item.keyword === "פלילי").length >
+                0 && (
+                <div
+                  onClick={() => toggleCategory("פלילי")}
+                  className="category-header"
+                >
+                  מצאתי{" "}
+                  {
+                    negativeInfo.filter((item) => item.keyword === "פלילי")[0]
+                      .filteredResults.length
+                  }{" "}
+                  קישורים רלוונטים בהקשר פלילי
+                </div>
+              )}
+              {expandedCategory === "פלילי" && (
+                <table className="category-content">
+                  <thead>
+                    <tr>
+                      <th>כותרת</th>
+                      <th>קישור</th>
+                      <th>תוכן</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {negativeInfo
+                      .filter((item) => item.keyword === "פלילי")[0]
+                      .filteredResults.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.title}</td>
+                          <td>
+                            <a
+                              href={result.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              קישור
+                            </a>
+                          </td>
+                          <td>
+                            <div className="scrollable-content">
+                              {result.content || "No content available"}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+              {/* 
+              {expandedCategory === "פירוק" && (
+                <table className="category-content">
+                  <thead>
+                    <tr>
+                      <th>כותרת</th>
+                      <th>קישור</th>
+                      <th>תוכן</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {negativeInfo
+                      .filter((item) => item.keyword === "פירוק")[0]
+                      .filteredResults.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.title}</td>
+                          <td>
+                            <a
+                              href={result.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              קישור
+                            </a>
+                          </td>
+                          <td>
+                            <div className="scrollable-content">
+                              {result.content || "No content available"}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )} */}
+
+              {negativeInfo.filter((item) => item.keyword === "פירוק").length >
+                0 && (
+                <div
+                  onClick={() => toggleCategory("פירוק")}
+                  className="category-header"
+                >
+                  מצאתי{" "}
+                  {
+                    negativeInfo.filter((item) => item.keyword === "פירוק")[0]
+                      .filteredResults.length
+                  }{" "}
+                  קישורים רלוונטים בהקשר פירוק
+                </div>
+              )}
+              {expandedCategory === "פירוק" && (
+                <table className="category-content">
+                  <thead>
+                    <tr>
+                      <th>כותרת</th>
+                      <th>קישור</th>
+                      <th>תוכן</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {negativeInfo
+                      .filter((item) => item.keyword === "פירוק")[0]
+                      .filteredResults.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.title}</td>
+                          <td>
+                            <a
+                              href={result.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              קישור
+                            </a>
+                          </td>
+                          <td>{result.content || "No content available"}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+
+              {negativeInfo.filter((item) => item.keyword === "הליכים").length >
+                0 && (
+                <div
+                  onClick={() => toggleCategory("הליכים")}
+                  className="category-header"
+                >
+                  מצאתי{" "}
+                  {
+                    negativeInfo.filter((item) => item.keyword === "הליכים")[0]
+                      .filteredResults.length
+                  }{" "}
+                  קישורים רלוונטים בהקשר הליכים
+                </div>
+              )}
+              {expandedCategory === "הליכים" && (
+                <table className="category-content">
+                  <thead>
+                    <tr>
+                      <th>כותרת</th>
+                      <th>קישור</th>
+                      <th>תוכן</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {negativeInfo
+                      .filter((item) => item.keyword === "הליכים")[0]
+                      .filteredResults.map((result, index) => (
+                        <tr key={index}>
+                          <td>{result.title}</td>
+                          <td>
+                            <a
+                              href={result.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              קישור
+                            </a>
+                          </td>
+                          <td>{result.content || "No content available"}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
             </div>
+
+            {/* Table for Yearly Approval */}
+            {approvals && approvals.length > 0 && (
+              <div className="approvals-section">
+                <h2>היסטוריית אישורים:</h2>
+                <table className="approvals-table">
+                  <thead>
+                    <tr>
+                      <th>שנת האישור</th>
+                      <th>האם מאושר</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {approvals.map((record, index) => (
+                      <tr key={index}>
+                        <td>{record["שנת האישור"]}</td>
+                        <td>{record["האם יש אישור"]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           {/* Donation Popup */}
@@ -298,14 +455,15 @@ const AssociationPage = () => {
     </div>
   );
 };
-   
+//export default AssociationPage;
+
 //     return (
 //         <div>
-//             {hasCookie ? ( 
+//             {hasCookie ? (
 //             <div>
 //                 <h1>{association["שם עמותה בעברית"]}</h1>
 //                 <p>{association["מטרות עמותה"]}</p>
-//                 <p>{association["סיווג פעילות ענפי"]}</p>                  
+//                 <p>{association["סיווג פעילות ענפי"]}</p>
 //                 <h2>מידע נוסף</h2>
 //                 {approvals.length > 0 ? (
 //                     <table>
@@ -331,10 +489,10 @@ const AssociationPage = () => {
 //                 )}
 //                 <div className="flex justify-end ml-2">
 //                     {user._id ? (
-//                         <FavoriteButton association={association} userId={user._id}/>) 
+//                         <FavoriteButton association={association} userId={user._id}/>)
 //                         :(
 //                             <div> </div>
-//                         )} 
+//                         )}
 //                 </div>
 //                 <div>
 //                     <button onClick={handleOpenModal} className="donate-button">
