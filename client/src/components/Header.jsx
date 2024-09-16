@@ -6,6 +6,9 @@ import profileIcon from "../assets/user-profile-icon.png";
 import debounce from "lodash.debounce";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import AssociationCrusel from "./AssociationCrusel";
+import AssociationCard from "./AssociationCard";
 
 const Header = ({
   handleLogin,
@@ -13,12 +16,14 @@ const Header = ({
   userProfile,
   onSearch,
   suggestions,
+  userId,
 }) => {
   const { t, i18n } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false); // To store login state
   const [userName, setUserName] = useState(""); // To store user's name
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch user data from cookies and token
@@ -69,21 +74,16 @@ const Header = ({
     debouncedSearch(e.target.value);
   };
 
-  const handleSearchClick = () => {
-    onSearch(searchInput);
-    setShowSuggestions(false);
-  };
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      onSearch(searchInput);
-      setShowSuggestions(false);
+      navigate(`/search?query=${searchInput}`); // Navigate to search results page
+      setShowSuggestions(false); // Hide suggestions
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    onSearch(suggestion);
-    setShowSuggestions(false);
+  const handleSuggestionClick = (suggestionId) => {
+    navigate(`/AssociationPage/${suggestionId}`); // Navigate to the selected association page
+    setShowSuggestions(false); // Hide suggestions after selection
   };
 
   const getUserInitials = () => {
@@ -119,18 +119,11 @@ const Header = ({
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
             />
-            {showSuggestions && suggestions && suggestions.length > 0 && (
-              <ul className="suggestions-dropdown">
-                {suggestions.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    className="suggestion-item"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
+            {showSuggestions && suggestions?.length > 0 && (
+              <AssociationCrusel
+                dataList={filteredData}
+                userId={user?._id}
+              ></AssociationCrusel>
             )}
           </div>
 

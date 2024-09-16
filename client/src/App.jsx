@@ -6,9 +6,8 @@ import Login from "./Login";
 import SignUp from "./SignUp";
 import UserProfile from "./UserProfile";
 import AssociationPage from "./AssociationPage";
-import NotFound from "./NotFound"; // Assuming you have a NotFound component
+import NotFound from "./NotFound";
 import "./App.css";
-import { useTranslation } from "react-i18next";
 
 // Define route paths as constants
 const ROUTES = {
@@ -21,36 +20,27 @@ const ROUTES = {
 };
 
 const App = () => {
-  const { i18n } = useTranslation();
   const navigate = useNavigate();
-  const [npoData, setNpoData] = useState([]); // Example state for NPO data
-  const [filteredResults, setFilteredResults] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // Add state for search term
-
   const handleLogin = () => {
-    navigate(ROUTES.LOGIN);
-  };
-
-  const handleSignUp = () => {
-    navigate(ROUTES.SIGNUP);
+    navigate("/login");
   };
 
   const userProfile = () => {
-    navigate(ROUTES.PROFILE);
+    navigate("/profile");
   };
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
-  const handleSearch = (searchTerm) => {
-    console.log("handleSearch called with:", searchTerm);
-    setSearchTerm(searchTerm); // Set the search term in the App state
+  const handleSearch = (term) => {
+    console.log("Search initiated with:", term);
+    setSearchTerm(term); // Update the searchTerm state
   };
 
   return (
     <div style={{ direction: "rtl", textAlign: "right" }}>
       <Header
-        handleLogin={handleLogin}
-        handleSignUp={handleSignUp}
-        userProfile={userProfile}
         onSearch={handleSearch}
+        handleLogin={handleLogin}
+        userProfile={userProfile}
       />
       <Routes>
         <Route path={ROUTES.HOME} element={<Home searchTerm={searchTerm} />} />

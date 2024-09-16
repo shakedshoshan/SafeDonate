@@ -1,5 +1,5 @@
 /* Basic page styling */
-.signup-page {
+.login-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,7 @@
   background-color: #E6F7FF; /* Light blue background */
 }
 
-.signup-container {
+.login-container {
   background-color: white;
   padding: 40px;
   border-radius: 10px;
@@ -25,7 +25,7 @@ h2 {
   margin-bottom: 20px;
 }
 
-.signup-form {
+.login-form {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -48,7 +48,7 @@ input::placeholder {
   color: #999;
 }
 
-.signup-button {
+.login-button {
   background: linear-gradient(90deg, #104d8e, #3d9bc6);
   color: white;
   padding: 12px;
@@ -59,23 +59,23 @@ input::placeholder {
   transition: background-color 0.3s ease;
 }
 
-.signup-button:hover {
+.login-button:hover {
   background-color: #2f7bbf; /* Slightly darker on hover */
 }
 
-/* Login redirect section */
-.login-redirect {
+/* Signup redirect section */
+.signup-redirect {
   margin-top: 30px;
 }
 
-.login-redirect p {
+.signup-redirect p {
   font-size: 14px;
   color: #333;
   margin-bottom: 10px;
 }
 
-/* Highlighted, clickable login link */
-.login-redirect .highlight {
+/* Highlighted, clickable signup link */
+.signup-redirect .highlight {
   color: #104d8e;
   font-weight: bold;
   cursor: pointer;

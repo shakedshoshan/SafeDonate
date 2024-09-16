@@ -4,6 +4,7 @@ import "./Home.css";
 import AssociationCrusel from "./components/AssociationCrusel";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 const Home = ({ searchTerm }) => {
   // Accept searchTerm as a prop
@@ -13,6 +14,8 @@ const Home = ({ searchTerm }) => {
   const [error, setError] = useState(null);
   const [user, setUser] = useState();
   const { t, i18n } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query");
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -108,25 +111,35 @@ const Home = ({ searchTerm }) => {
       : t("welcome_message");
   };
 
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (query) {
+        try {
+          const response = await axios.get(`/api/search?q=${query}`);
+          setData(response.data); // Assuming backend returns matching NPOs
+        } catch (error) {
+          setError(error.toString());
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchResults();
+  }, [query]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
-    <div className="home">
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <div>
-          <h3>{user?.email} is connected</h3>
-          <h1 className="home-title p-12 text-4xl font-extrabold">
-            {getWelcomeMessage()} {user?.email}
-          </h1>
-          <div>
-            <AssociationCrusel dataList={filteredData} userId={user?._id} />
-          </div>
-        </div>
-      )}
+    <div>
+      <h1>List of NPOs</h1>
+      <ul>
+        {filteredData.map((npo) => (
+          <li key={npo["מספר עמותה"]}>{npo["שם עמותה בעברית"]}</li>
+        ))}
+      </ul>
     </div>
   );
 };
-
 export default Home;

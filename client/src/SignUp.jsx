@@ -1,81 +1,166 @@
-// src/SignUp.jsx
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./SignUp.css";
 
-const SignUp = () => {
+const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dob, setDob] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const today = new Date().toISOString().split("T")[0];
 
-  async function handleSubmit(e) {
-    console.log("submit")
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert(t("password_mismatch"));
+
+    if (password !== verifyPassword) {
+      alert("Passwords do not match!");
       return;
     }
-    // Signup logic
-    const response = await axios.post("http://localhost:3000/users/signup", { email: email, password: password })
+
+    if (!showAdditionalFields) {
+      // Move to the next step
+      setShowAdditionalFields(true);
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/users/signup", {
+        email,
+        password,
+        firstName,
+        lastName,
+        dob,
+        phone,
+      });
+
       if (response.status === 200) {
         const token = response.data.token;
         const expires = new Date(Date.now() + 3600000); // 1 hour from now
         document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
-        document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
-        navigate("/", { state: { id: email } }); 
+
+        navigate("/", { state: { id: email } });
       } else {
-        console.log("Bad request. Please check your credentials.");
+        console.log("Signup failed. Please check your input.");
       }
+    } catch (error) {
+      console.error("Error during signup:", error);
+    }
+  };
 
-
-    console.log("Email:", email, "Password:", password);
+  const handleLoginRedirect = () => {
+    navigate("/login");
   };
 
   return (
-    <div className="form-container">
-      <h2>{t("signup")}</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>{t("email")}</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <div className="signup-page">
+      <div className="signup-container">
+        <h2>ברוכים הבאים ל-SafeDonate</h2>
+        <form onSubmit={handleSignUp} className="signup-form">
+          {/* Step 1: Email, Password, Verify Password */}
+          {!showAdditionalFields && (
+            <>
+              <label htmlFor="email">אימייל</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="הכנס את כתובת האימייל שלך"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+
+              <label htmlFor="password">סיסמא</label>
+              <input
+                type="password"
+                id="password"
+                placeholder="הכנס את הסיסמא שלך"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+
+              <label htmlFor="verifyPassword">אמת סיסמא</label>
+              <input
+                type="password"
+                id="verifyPassword"
+                placeholder="הכנס את הסיסמא שלך שוב"
+                value={verifyPassword}
+                onChange={(e) => setVerifyPassword(e.target.value)}
+                required
+              />
+
+              <button type="submit" className="signup-button">
+                המשך
+              </button>
+            </>
+          )}
+
+          {/* Step 2: Additional Info */}
+          {showAdditionalFields && (
+            <>
+              <label htmlFor="firstName">שם פרטי</label>
+              <input
+                type="text"
+                id="firstName"
+                placeholder="הכנס את שמך הפרטי"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+
+              <label htmlFor="lastName">שם משפחה</label>
+              <input
+                type="text"
+                id="lastName"
+                placeholder="הכנס את שם המשפחה שלך"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+
+              <label htmlFor="dob">תאריך לידה</label>
+              <input
+                type="date"
+                id="dob"
+                max={today}
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                required
+              />
+
+              <label htmlFor="phone">מספר טלפון (אופציונלי)</label>
+              <input
+                type="tel"
+                id="phone"
+                placeholder="הכנס את מספר הטלפון שלך"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+
+              <button type="submit" className="signup-button">
+                צור חשבון
+              </button>
+            </>
+          )}
+        </form>
+
+        <div className="login-redirect">
+          <p>
+            כבר יש לך חשבון?{" "}
+            <span className="highlight" onClick={handleLoginRedirect}>
+              התחבר כאן
+            </span>
+          </p>
         </div>
-        <div>
-          <label>{t("password")}</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>{t("confirm_password")}</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">{t("signup")}</button>
-      </form>
-      <div>
-        <Link to="/login">{t("have_account")}</Link>
-      </div>
-      <div>
-        <button onClick={() => navigate("/")}>{t("back")}</button>
       </div>
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;
