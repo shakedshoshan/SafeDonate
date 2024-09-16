@@ -81,3 +81,77 @@ input::placeholder {
   cursor: pointer;
   text-decoration: underline;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* Ensure absolute elements are relative to modal */
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px; /* Top-left positioning */
+  left: 20px;
+}
+
+.reset-button {
+  background: linear-gradient(90deg, #104d8e, #3d9bc6);
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.reset-button:hover {
+  background-color: #2f7bbf;
+}
+
+.modal-content h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.modal-content input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.forgot-password span {
+  color: #104d8e;
+  font-size: 14px;
+  text-decoration: underline;
+}
