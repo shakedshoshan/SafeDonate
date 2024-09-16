@@ -6,15 +6,40 @@ const cheerio = require('cheerio');
 
 puppeteer.use(StealthPlugin()); // Enable stealth mode
 // const keywords = ['הליכים משפטיים', 'הליכים', 'פלילי', 'פירוק', 'עמותה'];
-//const keywords = ['פלילי', 'פירוק', 'הליכים'];
 const keywords = ['פלילי', 'פירוק', 'הליכים'];
 //const keywords = ['פירוק'];
 
 // Delay function to mimic human-like browsing behavior
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const selectRandom = () => {
+    const userAgents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36"
+    ]
+    var randomNumber = Math.floor(Math.random() * userAgents.length);
+    return userAgents[randomNumber];
+}
+
+const getUserAgent = () => {
+    const userAgent = randomUseragent.getRandom();
+
+    if (typeof userAgent === 'string' && userAgent.includes('Chrome') && parseFloat(userAgent.split('Chrome/')[1]) > 80) {
+        console.log("User agent from random") 
+        return userAgent;
+    }
+    else {
+        console.log("User agent from List") 
+        return selectRandom();
+    }
+}
 // Function to scrape Google search results for a given association number and keywords
-const scrapeGoogle = async (associationNumber) => {
+const scrapeData = async (associationNumber) => {
     const results = [];
     let browser;
 
@@ -30,21 +55,19 @@ const scrapeGoogle = async (associationNumber) => {
             const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
             const page = await browser.newPage();
 
-            const userAgent = randomUseragent.getRandom();
-         
-            if (typeof userAgent === 'string' && userAgent.includes('Chrome') && parseFloat(userAgent.split('Chrome/')[1]) > 80) {
-                await page.setUserAgent(userAgent);
-                console.log(`Using User-Agent: ${userAgent}`);
-            }
+            const userAgent = getUserAgent();
+            await page.setUserAgent(userAgent);
+            //console.log(`Using User-Agent: ${userAgent}`);
+            
 
-            // Set extra HTTP headers
-            await page.setExtraHTTPHeaders({
-                "User-Agent": userAgent || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
-            });
+            // // Set extra HTTP headers
+            // await page.setExtraHTTPHeaders({
+            //     "User-Agent": userAgent || "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36",
+            // });
 
             // Navigate to the Google search page and wait for content to load
             await page.goto(searchUrl, { waitUntil: "domcontentloaded" });
-            console.log(`Navigated to: ${searchUrl}`);
+            //console.log(`Navigated to: ${searchUrl}`);
 
             const isCaptcha = await page.$('form[action="/sorry/index"]');
             if (isCaptcha) {
@@ -70,13 +93,13 @@ const scrapeGoogle = async (associationNumber) => {
 
             //console.log(`Results for keyword '${keyword}':`, searchResults);
 
-             // Filter results where the associationNumber and keyword are found in the title or content
-        const filteredResults = searchResults.filter(result =>
-            (result.title.includes(associationNumber) || result.content.includes(associationNumber)) &&
-            (result.title.includes(keyword) || result.content.includes(keyword))
-          );
+            // Filter results where the associationNumber and keyword are found in the title or content
+            const filteredResults = searchResults.filter(result =>
+                (result.title.includes(associationNumber) || result.content.includes(associationNumber)) &&
+                (result.title.includes(keyword) || result.content.includes(keyword))
+            );
 
-          console.log(`Filtered Results for keyword '${keyword}':`, filteredResults);
+            //console.log(`Filtered Results for keyword '${keyword}':`, filteredResults);
 
             // Store the filtered results
             results.push({
@@ -87,7 +110,7 @@ const scrapeGoogle = async (associationNumber) => {
             // Close the page after each search
             await page.close();
 
-             // Random delay to mimic human browsing and avoid detection
+            // Random delay to mimic human browsing and avoid detection
             await delay(Math.random() * 2000 + 3000); // Wait between 3-5 seconds
         }
     } catch (error) {
@@ -96,11 +119,10 @@ const scrapeGoogle = async (associationNumber) => {
         if (browser) {
             await browser.close();
             console.log("finish scraping")
-            console.log(results)
         }
     }
     return results;
 };
 
 // Run the scraping
-module.exports = { scrapeGoogle }
+module.exports = { scrapeData  }
