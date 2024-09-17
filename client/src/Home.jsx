@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./Home.css";
+
 import AssociationCrusel from "./components/AssociationCrusel";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
-const Home = ({ searchTerm }) => {
+const Home = ({ searchTerm, setSuggestions }) => {
   // Accept searchTerm as a prop
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -61,6 +62,7 @@ const Home = ({ searchTerm }) => {
         console.log(activeData);
         setData(activeData);
         setFilteredData(activeData);
+        setSuggestions(activeData);
       } catch (error) {
         setError(error.toString());
         console.error("Error fetching association data:", error);
@@ -71,7 +73,7 @@ const Home = ({ searchTerm }) => {
 
     fetchUserInfo();
     fetchAssociationData();
-  }, []);
+  }, [setSuggestions]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -160,6 +162,5 @@ const Home = ({ searchTerm }) => {
   //     </ul>
   //   </div>
   // );
-
 };
 export default Home;

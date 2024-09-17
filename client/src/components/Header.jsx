@@ -7,26 +7,25 @@ import debounce from "lodash.debounce";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AssociationCrusel from "./AssociationCrusel";
-import AssociationCard from "./AssociationCard";
 
 const Header = ({
+  suggestions, // All NPOs are passed as suggestions
   handleLogin,
   handleSignUp,
   userProfile,
   onSearch,
-  suggestions,
   userId,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false); // To store login state
-  const [userName, setUserName] = useState(""); // To store user's name
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
 
+  // Fetch user data on mount
   useEffect(() => {
-    // Fetch user data from cookies and token
     const fetchUserData = async () => {
       const token = Cookies.get("token");
       if (token) {
@@ -38,37 +37,55 @@ const Header = ({
           if (tokenResponse.status === 200) {
             const userData = tokenResponse.data;
             setUserName(`${userData.firstName} ${userData.lastName}`);
-            setLoggedIn(true); // User is authenticated
+            setLoggedIn(true);
           } else {
-            setLoggedIn(false); // Failed to authenticate user
+            setLoggedIn(false);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
-          setLoggedIn(false); // Handle token verification failure
+          setLoggedIn(false);
         }
       } else {
-        setLoggedIn(false); // No token found
+        setLoggedIn(false);
       }
     };
 
-    fetchUserData(); // Call the function when the component mounts
-  }, []); // Empty dependency array ensures it runs once
+    fetchUserData();
+  }, []);
 
-  // Logs for debugging
-  useEffect(() => {
-    console.log("Logged in:", loggedIn);
-    console.log("User name:", userName);
-  }, [loggedIn, userName]);
-
-  // Debounced search function
+  // Debounced search logic to filter suggestions
   const debouncedSearch = useCallback(
     debounce((nextValue) => {
-      onSearch(nextValue);
-      setShowSuggestions(true);
+      if (onSearch) {
+        onSearch(nextValue);
+      }
+      if (nextValue) {
+        // Filter suggestions based on the search term
+        const filtered = suggestions.filter(
+          (suggestion) =>
+            suggestion["שם עמותה בעברית"]
+              .toLowerCase()
+              .includes(nextValue.toLowerCase()) ||
+            suggestion["מטרות עמותה"]
+              ?.toLowerCase()
+              .includes(nextValue.toLowerCase()) // Adjust the field name as needed
+        );
+        setFilteredSuggestions(filtered);
+        setShowSuggestions(true);
+      } else {
+        setFilteredSuggestions([]); // Clear filtered suggestions if input is empty
+        setShowSuggestions(false);
+      }
     }, 300),
-    [onSearch]
+    [onSearch, suggestions]
   );
 
+  useEffect(() => {
+    console.log("Filtered Suggestions:", filteredSuggestions); // Log whenever filtered suggestions change
+    console.log("Show suggestions:", showSuggestions); // Log the showSuggestions state
+  }, [filteredSuggestions, showSuggestions]);
+
+  // Handle input change for search
   const handleInputChange = (e) => {
     setSearchInput(e.target.value);
     debouncedSearch(e.target.value);
@@ -76,14 +93,14 @@ const Header = ({
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      navigate(`/search?query=${searchInput}`); // Navigate to search results page
-      setShowSuggestions(false); // Hide suggestions
+      navigate(`/search?query=${searchInput}`);
+      setShowSuggestions(false);
     }
   };
 
   const handleSuggestionClick = (suggestionId) => {
-    navigate(`/AssociationPage/${suggestionId}`); // Navigate to the selected association page
-    setShowSuggestions(false); // Hide suggestions after selection
+    navigate(`/AssociationPage/${suggestionId}`);
+    setShowSuggestions(false);
   };
 
   const getUserInitials = () => {
@@ -117,13 +134,23 @@ const Header = ({
               className="search-bar"
               value={searchInput}
               onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
+              //onKeyPress={handleKeyPress}
             />
-            {showSuggestions && suggestions?.length > 0 && (
-              <AssociationCrusel
-                dataList={filteredData}
-                userId={user?._id}
-              ></AssociationCrusel>
+            {showSuggestions && filteredSuggestions?.length > 0 && (
+              <div className="suggestions-dropdown">
+                {filteredSuggestions.slice(0, 7).map((suggestion) => (
+                  <div
+                    key={suggestion._id}
+                    className="suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion._id)}
+                  >
+                    {suggestion["שם עמותה בעברית"]}
+                  </div>
+                ))}
+              </div>
+            )}
+            {showSuggestions && filteredSuggestions?.length === 0 && (
+              <div className="no-suggestions">No results found</div>
             )}
           </div>
 

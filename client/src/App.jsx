@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
-import Home from "./Home";
+import Home from "./Home"; // Import Home component
+import AssociationPage from "./AssociationPage";
 import Login from "./Login";
 import SignUp from "./SignUp";
 import UserProfile from "./UserProfile";
-import AssociationPage from "./AssociationPage";
-import NotFound from "./NotFound";
 import AboutUs from "./AboutUs";
-import "./App.css";
+import NotFound from "./NotFound";
 
-// Define route paths as constants
 const ROUTES = {
   HOME: "/",
   ASSOCIATION_PAGE: "/AssociationPage/:id",
@@ -22,30 +20,29 @@ const ROUTES = {
 };
 
 const App = () => {
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    navigate("/login");
-  };
-
-  const userProfile = () => {
-    navigate("/profile");
-  };
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchTerm, setSearchTerm] = useState(""); // Control search term in App
+  const [suggestions, setSuggestions] = useState([]); // This is important: make sure `setSuggestions` is defined
 
   const handleSearch = (term) => {
-    console.log("Search initiated with:", term);
-    setSearchTerm(term); // Update the searchTerm state
+    setSearchTerm(term);
   };
 
   return (
     <div style={{ direction: "rtl", textAlign: "right" }}>
+      {/* Pass searchTerm and suggestions to Header */}
       <Header
         onSearch={handleSearch}
-        handleLogin={handleLogin}
-        userProfile={userProfile}
+        suggestions={suggestions} // Pass suggestions here
+        handleLogin={() => {}}
+        userProfile={() => {}}
       />
       <Routes>
-        <Route path={ROUTES.HOME} element={<Home searchTerm={searchTerm} />} />
+        <Route
+          path={ROUTES.HOME}
+          element={
+            <Home searchTerm={searchTerm} setSuggestions={setSuggestions} />
+          } // Pass setSuggestions to Home
+        />
         <Route path={ROUTES.ASSOCIATION_PAGE} element={<AssociationPage />} />
         <Route path={ROUTES.LOGIN} element={<Login />} />
         <Route path={ROUTES.SIGNUP} element={<SignUp />} />
