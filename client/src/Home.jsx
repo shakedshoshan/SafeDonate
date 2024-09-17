@@ -132,14 +132,34 @@ const Home = ({ searchTerm }) => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <h1>List of NPOs</h1>
-      <ul>
-        {filteredData.map((npo) => (
-          <li key={npo["מספר עמותה"]}>{npo["שם עמותה בעברית"]}</li>
-        ))}
-      </ul>
+    <div className="home">
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <div>
+          <h3>{user?.email} is connected</h3>
+          <h1 className="home-title p-12 text-4xl font-extrabold">
+            {getWelcomeMessage()} {user?.email}
+          </h1>
+          <div>
+            <AssociationCrusel dataList={filteredData} userId={user?._id} />
+          </div>
+        </div>
+      )}
     </div>
   );
+  // return (
+  //   <div>
+  //     <h1>List of NPOs</h1>
+  //     <ul>
+  //       {filteredData.map((npo) => (
+  //         <li key={npo["מספר עמותה"]}>{npo["שם עמותה בעברית"]}</li>
+  //       ))}
+  //     </ul>
+  //   </div>
+  // );
+
 };
 export default Home;

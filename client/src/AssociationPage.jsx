@@ -5,254 +5,296 @@ import axios from "axios";
 import "./AssociationPage.css";
 
 const AssociationPage = () => {
-   const { id } = useParams();
-   const [association, setAssociation] = useState(null);
-   const [approvals, setApprovals] = useState([]);
-   //const [loading, setLoading] = useState(true);
+    const { id } = useParams();
+    const [association, setAssociation] = useState(null);
+    const [approvals, setApprovals] = useState([]);
+    //const [loading, setLoading] = useState(true);
 
-   const [loadingAssociation, setLoadingAssociation] = useState(true);
-   const [loadingScraping, setLoadingScraping] = useState(true);
+    const [loadingAssociation, setLoadingAssociation] = useState(true);
+    const [loadingScraping, setLoadingScraping] = useState(true);
 
-   const [error, setError] = useState(null);
-   const [user, setUser] = useState(null);
-   const [showModal, setShowModal] = useState(false);
-   const [donationType, setDonationType] = useState("חד פעמי");
-   const [donationAmount, setDonationAmount] = useState("");
-   const [addDedication, setAddDedication] = useState(false);
-   const [dedicationText, setDedicationText] = useState("");
-   const [negativeInfo, setNegativeInfo] = useState([]);
-   const [categoryCounts, setCategoryCounts] = useState({});
-   const [expandedCategory, setExpandedCategory] = useState(null);
-   const [hasCookie, setHasCookie] = useState(false);
-   const [isFavorite, setIsFavorite] = useState(false);
+    const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [donationType, setDonationType] = useState("חד פעמי");
+    const [donationAmount, setDonationAmount] = useState("");
+    const [addDedication, setAddDedication] = useState(false);
+    const [dedicationText, setDedicationText] = useState("");
+    const [negativeInfo, setNegativeInfo] = useState([]);
+    const [categoryCounts, setCategoryCounts] = useState({});
+    const [expandedCategory, setExpandedCategory] = useState(null);
+    const [hasCookie, setHasCookie] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
 
-   // Fetch association data from the API
-   useEffect(() => {
-      const fetchAssociation = async () => {
-         try {
-            console.log("hi")
-            const token = Cookies.get("token");
-            if (token) {
-               const tokenResponse = await axios.post(
-                  "http://localhost:3000/users/getToken", { token }
-               );
-               if (tokenResponse.status === 200) {
-                  setHasCookie(true);
-                  setUser(tokenResponse.data);
-
-                  // Fetch the association data by ID
-                  const response = await axios.get(
-                     `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
-                  );
-
-                  if (response.data.result.records.length > 0) {
-                     const associationData = response.data.result.records[0];
-                     setAssociation(associationData);
-
-                     const associationNumber = associationData["מספר עמותה"];
-                     await fetchApprovals(associationNumber);
-                  } else {
-                     setError("No association found");
-                  }
-               }
-            } else {
-               setHasCookie(false);
-            }
-            setLoadingAssociation(false); // Loading for association is done
-         } catch (error) {
-            setError(error);
-            setLoadingAssociation(false);
-
-         }
-      };
-      fetchAssociation();
-   }, [id]);
-
-   // Fetch approvals by association number
-   const fetchApprovals = async (associationNumber) => {
-      try {
-         console.log("in fetchApprovals");
-         const response = await axios.get(
-            `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
-         );
-         const sortedData = response.data.result.records.sort((a, b) => {
-            const yearA = parseInt(a["שנת האישור"], 10);
-            const yearB = parseInt(b["שנת האישור"], 10);
-            return yearB - yearA;
-         });
-         setApprovals(sortedData);
-      } catch (error) {
-         setError(error);
-         //setLoading(false);
-      }
-   };
-
-   // Fetch web scraping data
-   useEffect(() => {
-      if (association) {
-         const fetchScrapingData = async () => {
+    // Fetch association data from the API
+    useEffect(() => {
+        const fetchAssociation = async () => {
             try {
-               console.log("in fetchScrapingData");
-               const associationNumber = association["מספר עמותה"];
-               const response = await axios.get(
-                  `http://localhost:3000/scrape/${associationNumber}`
-               );
-               const data = response.data;
+                const token = Cookies.get("token");
+                const tokenResponse = await axios.post(
+                    "http://localhost:3000/users/getToken", { token }
 
-               // Filter the results by categories (פלילי, פירוק, הליכים)
-               const categories = ["פלילי", "פירוק", "הליכים"];
-               const counts = {};
-               categories.forEach((category) => {
-                  counts[category] = data.filter(
-                     (item) => item.keyword === category
-                  ).length;
-               });
+                );
+                if (tokenResponse.status === 200) {
+                    setHasCookie(true);
+                    setUser(tokenResponse.data);
+                    
 
-               setCategoryCounts(counts); // Save counts
-               setNegativeInfo(data); // Save negative info
-               setLoadingScraping(false); // Loading for scraping is done
+                    const cachedData = localStorage.getItem(`assoc_${id}`);
+                    if (cachedData) {
+                        console.log("doing caching")
+                        const parsedData = JSON.parse(cachedData);
+                        setAssociation(parsedData);
+                        setLoadingAssociation(false);
+
+                        // Call fetchApprovals with the cached association number
+                        const cachedAssociationNumber = parsedData["מספר עמותה"];
+                        await fetchApprovals(cachedAssociationNumber);
+                        return;
+
+                    }
+                    console.log("fetching from API")
+                    // If no cache, fetch from the server
+                    const response = await axios.get(
+                        `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
+                    );
+
+                    if (response.data.result.records.length > 0) {
+                        const associationData = response.data.result.records[0];
+
+                        // Store the fetched data in localStorage
+                        localStorage.setItem(`assoc_${id}`, JSON.stringify(associationData));
+                        setAssociation(associationData);
+                        setLoadingAssociation(false);
+
+                        // Extract association number and fetch approvals
+                        const associationNumber = associationData["מספר עמותה"];
+                        await fetchApprovals(associationNumber);
+                    } else {
+                        setError("No association found");
+                    }
+                } else {
+                    setHasCookie(false);
+                }
+                setLoadingAssociation(false); // Loading for association is done
+                
             } catch (error) {
-               setError("Error fetching scraping information");
-               setLoadingScraping(false);
+                console.error('Failed to fetch association data:', error);
+                setError(error);
+                setLoadingAssociation(false);
             }
-         };
+        };
+        fetchAssociation();
+    }, [id]);
 
-         fetchScrapingData(); // Start fetching the association data
-      }
-   }, [association]);
+    // Fetch approvals by association number
+    const fetchApprovals = async (associationNumber) => {
+        try {
+            console.log("in fetchApprovals");
+            console.log(associationNumber)
+            const response = await axios.get(
+                `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
+            );
+            const sortedData = response.data.result.records.sort((a, b) => {
+                const yearA = parseInt(a["שנת האישור"], 10);
+                const yearB = parseInt(b["שנת האישור"], 10);
+                return yearB - yearA;
+            });
+            setApprovals(sortedData);
+            
+        } catch (error) {
+            setError(error);
+            //setLoading(false);
+        }
+    };
 
-   // Expand/collapse category
-   const toggleCategory = (category) => {
-      setExpandedCategory(expandedCategory === category ? null : category);
-   };
+    // Fetch web scraping data
+    useEffect(() => {
+        if (association) {
+            const fetchScrapedData = async () => {
+                const associationNumber = association["מספר עמותה"];
+                //setLoading(true);
 
-   // Modal handlers
-   const handleOpenModal = () => {
-      setShowModal(true);
-   };
+                try {
+                    // Check if data is in localStorage
+                    const cachedScrapingData = localStorage.getItem(`scrape_${id}`);
+                    if (cachedScrapingData) {
+                        console.log("doing caching of scraped Data")
+                        setNegativeInfo(JSON.parse(cachedScrapingData))
+                        //setLoading(false);
+                        setLoadingScraping(false);
+                        return;
+                    }
+                    
+                    console.log("doing only scraping")
+                    // Fetch data from the API if not cached
+                    const response = await axios.get(`http://localhost:3000/scrape/${associationNumber}`);
 
-   const handleCloseModal = () => {
-      setShowModal(false);
-   };
+                    if (response.data.length > 0) {
+                        const scrapedData = response.data;
 
-   const toggleFavorite = () => {
-      setIsFavorite(!isFavorite);
-   };
+                        // Store the scraped data in localStorage
+                        localStorage.setItem(`scrape_${id}`, JSON.stringify(scrapedData));
+                        setNegativeInfo(scrapedData); // Save negative info
 
-   const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log(
-         "Donation submitted:",
-         donationType,
-         donationAmount,
-         dedicationText
-      );
-   };
+                        // Filter the results by categories (פלילי, פירוק, הליכים)
+                        const categories = ["פלילי", "פירוק", "הליכים"];
+                        const counts = {};
+                        categories.forEach((category) => {
+                            counts[category] = scrapedData.filter(
+                                (item) => item.keyword === category
+                            ).length;
+                        });
 
-   if (loadingAssociation) return <p>Loading association data...</p>;
-   //if (loading) return <p>Loading...</p>;
-   if (error) return <p>Error: {error.message}</p>;
+                        setCategoryCounts(counts); // Save counts
+                    } else {
+                        setError("No scraped data found");
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch or process scraped data:', error);
+                    setError("Error fetching scraping information");
+                } finally {
+                    // setLoading(false); // Ensure loading is false in all cases
+                    setLoadingScraping(false); // Ensure loadingScraping is false in all cases
+                }
+            };
 
-   return (
-      <div className="association-page">
-         {association ? (
-            <>
-               {/* Right Section */}
-               <div className="right-section">
-                  <div className="circle-image">
-                     {association["שם עמותה בעברית"]
-                        ? association["שם עמותה בעברית"].substring(0, 2)
-                        : "נפ"}
-                  </div>
+            fetchScrapedData();
+        }
+    }, [association]);
 
-                  <div className="npo-name">
-                     {association["שם עמותה בעברית"] || "No name available"}
-                  </div>
+    // Expand/collapse category
+    const toggleCategory = (category) => {
+        setExpandedCategory(expandedCategory === category ? null : category);
+    };
 
-                  <div className="npo-place">
-                     {association["כתובת - ישוב"] || "No place available"}
-                  </div>
+    // Modal handlers
+    const handleOpenModal = () => {
+        setShowModal(true);
+    };
 
-                  <div className="npo-number">
-                     מספר עמותה: {association["מספר עמותה"] || "No number available"}
-                  </div>
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
 
-                  <button className="donate-button" onClick={handleOpenModal}>
-                     לתרומה
-                  </button>
-                  <button
-                     className={`favorite-button ${isFavorite ? "liked" : ""}`}
-                     onClick={toggleFavorite}
-                  >
-                     {isFavorite ? "מועדפים" : "הוסף למועדפים"}
-                     <span className="heart-icon">{isFavorite ? "❤️" : "🤍"}</span>
-                  </button>
-               </div>
+    const toggleFavorite = () => {
+        setIsFavorite(!isFavorite);
+    };
 
-               {/* Separator Line */}
-               <div className="separator"></div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(
+            "Donation submitted:",
+            donationType,
+            donationAmount,
+            dedicationText
+        );
+    };
 
-               {/* Left Section for Goals */}
-               <div className="left-section">
-                  <h2 className="goals-headline">מטרות העמותה</h2>
-                  <p className="npo-goals">
-                     {association["מטרות עמותה"] || "No goals available"}
-                  </p>
+    //if (loadingScraping) return <p>Loading Scraped data...</p>;
+    if (loadingAssociation) return <p>Loading association data...</p>;
+    //if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+    return (
+        <div className="association-page">
+            {association ? (
+                <>
+                    {/* Right Section */}
+                    <div className="right-section">
+                        <div className="circle-image">
+                            {association["שם עמותה בעברית"]
+                                ? association["שם עמותה בעברית"].substring(0, 2)
+                                : "נפ"}
+                        </div>
 
-                  {/* Negative Info Section */}
-                  {loadingScraping ? (
-                     <p>Loading negative information...</p>
-                  ) : (
-                     <div className="negative-info-summary">
-                        {negativeInfo.filter((item) => item.keyword === "פלילי").length >
-                           0 && (
-                              <div
-                                 onClick={() => toggleCategory("פלילי")}
-                                 className="category-header"
-                              >
-                                 מצאתי{" "}
-                                 {
-                                    negativeInfo.filter((item) => item.keyword === "פלילי")[0]
-                                       .filteredResults.length
-                                 }{" "}
-                                 קישורים רלוונטים בהקשר פלילי
-                              </div>
-                           )}
-                        {expandedCategory === "פלילי" && (
-                           <table className="category-content">
-                              <thead>
-                                 <tr>
-                                    <th>כותרת</th>
-                                    <th>קישור</th>
-                                    <th>תוכן</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {negativeInfo
-                                    .filter((item) => item.keyword === "פלילי")[0]
-                                    .filteredResults.map((result, index) => (
-                                       <tr key={index}>
-                                          <td>{result.title}</td>
-                                          <td>
-                                             <a
-                                                href={result.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                             >
-                                                קישור
-                                             </a>
-                                          </td>
-                                          <td>
-                                             <div className="scrollable-content">
-                                                {result.content || "No content available"}
-                                             </div>
-                                          </td>
-                                       </tr>
-                                    ))}
-                              </tbody>
-                           </table>
-                        )}
-                        {/* 
+                        <div className="npo-name">
+                            {association["שם עמותה בעברית"] || "No name available"}
+                        </div>
+
+                        <div className="npo-place">
+                            {association["כתובת - ישוב"] || "No place available"}
+                        </div>
+
+                        <div className="npo-number">
+                            מספר עמותה: {association["מספר עמותה"] || "No number available"}
+                        </div>
+
+                        <button className="donate-button" onClick={handleOpenModal}>
+                            לתרומה
+                        </button>
+                        <button
+                            className={`favorite-button ${isFavorite ? "liked" : ""}`}
+                            onClick={toggleFavorite}
+                        >
+                            {isFavorite ? "מועדפים" : "הוסף למועדפים"}
+                            <span className="heart-icon">{isFavorite ? "❤️" : "🤍"}</span>
+                        </button>
+                    </div>
+
+                    {/* Separator Line */}
+                    <div className="separator"></div>
+
+                    {/* Left Section for Goals */}
+                    <div className="left-section">
+                        <h2 className="goals-headline">מטרות העמותה</h2>
+                        <p className="npo-goals">
+                            {association["מטרות עמותה"] || "No goals available"}
+                        </p>
+
+                        {/* Negative Info Section */}
+                        {loadingScraping ? (
+                            <p>Loading negative information...</p>
+                        ) : (
+                            <div className="negative-info-summary">
+                                {negativeInfo.filter((item) => item.keyword === "פלילי").length >
+                                    0 && (
+                                        <div
+                                            onClick={() => toggleCategory("פלילי")}
+                                            className="category-header"
+                                        >
+                                            מצאתי{" "}
+                                            {
+                                                negativeInfo.filter((item) => item.keyword === "פלילי")[0]
+                                                    .filteredResults.length
+                                            }{" "}
+                                            קישורים רלוונטים בהקשר פלילי
+                                        </div>
+                                    )}
+                                {expandedCategory === "פלילי" && (
+                                    <table className="category-content">
+                                        <thead>
+                                            <tr>
+                                                <th>כותרת</th>
+                                                <th>קישור</th>
+                                                <th>תוכן</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {negativeInfo
+                                                .filter((item) => item.keyword === "פלילי")[0]
+                                                .filteredResults.map((result, index) => (
+                                                    <tr key={index}>
+                                                        <td>{result.title}</td>
+                                                        <td>
+                                                            <a
+                                                                href={result.link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                קישור
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <div className="scrollable-content">
+                                                                {result.content || "No content available"}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                                {/* 
                                 {expandedCategory === "פירוק" && (
                                     <table className="category-content">
                                     <thead>
@@ -288,202 +330,202 @@ const AssociationPage = () => {
                                     </table>
                                 )} */}
 
-                        {negativeInfo.filter((item) => item.keyword === "פירוק").length >
-                           0 && (
-                              <div
-                                 onClick={() => toggleCategory("פירוק")}
-                                 className="category-header"
-                              >
-                                 מצאתי{" "}
-                                 {
-                                    negativeInfo.filter((item) => item.keyword === "פירוק")[0]
-                                       .filteredResults.length
-                                 }{" "}
-                                 קישורים רלוונטים בהקשר פירוק
-                              </div>
-                           )}
-                        {expandedCategory === "פירוק" && (
-                           <table className="category-content">
-                              <thead>
-                                 <tr>
-                                    <th>כותרת</th>
-                                    <th>קישור</th>
-                                    <th>תוכן</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {negativeInfo
-                                    .filter((item) => item.keyword === "פירוק")[0]
-                                    .filteredResults.map((result, index) => (
-                                       <tr key={index}>
-                                          <td>{result.title}</td>
-                                          <td>
-                                             <a
-                                                href={result.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                             >
-                                                קישור
-                                             </a>
-                                          </td>
-                                          <td>{result.content || "No content available"}</td>
-                                       </tr>
-                                    ))}
-                              </tbody>
-                           </table>
+                                {negativeInfo.filter((item) => item.keyword === "פירוק").length >
+                                    0 && (
+                                        <div
+                                            onClick={() => toggleCategory("פירוק")}
+                                            className="category-header"
+                                        >
+                                            מצאתי{" "}
+                                            {
+                                                negativeInfo.filter((item) => item.keyword === "פירוק")[0]
+                                                    .filteredResults.length
+                                            }{" "}
+                                            קישורים רלוונטים בהקשר פירוק
+                                        </div>
+                                    )}
+                                {expandedCategory === "פירוק" && (
+                                    <table className="category-content">
+                                        <thead>
+                                            <tr>
+                                                <th>כותרת</th>
+                                                <th>קישור</th>
+                                                <th>תוכן</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {negativeInfo
+                                                .filter((item) => item.keyword === "פירוק")[0]
+                                                .filteredResults.map((result, index) => (
+                                                    <tr key={index}>
+                                                        <td>{result.title}</td>
+                                                        <td>
+                                                            <a
+                                                                href={result.link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                קישור
+                                                            </a>
+                                                        </td>
+                                                        <td>{result.content || "No content available"}</td>
+                                                    </tr>
+                                                ))}
+                                        </tbody>
+                                    </table>
+                                )}
+
+                                {negativeInfo.filter((item) => item.keyword === "הליכים").length >
+                                    0 && (
+                                        <div
+                                            onClick={() => toggleCategory("הליכים")}
+                                            className="category-header"
+                                        >
+                                            מצאתי{" "}
+                                            {
+                                                negativeInfo.filter((item) => item.keyword === "הליכים")[0]
+                                                    .filteredResults.length
+                                            }{" "}
+                                            קישורים רלוונטים בהקשר הליכים
+                                        </div>
+                                    )}
+                                {expandedCategory === "הליכים" && (
+                                    <table className="category-content">
+                                        <thead>
+                                            <tr>
+                                                <th>כותרת</th>
+                                                <th>קישור</th>
+                                                <th>תוכן</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {negativeInfo
+                                                .filter((item) => item.keyword === "הליכים")[0]
+                                                .filteredResults.map((result, index) => (
+                                                    <tr key={index}>
+                                                        <td>{result.title}</td>
+                                                        <td>
+                                                            <a
+                                                                href={result.link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                קישור
+                                                            </a>
+                                                        </td>
+                                                        <td>{result.content || "No content available"}</td>
+                                                    </tr>
+                                                ))}
+                                        </tbody>
+                                    </table>
+                                )}
+                            </div>
                         )}
 
-                        {negativeInfo.filter((item) => item.keyword === "הליכים").length >
-                           0 && (
-                              <div
-                                 onClick={() => toggleCategory("הליכים")}
-                                 className="category-header"
-                              >
-                                 מצאתי{" "}
-                                 {
-                                    negativeInfo.filter((item) => item.keyword === "הליכים")[0]
-                                       .filteredResults.length
-                                 }{" "}
-                                 קישורים רלוונטים בהקשר הליכים
-                              </div>
-                           )}
-                        {expandedCategory === "הליכים" && (
-                           <table className="category-content">
-                              <thead>
-                                 <tr>
-                                    <th>כותרת</th>
-                                    <th>קישור</th>
-                                    <th>תוכן</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {negativeInfo
-                                    .filter((item) => item.keyword === "הליכים")[0]
-                                    .filteredResults.map((result, index) => (
-                                       <tr key={index}>
-                                          <td>{result.title}</td>
-                                          <td>
-                                             <a
-                                                href={result.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                             >
-                                                קישור
-                                             </a>
-                                          </td>
-                                          <td>{result.content || "No content available"}</td>
-                                       </tr>
-                                    ))}
-                              </tbody>
-                           </table>
+                        {/* Table for Yearly Approval */}
+                        {approvals && approvals.length > 0 && (
+                            <div className="approvals-section">
+                                <h2>היסטוריית אישורים:</h2>
+                                <table className="approvals-table">
+                                    <thead>
+                                        <tr>
+                                            <th>שנת האישור</th>
+                                            <th>האם מאושר</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {approvals.map((record, index) => (
+                                            <tr key={index}>
+                                                <td>{record["שנת האישור"]}</td>
+                                                <td>{record["האם יש אישור"]}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
-                     </div>
-                  )}
+                    </div>
 
-                  {/* Table for Yearly Approval */}
-                  {approvals && approvals.length > 0 && (
-                     <div className="approvals-section">
-                        <h2>היסטוריית אישורים:</h2>
-                        <table className="approvals-table">
-                           <thead>
-                              <tr>
-                                 <th>שנת האישור</th>
-                                 <th>האם מאושר</th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                              {approvals.map((record, index) => (
-                                 <tr key={index}>
-                                    <td>{record["שנת האישור"]}</td>
-                                    <td>{record["האם יש אישור"]}</td>
-                                 </tr>
-                              ))}
-                           </tbody>
-                        </table>
-                     </div>
-                  )}
-               </div>
+                    {/* Donation Popup */}
+                    {showModal && (
+                        <div className="popup-overlay">
+                            <div className="popup-content">
+                                <button onClick={handleCloseModal} className="close-popup">
+                                    &times;
+                                </button>
+                                <div className="popup-title">
+                                    <span>תשלום מאובטח</span>
+                                    <span className="lock-icon">🔒</span>
+                                </div>
 
-               {/* Donation Popup */}
-               {showModal && (
-                  <div className="popup-overlay">
-                     <div className="popup-content">
-                        <button onClick={handleCloseModal} className="close-popup">
-                           &times;
-                        </button>
-                        <div className="popup-title">
-                           <span>תשלום מאובטח</span>
-                           <span className="lock-icon">🔒</span>
+                                <div className="radio-group">
+                                    <label className="radio-label">
+                                        <input
+                                            type="radio"
+                                            value="חד פעמי"
+                                            checked={donationType === "חד פעמי"}
+                                            onChange={() => setDonationType("חד פעמי")}
+                                        />
+                                        תרומה חד פעמית
+                                    </label>
+                                    <label className="radio-label">
+                                        <input
+                                            type="radio"
+                                            value="הוראת קבע"
+                                            checked={donationType === "הוראת קבע"}
+                                            onChange={() => setDonationType("הוראת קבע")}
+                                        />
+                                        הוראת קבע
+                                    </label>
+                                </div>
+
+                                <input
+                                    type="number"
+                                    className="donation-amount"
+                                    placeholder="סכום תרומה"
+                                    value={donationAmount}
+                                    onChange={(e) => setDonationAmount(e.target.value)}
+                                />
+
+                                <div
+                                    className={`checkbox-group ${addDedication ? "show-dedication" : ""
+                                        }`}
+                                >
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={addDedication}
+                                            onChange={() => setAddDedication(!addDedication)}
+                                        />
+                                        רוצה להוסיף הקדשה
+                                    </label>
+                                    {addDedication && (
+                                        <textarea
+                                            className="dedication-text"
+                                            placeholder="כתוב כאן את ההקדשה שלך"
+                                            value={dedicationText}
+                                            onChange={(e) => setDedicationText(e.target.value)}
+                                        />
+                                    )}
+                                </div>
+
+                                <button className="submit-donation" onClick={handleSubmit}>
+                                    תרמו עכשיו
+                                </button>
+                                {donationAmount && (
+                                    <p className="donation-summary">
+                                        סכום לתרומה: ₪{donationAmount}
+                                    </p>
+                                )}
+                            </div>
                         </div>
-
-                        <div className="radio-group">
-                           <label className="radio-label">
-                              <input
-                                 type="radio"
-                                 value="חד פעמי"
-                                 checked={donationType === "חד פעמי"}
-                                 onChange={() => setDonationType("חד פעמי")}
-                              />
-                              תרומה חד פעמית
-                           </label>
-                           <label className="radio-label">
-                              <input
-                                 type="radio"
-                                 value="הוראת קבע"
-                                 checked={donationType === "הוראת קבע"}
-                                 onChange={() => setDonationType("הוראת קבע")}
-                              />
-                              הוראת קבע
-                           </label>
-                        </div>
-
-                        <input
-                           type="number"
-                           className="donation-amount"
-                           placeholder="סכום תרומה"
-                           value={donationAmount}
-                           onChange={(e) => setDonationAmount(e.target.value)}
-                        />
-
-                        <div
-                           className={`checkbox-group ${addDedication ? "show-dedication" : ""
-                              }`}
-                        >
-                           <label>
-                              <input
-                                 type="checkbox"
-                                 checked={addDedication}
-                                 onChange={() => setAddDedication(!addDedication)}
-                              />
-                              רוצה להוסיף הקדשה
-                           </label>
-                           {addDedication && (
-                              <textarea
-                                 className="dedication-text"
-                                 placeholder="כתוב כאן את ההקדשה שלך"
-                                 value={dedicationText}
-                                 onChange={(e) => setDedicationText(e.target.value)}
-                              />
-                           )}
-                        </div>
-
-                        <button className="submit-donation" onClick={handleSubmit}>
-                           תרמו עכשיו
-                        </button>
-                        {donationAmount && (
-                           <p className="donation-summary">
-                              סכום לתרומה: ₪{donationAmount}
-                           </p>
-                        )}
-                     </div>
-                  </div>
-               )}
-            </>
-         ) : (
-            <p>Association data not available please signin.</p>
-         )}
-      </div>
-   );
+                    )}
+                </>
+            ) : (
+                <p>Association data not available please signin.</p>
+            )}
+        </div>
+    );
 };
 //export default AssociationPage;
 
