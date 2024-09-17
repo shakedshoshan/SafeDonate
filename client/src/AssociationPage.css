@@ -79,6 +79,9 @@
     color: #104d8e;
     margin-bottom: 20px;
     background: linear-gradient(90deg, #104d8e, #00c853); /* Gradient */
+    background-clip: text;
+-webkit-background-clip: text;
+
     padding: 10px;
     border-radius: 10px;
 }
