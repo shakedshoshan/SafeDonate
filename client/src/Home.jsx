@@ -7,8 +7,8 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
 
-const Home = ({ searchTerm, setSuggestions }) => {
-  // Accept searchTerm as a prop
+const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
+  // Accept setNpoData here
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,16 +53,15 @@ const Home = ({ searchTerm, setSuggestions }) => {
           throw new Error(`Http error! status: ${response.status}`);
         }
         const jsonData = await response.json();
-        console.log(jsonData);
         const activeData = jsonData.result.records.filter(
           (association) =>
             association["סטטוס עמותה"] === "רשומה" ||
             association["סטטוס עמותה"] === "פעילה"
         );
-        console.log(activeData);
         setData(activeData);
         setFilteredData(activeData);
-        setSuggestions(activeData);
+        setSuggestions(activeData); // Set suggestions for the search bar
+        setNpoData(activeData); // Pass NPO data to App
       } catch (error) {
         setError(error.toString());
         console.error("Error fetching association data:", error);
@@ -73,7 +72,7 @@ const Home = ({ searchTerm, setSuggestions }) => {
 
     fetchUserInfo();
     fetchAssociationData();
-  }, [setSuggestions]);
+  }, [setSuggestions, setNpoData]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -152,15 +151,6 @@ const Home = ({ searchTerm, setSuggestions }) => {
       )}
     </div>
   );
-  // return (
-  //   <div>
-  //     <h1>List of NPOs</h1>
-  //     <ul>
-  //       {filteredData.map((npo) => (
-  //         <li key={npo["מספר עמותה"]}>{npo["שם עמותה בעברית"]}</li>
-  //       ))}
-  //     </ul>
-  //   </div>
-  // );
 };
+
 export default Home;

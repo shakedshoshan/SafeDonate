@@ -100,6 +100,7 @@ const Header = ({
 
   const handleSuggestionClick = (suggestionId) => {
     navigate(`/AssociationPage/${suggestionId}`);
+    setSearchInput("");
     setShowSuggestions(false);
   };
 
@@ -155,7 +156,12 @@ const Header = ({
           </div>
 
           {/* Advanced Category Search */}
-          <button className="header-tab">{t("חיפוש קטגוריות")}</button>
+          <button
+            className="header-tab"
+            onClick={() => navigate("/advanced-search")}
+          >
+            {t("חיפוש קטגוריות")}
+          </button>
 
           {/* About Us */}
           <button className="header-tab" onClick={() => navigate("/about-us")}>
