@@ -3,7 +3,7 @@
   width: 100%;
   background-color: transparent;
   color: blue;
-  padding: 20px 0; /* Adjust padding to reduce space on top and bottom */
+  padding: 20px; /* Adjust padding to reduce space on top and bottom */
   box-shadow: none;
   z-index: 1000;
   display: flex;

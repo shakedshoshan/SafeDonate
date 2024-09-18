@@ -1,19 +1,37 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import axios from "axios";
 import "./styles/Login.css";
 
 const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false); // Modal state
   const [email, setEmail] = useState(""); // Email input state
+  const [password, setPassword] = useState(""); // Password input state
   const [confirmationMessage, setConfirmationMessage] = useState(""); // Confirmation state
-
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  async function handleLogin(e) {
+    e.preventDefault(); // Prevent form from refreshing the page
     console.log("Logging in with:", email, password);
-  };
+
+    const response = await axios.post("http://localhost:3000/users/login", {
+      email: email,
+      password: password,
+    });
+    if (response.status === 200) {
+      const token = response.data.token;
+      const expires = new Date(Date.now() + 3600000); // 1 hour from now
+      document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
+      document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
+
+      navigate("/", { state: { id: email } });
+    } else {
+      console.log("Bad request. Please check your credentials.");
+    }
+
+    console.log("Email:", email, "Password:", password);
+  }
 
   const handleSignUpRedirect = () => {
     navigate("/signup");
@@ -44,27 +62,30 @@ const Login = () => {
     <div className="login-page">
       <div className="login-container">
         <h2>ברוכים הבאים ל-SafeDonate</h2>
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleLogin}>
+          {" "}
+          {/* Attach handleLogin to form submit */}
           <label htmlFor="email">אימייל</label>
           <input
             type="email"
             id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} // Set email value
             placeholder="הכנס את כתובת האימייל שלך"
             required
           />
-
           <label htmlFor="password">סיסמא</label>
           <input
             type="password"
             id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} // Set password value
             placeholder="הכנס את הסיסמא שלך"
             required
           />
-
           <div className="forgot-password">
             <span onClick={handleForgotPassword}>שכחתי סיסמה</span>
           </div>
-
           <button type="submit" className="login-button">
             התחבר
           </button>

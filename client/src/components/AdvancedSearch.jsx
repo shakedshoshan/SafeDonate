@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import "../styles/AdvancedSearch.css"; // Corrected path
+import { useNavigate } from "react-router-dom";
+import "../styles/AdvancedSearch.css";
 
-const AdvancedSearch = ({ npoData }) => {
+const AdvancedSearch = ({ npoData, setFilteredData }) => {
+  const [activeTab, setActiveTab] = useState("קטגוריות"); // Default tab is categories
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [companyNumber, setCompanyNumber] = useState("");
-
+  const [npoNumber, setNpoNumber] = useState("");
   const categories = Array.from(
-    new Set(npoData.map((npo) => npo["סיווג פעילות ענפי"])) // Extract unique categories from NPO data
+    new Set(npoData.map((npo) => npo["סיווג פעילות ענפי"]))
   );
+  const navigate = useNavigate();
 
   const handleCategoryClick = (category) => {
     if (selectedCategories.includes(category)) {
@@ -17,49 +19,49 @@ const AdvancedSearch = ({ npoData }) => {
     }
   };
 
-  const handleSearchByCategories = () => {
-    const filteredNPOs = npoData.filter((npo) =>
-      selectedCategories.includes(npo["סיווג פעילות ענפי"])
-    );
-    console.log("Filtered NPOs based on categories:", filteredNPOs);
-  };
-
-  const handleSearchByCompanyNumber = () => {
-    const npo = npoData.find((npo) => npo["מספר חברה"] === companyNumber);
-    console.log(npo ? "NPO found:" : "No NPO found.", npo);
+  const handleSearch = () => {
+    if (activeTab === "קטגוריות") {
+      const filteredNPOs = npoData.filter((npo) =>
+        selectedCategories.includes(npo["סיווג פעילות ענפי"])
+      );
+      setFilteredData(filteredNPOs);
+    } else if (activeTab === "מספר עמותה" && npoNumber) {
+      const filteredNPOs = npoData.filter(
+        (npo) => npo["מספר עמותה"] === npoNumber
+      );
+      setFilteredData(filteredNPOs);
+    }
+    navigate("/"); // Redirect to home with filtered results
   };
 
   return (
-    <div className="advanced-search-container">
-      <h1 className="advanced-search-title">למי תרצה לעזור</h1>
-      <div className="advanced-search-options">
-        <button
-          className="advanced-search-button"
-          onClick={() => setCompanyNumber("")}
-        >
-          מספר חברה
-        </button>
-        <button
-          className="advanced-search-button"
-          onClick={() => setSelectedCategories([])}
-        >
-          קטגוריות
-        </button>
-      </div>
+    <div className="advanced-search-page">
+      <div className="advanced-search-container">
+        <h2>למי תרצו לתרום</h2>
 
-      {companyNumber !== "" ? (
-        <div className="company-number-input">
-          <input
-            type="text"
-            placeholder="הזן מספר חברה"
-            value={companyNumber}
-            onChange={(e) => setCompanyNumber(e.target.value)}
-          />
-          <button onClick={handleSearchByCompanyNumber}>חפש</button>
+        <div className="tabs-container">
+          <div
+            className={`tab ${activeTab === "קטגוריות" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("קטגוריות");
+              setSelectedCategories([]); // Clear selected categories on switch
+            }}
+          >
+            קטגוריות
+          </div>
+
+          <div
+            className={`tab ${activeTab === "מספר עמותה" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("מספר עמותה");
+              setNpoNumber(""); // Clear NPO number on switch
+            }}
+          >
+            מספר עמותה
+          </div>
         </div>
-      ) : (
-        <div className="category-selection">
-          <h2>בחר קטגוריות (עד 3)</h2>
+
+        {activeTab === "קטגוריות" ? (
           <div className="bubble-buttons">
             {categories.map((category) => (
               <button
@@ -73,11 +75,21 @@ const AdvancedSearch = ({ npoData }) => {
               </button>
             ))}
           </div>
-          {selectedCategories.length > 0 && (
-            <button onClick={handleSearchByCategories}>חפש לפי קטגוריות</button>
-          )}
-        </div>
-      )}
+        ) : (
+          <div className="npo-number-input">
+            <input
+              type="text"
+              placeholder="הזן מספר עמותה"
+              value={npoNumber}
+              onChange={(e) => setNpoNumber(e.target.value)}
+            />
+          </div>
+        )}
+
+        <button className="search-button" onClick={handleSearch}>
+          חפש
+        </button>
+      </div>
     </div>
   );
 };

@@ -25,6 +25,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Control search term in App
   const [suggestions, setSuggestions] = useState([]); // This is important: make sure `setSuggestions` is defined
   const [npoData, setNpoData] = useState([]); // This will store NPO data
+  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
 
   const handleSearch = (term) => {
@@ -57,6 +58,8 @@ const App = () => {
           path={ROUTES.HOME}
           element={
             <Home
+              filteredData={filteredData}
+              setFilteredData={setFilteredData}
               searchTerm={searchTerm}
               setSuggestions={setSuggestions}
               setNpoData={setNpoData} // Pass setNpoData here
@@ -70,7 +73,12 @@ const App = () => {
         <Route path={ROUTES.ABOUT_US} element={<AboutUs />} />
         <Route
           path={ROUTES.ADVANCED_SEARCH}
-          element={<AdvancedSearch npoData={npoData} />} // Pass the NPO data here
+          element={
+            <AdvancedSearch
+              npoData={npoData}
+              setFilteredData={setFilteredData}
+            />
+          } // Pass the NPO data here
         />
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>

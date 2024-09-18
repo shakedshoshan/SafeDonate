@@ -49,7 +49,7 @@ const Header = ({
         setLoggedIn(false);
       }
     };
-
+    console.log("setLoggedIn: ", setLoggedIn);
     fetchUserData();
   }, []);
 

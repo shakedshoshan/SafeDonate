@@ -5,25 +5,32 @@ import "./Home.css";
 import AssociationCrusel from "./components/AssociationCrusel";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom"; // Import useNavigate
 
-const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
-  // Accept setNpoData here
+const Home = ({
+  filteredData,
+  setFilteredData,
+  searchTerm,
+  setSuggestions,
+  setNpoData,
+}) => {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState();
   const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate(); // useNavigate for redirects
+  const dataToDisplay = filteredData.length > 0 ? filteredData : data;
   const query = searchParams.get("query");
 
+  // Fetch user info and association data
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = Cookies.get("token");
       if (!token) {
         console.log("No token found, user is not authenticated.");
-        setUser(null); // Clear user state if no token
+        setUser(null);
         return;
       }
       try {
@@ -58,8 +65,9 @@ const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
             association["סטטוס עמותה"] === "רשומה" ||
             association["סטטוס עמותה"] === "פעילה"
         );
+        console.log("Fetched active NPOs:", activeData); // Log fetched data
         setData(activeData);
-        setFilteredData(activeData);
+        setFilteredData(activeData); // Use setFilteredData from props
         setSuggestions(activeData); // Set suggestions for the search bar
         setNpoData(activeData); // Pass NPO data to App
       } catch (error) {
@@ -72,25 +80,31 @@ const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
 
     fetchUserInfo();
     fetchAssociationData();
-  }, [setSuggestions, setNpoData]);
+  }, [setSuggestions, setNpoData, setFilteredData]);
 
+  // Handle search filtering
   useEffect(() => {
     if (searchTerm) {
+      console.log("Search term entered:", searchTerm);
+
       // Filter NPOs by name first
       const nameMatches = data.filter(
         (association) =>
           association["שם עמותה בעברית"] &&
           association["שם עמותה בעברית"].includes(searchTerm)
       );
+      console.log("Name matches:", nameMatches);
 
       // Filter NPOs by cause, excluding the ones already matched by name
       const causeMatches = data.filter(
         (association) =>
-          !nameMatches.includes(association) && // Ensure no duplicates
+          !nameMatches.includes(association) &&
           association["מטרות עמותה"] &&
           association["מטרות עמותה"].includes(searchTerm)
       );
+      console.log("Cause matches:", causeMatches);
 
+      // Filter NPOs by number (מספר עמותה)
       const numberMatches = data.filter(
         (association) =>
           !nameMatches.includes(association) &&
@@ -98,36 +112,29 @@ const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
           association["מספר עמותה"] &&
           association["מספר עמותה"].toString().includes(searchTerm)
       );
+      console.log("Number matches:", numberMatches);
 
       // Merge the results: nameMatches first, then causeMatches, then numberMatches
-      setFilteredData([...nameMatches, ...causeMatches, ...numberMatches]);
+      const finalResults = [...nameMatches, ...causeMatches, ...numberMatches];
+      console.log("Final filtered results:", finalResults);
+
+      // If no results and the search term is a number, navigate to NOT_FOUND
+      if (finalResults.length === 0 && !isNaN(searchTerm)) {
+        console.log(`NPO with number ${searchTerm} not found, redirecting...`);
+        navigate("/not-found");
+      } else {
+        setFilteredData(finalResults);
+      }
     } else {
       setFilteredData(data); // Show all data if no search term
     }
-  }, [searchTerm, data]);
+  }, [searchTerm, data, setFilteredData, navigate]);
 
   const getWelcomeMessage = () => {
     return i18n.language === "he"
       ? "ברוכים הבאים ל SafeDonate"
       : t("welcome_message");
   };
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (query) {
-        try {
-          const response = await axios.get(`/api/search?q=${query}`);
-          setData(response.data); // Assuming backend returns matching NPOs
-        } catch (error) {
-          setError(error.toString());
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchResults();
-  }, [query]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -145,7 +152,7 @@ const Home = ({ searchTerm, setSuggestions, setNpoData }) => {
             {getWelcomeMessage()} {user?.email}
           </h1>
           <div>
-            <AssociationCrusel dataList={filteredData} userId={user?._id} />
+            <AssociationCrusel dataList={dataToDisplay} userId={user?._id} />
           </div>
         </div>
       )}
