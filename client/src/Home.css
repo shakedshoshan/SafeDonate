@@ -10,15 +10,15 @@
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 10px; /* Space between grid items */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Use auto-fill to create flexible grid items */
+  gap: 10px;
 }
 
 .grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
-  border: 1px solid #ccc;
-  background-color: #f9f9f9;
-  text-align: center; /* Center text */
 }
 
 .clickable-tab {

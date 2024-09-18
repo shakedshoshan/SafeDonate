@@ -3,23 +3,28 @@
   width: 100%;
   background-color: transparent;
   color: blue;
-  padding: 20px; /* Adjust padding to reduce space on top and bottom */
+  padding: 10px 0; /* Reduce padding */
   box-shadow: none;
   z-index: 1000;
-  display: flex;
-  justify-content: center; /* Center the header content within the page */
 }
 
-/* Center the container and limit its width */
 .header-container {
-  width: 50%;
-  max-width: 1200px; /* Set a max width for the container */
   display: flex;
-  justify-content: space-between; /* Spread content across the header */
+  justify-content: space-between; /* Ensure the content is spread out */
   align-items: center;
-  direction: rtl;
-  padding: 0 20px; /* Add some padding on the left and right for spacing */
+  max-width: 1200px; /* Limit the maximum width */
+  margin: 0 auto; /* Center the header */
+  padding: 0 20px; /* Add padding on the sides */
+  width: 100%;
 }
+
+.header-logo {
+  height: 100px; /* Default size */
+  max-width: 100%;
+  width: auto;
+  transition: height 0.3s ease-in-out; /* Smooth resizing */
+}
+
 
 /* Logo */
 .header-title a {
@@ -28,10 +33,10 @@
   align-items: center;
 }
 
-.header-logo {
-  height: 80px; /* Adjust height for the logo to reduce size */
+/* .header-logo {
+  height: 80px; /* Adjust height for the logo to reduce size 
   margin-right: 10px;
-}
+} */
 
 /* Navigation */
 .header-nav {

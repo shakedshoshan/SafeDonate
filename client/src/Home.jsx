@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./Home.css";
-
 import AssociationCrusel from "./components/AssociationCrusel";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { useSearchParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
 
 const Home = ({
   filteredData,
@@ -21,8 +20,9 @@ const Home = ({
   const { t, i18n } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate(); // useNavigate for redirects
+  const location = useLocation(); // Get the state passed from AdvancedSearch
+  const { filteredNPOs } = location.state || {}; // Extract filtered NPOs from the state if available
   const dataToDisplay = filteredData.length > 0 ? filteredData : data;
-  const query = searchParams.get("query");
 
   // Fetch user info and association data
   useEffect(() => {
@@ -51,36 +51,44 @@ const Home = ({
       }
     };
 
-    const fetchAssociationData = async () => {
-      try {
-        const response = await fetch(
-          "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=200"
-        );
-        if (!response.ok) {
-          throw new Error(`Http error! status: ${response.status}`);
-        }
-        const jsonData = await response.json();
-        const activeData = jsonData.result.records.filter(
-          (association) =>
-            association["סטטוס עמותה"] === "רשומה" ||
-            association["סטטוס עמותה"] === "פעילה"
-        );
-        console.log("Fetched active NPOs:", activeData); // Log fetched data
-        setData(activeData);
-        setFilteredData(activeData); // Use setFilteredData from props
-        setSuggestions(activeData); // Set suggestions for the search bar
-        setNpoData(activeData); // Pass NPO data to App
-      } catch (error) {
-        setError(error.toString());
-        console.error("Error fetching association data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUserInfo();
-    fetchAssociationData();
-  }, [setSuggestions, setNpoData, setFilteredData]);
+  }, []);
+
+  // Fetch associations or use filteredNPOs
+  useEffect(() => {
+    if (filteredNPOs && filteredNPOs.length > 0) {
+      console.log("Filtered NPOs from AdvancedSearch:", filteredNPOs);
+      setFilteredData(filteredNPOs); // Set filtered NPOs
+    } else {
+      const fetchAssociationData = async () => {
+        try {
+          const response = await fetch(
+            "https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&limit=200"
+          );
+          if (!response.ok) {
+            throw new Error(`Http error! status: ${response.status}`);
+          }
+          const jsonData = await response.json();
+          const activeData = jsonData.result.records.filter(
+            (association) =>
+              association["סטטוס עמותה"] === "רשומה" ||
+              association["סטטוס עמותה"] === "פעילה"
+          );
+          console.log("Fetched active NPOs:", activeData);
+          setData(activeData);
+          setFilteredData(activeData); // Use setFilteredData from props
+          setSuggestions(activeData); // Set suggestions for the search bar
+          setNpoData(activeData); // Pass NPO data to App
+        } catch (error) {
+          setError(error.toString());
+          console.error("Error fetching association data:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchAssociationData();
+    }
+  }, [filteredNPOs, setSuggestions, setNpoData, setFilteredData]);
 
   // Handle search filtering
   useEffect(() => {
@@ -141,21 +149,15 @@ const Home = ({
 
   return (
     <div className="home">
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
+      <div>
+        <h3>{user?.email} is connected</h3>
+        <h1 className="home-title p-12 text-4xl font-extrabold">
+          {getWelcomeMessage()} {user?.email}
+        </h1>
         <div>
-          <h3>{user?.email} is connected</h3>
-          <h1 className="home-title p-12 text-4xl font-extrabold">
-            {getWelcomeMessage()} {user?.email}
-          </h1>
-          <div>
-            <AssociationCrusel dataList={dataToDisplay} userId={user?._id} />
-          </div>
+          <AssociationCrusel dataList={dataToDisplay} userId={user?._id} />
         </div>
-      )}
+      </div>
     </div>
   );
 };

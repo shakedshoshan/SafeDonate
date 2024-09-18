@@ -25,13 +25,18 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
         selectedCategories.includes(npo["סיווג פעילות ענפי"])
       );
       setFilteredData(filteredNPOs);
+      navigate("/", { state: { filteredNPOs } }); // Pass filtered NPOs to Home
     } else if (activeTab === "מספר עמותה" && npoNumber) {
       const filteredNPOs = npoData.filter(
         (npo) => npo["מספר עמותה"] === npoNumber
       );
-      setFilteredData(filteredNPOs);
+      if (filteredNPOs.length === 0) {
+        navigate("/not-found"); // Redirect to NOT_FOUND if NPO not found
+      } else {
+        setFilteredData(filteredNPOs);
+        navigate("/", { state: { filteredNPOs } }); // Pass filtered NPOs to Home
+      }
     }
-    navigate("/"); // Redirect to home with filtered results
   };
 
   return (
