@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const userRouter = require('./routes/userRoute.js');
 const scrapeRouter = require('./routes/scrapeRoute.js');
+const donationRounter = require('./routes/donationRoute.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use('/users', userRouter);
 app.use('/scrape', scrapeRouter);
+app.use('/donations',donationRounter);
 
 // Connect to MongoDB
 mongoose
@@ -34,22 +36,6 @@ mongoose
   });
 
 // Routes
-
-// app.get('/scrape/:associationNumber', async (req, res) => {
-//   const associationNumber = req.params.associationNumber;
-//   //const associationNumber = 580007086//580570950;
-//   console.log('Starting scraping process for association number:', associationNumber);
-
-//   try {
-//     // Perform the scraping
-//       const results = await scrapeGoogle(associationNumber);
-    
-//     // Return the results to the client
-//       res.json(results);
-//   } catch (error) {
-//       res.status(500).json({ error: 'Failed to scrape data' });
-//   }
-// });
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

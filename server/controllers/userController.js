@@ -1,4 +1,4 @@
-const User = require('../models/userModel.js'); // Assuming userModel.js exports the User model
+const User = require('../models/userModel.js');
 const jwt = require('jsonwebtoken');
 const cookie = require('cookie');
 
@@ -31,11 +31,21 @@ module.exports.verifyToken = async function verifyToken(req, res) {
 // User signup
 module.exports.signup = async function signup(req, res) {
   try {
-    const { email, password } = req.body;
+    const { firstName, lastName, email, password,  } = req.body;
 
     // Check for required fields
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Missing email or password' });
+    if (!firstName) {
+      return res.status(400).json({ message: 'firstName is Missing' });
+    }
+    if (!lastName) {
+      return res.status(400).json({ message: 'lastName is Missing' });
+    }
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is missing' });
+    }
+    if (!password) {
+      return res.status(400).json({ message: 'Password is Missing' });
     }
 
     // Check for existing user
@@ -45,7 +55,7 @@ module.exports.signup = async function signup(req, res) {
     }
 
     // Create new user
-    const newUser = await User.create({ email, password });
+    const newUser = await User.create({ firstName, lastName, email, password });
 
     const token = createToken(newUser._id);
     res.cookie("token", token, {httpOnly: true, maxAge: 3 * 24 * 60 * 60});  // 3 days
@@ -93,9 +103,7 @@ module.exports.getAllUsers = async function getAllUsers(req, res) {
     return res.status(200).json({ count: users.length, data: users });
   } catch (error) {
     console.error(error.message);   
-
-    res.status(500).send({ message: error.message   
- });
+    res.status(500).send({ message: error.message });
   }
 }
 
@@ -105,7 +113,7 @@ module.exports.getUserById = async function getUserById(req, res) {
     const user = await User.findById(req.params.id);
     
     if (!user) return res.status(404).send({ message: 'user not found' });
-    return res.status(200).send(user);   
+    return res.status(200).send(user);  
 
   } catch (error) {
     console.error(error.message);   
@@ -162,6 +170,22 @@ module.exports.removeUserFavorite = async function removeUserFavorite(req, res) 
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'Internal server error' });
+  }
+}
+
+module.exports.getFavoriteAssociations = async function getFavoriteAssociations(req, res) {
+  const { id } = req.params
+  
+  try {
+    const user = User.findById(id)
+    if(!user){
+      return res.status(404).send({ message: 'User not found' });
+    }
+    const favoriteAssociations = await User.Association;
+
+    return res.status(200).json({ favoriteAssociations})
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching favorite associations", error });
   }
 }
 

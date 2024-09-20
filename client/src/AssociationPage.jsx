@@ -8,11 +8,8 @@ const AssociationPage = () => {
     const { id } = useParams();
     const [association, setAssociation] = useState(null);
     const [approvals, setApprovals] = useState([]);
-    //const [loading, setLoading] = useState(true);
-
     const [loadingAssociation, setLoadingAssociation] = useState(true);
     const [loadingScraping, setLoadingScraping] = useState(true);
-
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -26,6 +23,8 @@ const AssociationPage = () => {
     const [hasCookie, setHasCookie] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
 
+    const [donationStatus, setDonationStatus] = useState(null); // Track donation status
+
     // Fetch association data from the API
     useEffect(() => {
         const fetchAssociation = async () => {
@@ -38,7 +37,7 @@ const AssociationPage = () => {
                 if (tokenResponse.status === 200) {
                     setHasCookie(true);
                     setUser(tokenResponse.data);
-                    
+
 
                     const cachedData = localStorage.getItem(`assoc_${id}`);
                     if (cachedData) {
@@ -77,7 +76,7 @@ const AssociationPage = () => {
                     setHasCookie(false);
                 }
                 setLoadingAssociation(false); // Loading for association is done
-                
+
             } catch (error) {
                 console.error('Failed to fetch association data:', error);
                 setError(error);
@@ -101,7 +100,7 @@ const AssociationPage = () => {
                 return yearB - yearA;
             });
             setApprovals(sortedData);
-            
+
         } catch (error) {
             setError(error);
             //setLoading(false);
@@ -125,7 +124,7 @@ const AssociationPage = () => {
                         setLoadingScraping(false);
                         return;
                     }
-                    
+
                     console.log("doing only scraping")
                     // Fetch data from the API if not cached
                     const response = await axios.get(`http://localhost:3000/scrape/${associationNumber}`);
@@ -163,6 +162,41 @@ const AssociationPage = () => {
         }
     }, [association]);
 
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(donationAmount)
+
+        if (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) {
+            alert("Please enter a valid donation amount.");
+            return;
+        }
+
+        try {
+            // Make the POST request
+            const response = await axios.post("http://localhost:3000/donations/donate", {
+                userId: user, // Include the userId from the logged-in user
+                associationNumber: association["מספר עמותה"], // Use association number as ID
+                amount: donationAmount, // Donation amount from input
+            })
+
+            // Handle successful donation
+            if (response.status === 200) {
+                alert("Donation successful! Thank you for your contribution.");
+                setShowModal(false); // Close the donation popup
+                setDonationAmount(""); // Clear the donation amount field
+                setDedicationText(""); // Clear the dedication text
+                setAddDedication(false); // Reset the dedication checkbox
+                handleCloseModal();
+            } else {
+                alert("There was an issue with your donation. Please try again.");
+            }
+        } catch (error) {
+            console.error("Failed to make a donation:", error);
+            alert("Failed to process the donation. Please try again later.");
+        }
+    };
+
     // Expand/collapse category
     const toggleCategory = (category) => {
         setExpandedCategory(expandedCategory === category ? null : category);
@@ -181,15 +215,16 @@ const AssociationPage = () => {
         setIsFavorite(!isFavorite);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(
-            "Donation submitted:",
-            donationType,
-            donationAmount,
-            dedicationText
-        );
-    };
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     handleDonation();
+    //     console.log(
+    //         "Donation submitted:",
+    //         donationType,
+    //         donationAmount,
+    //         dedicationText
+    //     );
+    // };
 
     //if (loadingScraping) return <p>Loading Scraped data...</p>;
     if (loadingAssociation) return <p>Loading association data...</p>;
@@ -488,9 +523,7 @@ const AssociationPage = () => {
                                 />
 
                                 <div
-                                    className={`checkbox-group ${addDedication ? "show-dedication" : ""
-                                        }`}
-                                >
+                                    className={`checkbox-group ${addDedication ? "show-dedication" : ""}`}>
                                     <label>
                                         <input
                                             type="checkbox"
@@ -512,6 +545,7 @@ const AssociationPage = () => {
                                 <button className="submit-donation" onClick={handleSubmit}>
                                     תרמו עכשיו
                                 </button>
+
                                 {donationAmount && (
                                     <p className="donation-summary">
                                         סכום לתרומה: ₪{donationAmount}

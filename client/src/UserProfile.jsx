@@ -22,12 +22,26 @@ const UserProfile = () => {
           );
           if (userResponse.status === 200) {
             setUser(userResponse.data);
-            // Fetch user's donations and favorites (dummy example)
-            // In real scenario, replace with actual API calls
-            setDonations([
-              { npo: "SafeDonate", amount: 100 },
-              { npo: "HelpingHands", amount: 200 },
-            ]);
+            
+            console.log(user._id)
+            try {
+         
+              const response = await axios.get(`http://localhost:3000/donations/${user._id}`);
+  
+              // Handle successful donation
+              if (response.status === 200) {
+                console.log(response.data)
+                // setDonations([
+                //   { npo: "SafeDonate", amount: 100 },
+                //   { npo: "HelpingHands", amount: 200 },
+                // ]);
+              } else {
+                  // set message at the page no donations yet
+              }
+          } catch (error) {
+              console.error("Failed to fetch user's donation list:", error);
+          }
+            
             setFavorites([
               { name: "Save the Children", id: "123" },
               { name: "World Wildlife Fund", id: "456" },

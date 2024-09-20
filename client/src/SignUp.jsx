@@ -10,7 +10,7 @@ const Signup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
@@ -31,12 +31,12 @@ const Signup = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/users/signup", {
-        email,
-        password,
-        firstName,
-        lastName,
-        dob,
-        phone,
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        dob: dob,
+        phoneNumber: phoneNumber,
       });
 
       if (response.status === 200) {
@@ -60,7 +60,7 @@ const Signup = () => {
   return (
     <div className="signup-page">
       <div className="signup-container">
-        <h2>ברוכים הבאים ל-SafeDonate</h2>
+        <h2>יצירת משתמש חדש</h2>
         <form onSubmit={handleSignUp} className="signup-form">
           {/* Step 1: Email, Password, Verify Password */}
           {!showAdditionalFields && (
@@ -134,13 +134,13 @@ const Signup = () => {
                 required
               />
 
-              <label htmlFor="phone">מספר טלפון (אופציונלי)</label>
+              <label htmlFor="phoneNumber">מספר טלפון (אופציונלי)</label>
               <input
                 type="tel"
-                id="phone"
+                id="phoneNumber"
                 placeholder="הכנס את מספר הטלפון שלך"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
 
               <button type="submit" className="signup-button">
