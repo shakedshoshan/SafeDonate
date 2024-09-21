@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import "./UserProfile.css";
 
-const UserProfile = () => {
+const UserProfile = ({ userId }) => {
   const [user, setUser] = useState(null);
   const [donations, setDonations] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -13,47 +13,69 @@ const UserProfile = () => {
   useEffect(() => {
     // Fetch user data and donation history
     const fetchUserData = async () => {
-      const token = Cookies.get("token");
-      if (token) {
-        try {
-          const userResponse = await axios.post(
-            "http://localhost:3000/users/getToken",
-            { token }
-          );
-          if (userResponse.status === 200) {
-            setUser(userResponse.data);
-            
-            console.log(user._id)
-            try {
-         
-              const response = await axios.get(`http://localhost:3000/donations/${user._id}`);
-  
-              // Handle successful donation
-              if (response.status === 200) {
-                console.log(response.data)
-                // setDonations([
-                //   { npo: "SafeDonate", amount: 100 },
-                //   { npo: "HelpingHands", amount: 200 },
-                // ]);
-              } else {
-                  // set message at the page no donations yet
-              }
-          } catch (error) {
-              console.error("Failed to fetch user's donation list:", error);
-          }
-            
-            setFavorites([
-              { name: "Save the Children", id: "123" },
-              { name: "World Wildlife Fund", id: "456" },
-            ]);
-          } else {
-            console.log("Token verification failed.");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+      try {
+        const token = Cookies.get("token");
+        if (!token) {
+          console.log("No token")
+          return;
         }
+
+        const userResponse = await axios.post(
+          "http://localhost:3000/users/getToken",
+          { token }
+        );
+        if (userResponse.status === 200) {
+          setUser(userResponse.data);
+
+          try {
+            const response = await axios.get(
+              `http://localhost:3000/donations/${user._id}`
+            );
+
+            // Handle successful donation
+            if (response.status === 200) {
+              console.log("hello")
+              // setDonations([
+              //   { npo: "SafeDonate", amount: 100 },
+              //   { npo: "HelpingHands", amount: 200 },
+              // ]);
+            } else {
+              // set message at the page no donations yet
+            }
+          } catch (error) {
+            console.error("Failed to fetch user's donation list:", error);
+          }
+
+          try {
+            const favoritesResponse = await axios.get(
+              `http://localhost:3000/users/favorite/${user._id}`
+            );
+
+            // Handle successful donation
+            if (favoritesResponse.status === 200) {
+              console.log("hello2")
+              // setDonations([
+              //   { npo: "SafeDonate", amount: 100 },
+              //   { npo: "HelpingHands", amount: 200 },
+              // ]);
+            } else {
+              // set message at the page no donations yet
+            }
+          } catch (error) {
+            console.error("Failed to fetch user's donation list:", error);
+          }
+
+          // setFavorites([
+          //   { name: "Save the Children", id: "123" },
+          //   { name: "World Wildlife Fund", id: "456" },
+          // ]);
+        } else {
+          console.log("Token verification failed.");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-    };
+    }
 
     fetchUserData();
   }, []);

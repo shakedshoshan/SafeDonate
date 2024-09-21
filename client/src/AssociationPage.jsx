@@ -30,15 +30,22 @@ const AssociationPage = () => {
         const fetchAssociation = async () => {
             try {
                 const token = Cookies.get("token");
+
+                if (!token) {
+                    setHasCookie(false);
+                    setLoadingAssociation(false);
+                    return;
+                }
+
                 const tokenResponse = await axios.post(
                     "http://localhost:3000/users/getToken", { token }
 
                 );
+
                 if (tokenResponse.status === 200) {
                     setHasCookie(true);
                     setUser(tokenResponse.data);
-
-
+                    
                     const cachedData = localStorage.getItem(`assoc_${id}`);
                     if (cachedData) {
                         console.log("doing caching")
@@ -81,6 +88,7 @@ const AssociationPage = () => {
                 console.error('Failed to fetch association data:', error);
                 setError(error);
                 setLoadingAssociation(false);
+                setHasCookie(false);
             }
         };
         fetchAssociation();
@@ -215,24 +223,14 @@ const AssociationPage = () => {
         setIsFavorite(!isFavorite);
     };
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     handleDonation();
-    //     console.log(
-    //         "Donation submitted:",
-    //         donationType,
-    //         donationAmount,
-    //         dedicationText
-    //     );
-    // };
-
     //if (loadingScraping) return <p>Loading Scraped data...</p>;
     if (loadingAssociation) return <p>Loading association data...</p>;
     //if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error.message}</p>;
+    //if (error) return <p>Error: {error.message}</p>;
+    
     return (
         <div className="association-page">
-            {association ? (
+            {hasCookie ? (
                 <>
                     {/* Right Section */}
                     <div className="right-section">

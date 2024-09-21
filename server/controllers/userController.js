@@ -12,19 +12,29 @@ module.exports.verifyToken = async function verifyToken(req, res) {
   const { token } = req.body;
 
   try{
+    // Attempt to verify the token
     const decoded = jwt.verify(token, process.env.jwtSecret);
     const user = await User.findById(decoded.id);
     
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     } 
+    console.log(user)
     return res.status(200).json(user);   
   
   } catch(error) {
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return res.status(200).json({ user: null, message: 'Token expired or invalid' }); // Return 200 with null user
+    // Handle specific JWT errors
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(400).json({ user: null, message: 'Token invalid' }); 
     } 
+
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ user: null, message: 'Token expired' }); 
+    } 
+
+    // General server error
     return res.status(500).json({ message: 'Internal server error' });
+
   }
 }
 
@@ -141,7 +151,7 @@ module.exports.addUserFavorite = async function addUserFavorite(req, res) {
     return res.status(200).send({ message: 'User updated successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: 'Internal server error' });
+    return res.status(500).send({ message: 'Internal server error' });
   }
 }
 
@@ -169,23 +179,25 @@ module.exports.removeUserFavorite = async function removeUserFavorite(req, res) 
     return res.status(200).send({ message: 'User association removed successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: 'Internal server error' });
+    return res.status(500).send({ message: 'Internal server error' });
   }
 }
 
+// get the favorite associations of the user
 module.exports.getFavoriteAssociations = async function getFavoriteAssociations(req, res) {
-  const { id } = req.params
+  const { id } = req.params;
   
   try {
-    const user = User.findById(id)
+    const user = await User.findById(id)
     if(!user){
       return res.status(404).send({ message: 'User not found' });
     }
-    const favoriteAssociations = await User.Association;
-
-    return res.status(200).json({ favoriteAssociations})
+    const favoriteAssociations = user.Association;
+    
+    return res.status(200).send({ favoriteAssociations})
+  
   } catch (error) {
-    res.status(500).json({ message: "Error fetching favorite associations", error });
+    return res.status(500).json({ message: "Error fetching favorite associations", error });
   }
 }
 
@@ -226,14 +238,19 @@ module.exports.deleteUserById  = async function deleteUserById(req, res) {
     const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
-      //return res.status(404).send({ message: 'User not found' });
     }
-    else {
-      console.log('User deleted successfully:', user);
-      return res.status(200).json({ message: 'User deleted successfully', user });
-    }
+    return res.status(200).json({ message: 'User deleted successfully', user });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: 'Error deleting user', error });
   }
 };  
+
+  // Remove all users from DB
+  module.exports.deleteAllUsers  = async function deleteAllUsers(req, res) {
+    try {
+      const result = await User.deleteMany({});
+      return res.status(200).json({ message: 'All users have been deleted', result });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error deleting users', error });
+    }
+  };

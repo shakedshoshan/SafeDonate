@@ -1,5 +1,6 @@
 const Donation = require('../models/donationModel');
 
+// Create a new donation
 module.exports.createDonation = async function createDonation(req, res) {
     const { userId, associationNumber, amount } = req.body;
 
@@ -14,38 +15,35 @@ module.exports.createDonation = async function createDonation(req, res) {
             association: associationNumber.toString(),
             amount,
         });
-        //console.log("New Donation Created:", newDonation);
         return res.status(200).json({ newDonation });
 
     } catch (error) {
-        // Log the error for debugging
-        console.error("Error while creating donation:", error);
-        return res.status(500).json({ message: 'Server donation error', error: error.message });
+        return res.status(500).json({ message: 'Error while creating donation:', error });
     }
 }
 
+// Get the list of donations made by a user
 module.exports.getTotalDonationListOfUser = async function getTotalDonationListOfUser(req, res) {
 
     const userId = req.params.userId;
-
+    //console.log(userId)
     try {
         const donations = await Donation.find({ userId });
 
-        if(!donations.length){
-            return res.status(404).send({ message: 'No donations list found for this user' });
-            //return res.status(200).send(0);
+        if(!donations || donations.length === 0){
+            return res.status(200).send({ message: 'No donations found for this user', donations: [] });
         }
         return res.status(200).send(donations);
 
     } catch (error) {
-        res.status(500).json({ message: "Error calculating total donations", error });
+        return res.status(500).json({ message: "Error fetching donation list", error });
     }
 }
 
+// Get the amount of donations made by a user
 module.exports.getTotalDonationAmountOfUser = async function getTotalDonationAmountOfUser(req, res) {
     const userId = req.params.userId;
-    console.log(userId)
-    console.log("hi getTotalDonationListOfUser");
+ 
     try {
         const donations = await Donation.find({ userId });
 
@@ -73,12 +71,11 @@ module.exports.getDonationListForAssociation = async function getDonationListFor
         }
         return res.status(200).send(donations);
     } catch (error) {
-        console.error('Error fetching donations for association:', error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Error fetching donation list for association:', error });
     }
 }
 
-// Get Donations Amount for a specific association
+// Get the amount of donations for a specific association
 module.exports.getDonationAmountForAssociation = async function getDonationAmountForAssociation(req, res) {
 
     const { associationNumber } = req.params;
@@ -97,12 +94,11 @@ module.exports.getDonationAmountForAssociation = async function getDonationAmoun
         res.status(200).json({ totalDonations: totalAmount });
    
     } catch (error) {
-        console.error('Error fetching donations for association:', error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Error fetching amount of donations for association:', error });
     }
 }
 
-// Get all donations to a specific association by a specific user
+// Get donations list to a specific association made by a specific user 
 module.exports.getDonationsByUserForAssociation = async function getDonationsByUserForAssociation(req, res) {
     const { userId, associationNumber } = req.param;
 
@@ -115,20 +111,56 @@ module.exports.getDonationsByUserForAssociation = async function getDonationsByU
         return res.status(200).send(donations);
         
     } catch (error) {
-        console.error('Error fetching donations by user for association:', error);
-        return res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Error fetching donations by user for association:', error });
     }
 }
 
 
-// Get all donations
-module.exports.getAllDonations = async function getAllDonations(req, res) {
+// Get all donations Data
+module.exports.getAllDonationsData = async function getAllDonationsData(req, res) {
     try {
-        const donations = await Donation.find({});
-        return res.status(200).json({ count: donations.length, data: donations });
+        const donations = await Donation.find();
+
+        if (!donations || donations.length === 0) {
+            return res.status(200).json({ message: "No donations found", associations: [] });
+        }
+        // return res.status(200).json({ count: donations.length, data: donations });
+        const associations = [...new Set(donations.map(donation => donation.association))];
+
+        return res.status(200).json({ associations });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send({ message: error.message })
+        return res.status(500).json({ message: "Error fetching donation list", error });
+    }
+}
+
+// Get all donation amount
+module.exports.getTotalDonationsAmount = async function getTotalDonationsAmount(req, res) {
+    
+    try {
+        const donations = await Donation.find();
+
+        if (!donations || donations.length === 0) {
+            return res.status(200).json({ message: "No donations found", totalAmount: 0 });
+        }
+        
+        const totalAmount = donations.reduce((total, donation) => {
+            return total + parseFloat(donation.amount);
+        }, 0);
+
+        return res.status(200).json({totalAmount});
+
+    } catch (error) {
+        return res.status(500).json({ message: "Error calculating total donations sum", error });
+    }
+}
+
+// Delete all donations
+module.exports.deleteAllDonations = async function deleteAllDonations(req, res) {
+    try {
+        const result = await Donation.deleteMany({});
+        return res.status(200).json({ message: 'All onations have been deleted', result});
+    } catch(errot){
+        return res.status(500).json({ message: 'Error deleting all donations', error});
     }
 }
 

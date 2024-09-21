@@ -9,8 +9,8 @@ const Signup = () => {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [dob, setDob] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  // const [dob, setDob] = useState("");
+  // const [phoneNumber, setPhoneNumber] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
@@ -31,12 +31,13 @@ const Signup = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/users/signup", {
-        email: email,
-        password: password,
         firstName: firstName,
         lastName: lastName,
-        dob: dob,
-        phoneNumber: phoneNumber,
+        email: email,
+        password: password,
+        
+        // dob: dob,
+        // phoneNumber: phoneNumber,
       });
 
       if (response.status === 200) {
@@ -124,7 +125,7 @@ const Signup = () => {
                 required
               />
 
-              <label htmlFor="dob">תאריך לידה</label>
+              {/* <label htmlFor="dob">תאריך לידה</label>
               <input
                 type="date"
                 id="dob"
@@ -132,16 +133,16 @@ const Signup = () => {
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 required
-              />
+              /> */}
 
-              <label htmlFor="phoneNumber">מספר טלפון (אופציונלי)</label>
+              {/* <label htmlFor="phoneNumber">מספר טלפון (אופציונלי)</label>
               <input
                 type="tel"
                 id="phoneNumber"
                 placeholder="הכנס את מספר הטלפון שלך"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-              />
+              /> */}
 
               <button type="submit" className="signup-button">
                 צור חשבון
