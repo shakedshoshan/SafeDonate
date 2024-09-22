@@ -46,7 +46,7 @@ const AssociationPage = () => {
                     setHasCookie(true);
                     setUser(tokenResponse.data);
                     
-                    const cachedData = localStorage.getItem(`assoc_${id}`);
+                    const cachedData = sessionStorage.getItem(`assoc_${id}`);
                     if (cachedData) {
                         console.log("doing caching")
                         const parsedData = JSON.parse(cachedData);
@@ -68,8 +68,8 @@ const AssociationPage = () => {
                     if (response.data.result.records.length > 0) {
                         const associationData = response.data.result.records[0];
 
-                        // Store the fetched data in localStorage
-                        localStorage.setItem(`assoc_${id}`, JSON.stringify(associationData));
+                        // Store the fetched data in sessionStorage
+                        sessionStorage.setItem(`assoc_${id}`, JSON.stringify(associationData));
                         setAssociation(associationData);
                         setLoadingAssociation(false);
 
@@ -123,8 +123,8 @@ const AssociationPage = () => {
                 //setLoading(true);
 
                 try {
-                    // Check if data is in localStorage
-                    const cachedScrapingData = localStorage.getItem(`scrape_${id}`);
+                    // Check if data is in sessionStorage
+                    const cachedScrapingData = sessionStorage.getItem(`scrape_${id}`);
                     if (cachedScrapingData) {
                         console.log("doing caching of scraped Data")
                         setNegativeInfo(JSON.parse(cachedScrapingData))
@@ -140,8 +140,8 @@ const AssociationPage = () => {
                     if (response.data.length > 0) {
                         const scrapedData = response.data;
 
-                        // Store the scraped data in localStorage
-                        localStorage.setItem(`scrape_${id}`, JSON.stringify(scrapedData));
+                        // Store the scraped data in sessionStorage
+                        sessionStorage.setItem(`scrape_${id}`, JSON.stringify(scrapedData));
                         setNegativeInfo(scrapedData); // Save negative info
 
                         // Filter the results by categories (פלילי, פירוק, הליכים)
