@@ -50,6 +50,7 @@ const UserProfile = ({ userId }) => {
 
               if (favoritesResponse.status === 200) {
                 setFavorites(favoritesResponse.data.favoriteAssociations || []);
+                console.log(favoritesResponse.data);
               } else {
                 console.log("No favorite associations found");
               }
