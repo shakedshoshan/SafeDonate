@@ -24,51 +24,68 @@ const UserProfile = ({ userId }) => {
           "http://localhost:3000/users/getToken",
           { token }
         );
+
         if (userResponse.status === 200) {
-          setUser(userResponse.data);
+          const fetchedUser = userResponse.data;
+          setUser(fetchedUser);
 
-          try {
-            const response = await axios.get(
-              `http://localhost:3000/donations/${user._id}`
-            );
+          if (fetchedUser._id) {
+            try {
+              const donationsResponse = await axios.get(
+                `http://localhost:3000/donations/${fetchedUser._id}`
+              );
 
-            // Handle successful donation
-            if (response.status === 200) {
-              console.log("hello")
-              // setDonations([
-              //   { npo: "SafeDonate", amount: 100 },
-              //   { npo: "HelpingHands", amount: 200 },
-              // ]);
-            } else {
-              // set message at the page no donations yet
+              if (donationsResponse.status === 200) {
+                console.log("Donation list fetched successfully");
+                console.log(donationsResponse.data)
+              } else {
+                console.log("No donations found");
+              }
+              // if (response.status === 200) {
+              //   console.log("hello")
+              //   // setDonations([
+              //   //   { npo: "SafeDonate", amount: 100 },
+              //   //   { npo: "HelpingHands", amount: 200 },
+              //   // ]);
+              // } else {
+              //   // set message at the page no donations yet
+              // }
+            } catch (error) {
+              console.error("Failed to fetch user's donation list:", error);
             }
-          } catch (error) {
-            console.error("Failed to fetch user's donation list:", error);
-          }
 
-          try {
-            const favoritesResponse = await axios.get(
-              `http://localhost:3000/users/favorite/${user._id}`
-            );
+            try {
+              const favoritesResponse = await axios.get(
+                `http://localhost:3000/users/favorite/${fetchedUser._id}`
+              );
 
-            // Handle successful donation
-            if (favoritesResponse.status === 200) {
-              console.log("hello2")
-              // setDonations([
-              //   { npo: "SafeDonate", amount: 100 },
-              //   { npo: "HelpingHands", amount: 200 },
-              // ]);
-            } else {
-              // set message at the page no donations yet
+              if (favoritesResponse.status === 200) {
+                console.log("Favorite associations fetched successfully");
+                console.log(favoritesResponse.data)
+              } else {
+                console.log("No favorite associations found");
+              }
+              // // Handle successful donation
+              // if (favoritesResponse.status === 200) {
+              //   console.log("hello2")
+              //   // setDonations([
+              //   //   { npo: "SafeDonate", amount: 100 },
+              //   //   { npo: "HelpingHands", amount: 200 },
+              //   // ]);
+              // } else {
+              //   // set message at the page no donations yet
+              // }
+            } catch (error) {
+              console.error("Failed to fetch user's favorite associations:", error);
             }
-          } catch (error) {
-            console.error("Failed to fetch user's donation list:", error);
-          }
 
-          // setFavorites([
-          //   { name: "Save the Children", id: "123" },
-          //   { name: "World Wildlife Fund", id: "456" },
-          // ]);
+            // setFavorites([
+            //   { name: "Save the Children", id: "123" },
+            //   { name: "World Wildlife Fund", id: "456" },
+            // ]);
+          } else {
+            console.log("User ID not found.");
+          }
         } else {
           console.log("Token verification failed.");
         }

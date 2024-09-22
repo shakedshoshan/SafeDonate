@@ -8,8 +8,8 @@ userRouter.post('/login', userController.login);
 userRouter.post('/getToken', userController.verifyToken);
 
 userRouter.get('/allUsers', userController.getAllUsers);
-userRouter.get('/:id', userController.getUserById);
 userRouter.get('/favorite/:id', userController.getFavoriteAssociations);
+userRouter.get('/:id', userController.getUserById);
 
 userRouter.post('/updateExist/:id', userController.existUserFavorite);
 userRouter.put('/updateAdd/:id', userController.addUserFavorite);

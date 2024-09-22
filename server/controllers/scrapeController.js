@@ -1,5 +1,4 @@
 const scraper = require('../Utils/scraper.js');
-//import { scrapeGoogle } from "../Utils/scraper";
 
 // Function to scrape Google search results for a given association number and keywords
 module.exports.scrapeOnline = async function scrapeOnline(req, res) {

@@ -26,7 +26,7 @@ module.exports.createDonation = async function createDonation(req, res) {
 module.exports.getTotalDonationListOfUser = async function getTotalDonationListOfUser(req, res) {
 
     const userId = req.params.userId;
-    //console.log(userId)
+   
     try {
         const donations = await Donation.find({ userId });
 
@@ -62,9 +62,9 @@ module.exports.getTotalDonationAmountOfUser = async function getTotalDonationAmo
 module.exports.getDonationListForAssociation = async function getDonationListForAssociation(req, res) {
 
     const associationNumber = req.params.associationNumber;
-    
+
     try {
-        const donations = await Donation.find({ associationNumber });
+        const donations = await Donation.find({ association: associationNumber });
 
         if (!donations.length) {
             return res.status(404).send({ message: 'No donation list found for this specific association' });
@@ -81,7 +81,7 @@ module.exports.getDonationAmountForAssociation = async function getDonationAmoun
     const { associationNumber } = req.params;
     
     try {
-        const donations = await Donation.find({ associationNumber });
+        const donations = await Donation.find({ association: associationNumber });
 
         if (!donations.length) {
             return res.status(404).send({ message: 'No donations amount found for this specific association' });
@@ -100,12 +100,12 @@ module.exports.getDonationAmountForAssociation = async function getDonationAmoun
 
 // Get donations list to a specific association made by a specific user 
 module.exports.getDonationsByUserForAssociation = async function getDonationsByUserForAssociation(req, res) {
-    const { userId, associationNumber } = req.param;
+    const { userId, associationNumber } = req.params;
 
     try {
-        const donations = await Donation.find({ userId, associationNumber });
+        const donations = await Donation.find({ userId, association: associationNumber });
 
-        if(!donations.length){
+        if(!donations){
             return res.status(404).send({ message: 'No donations found for this user and association' });
         }
         return res.status(200).send(donations);
@@ -124,10 +124,10 @@ module.exports.getAllDonationsData = async function getAllDonationsData(req, res
         if (!donations || donations.length === 0) {
             return res.status(200).json({ message: "No donations found", associations: [] });
         }
-        // return res.status(200).json({ count: donations.length, data: donations });
-        const associations = [...new Set(donations.map(donation => donation.association))];
+        return res.status(200).json({ count: donations.length, data: donations });
+        //const associations = [...new Set(donations.map(donation => donation.association))];
 
-        return res.status(200).json({ associations });
+        //return res.status(200).json({ associations });
     } catch (error) {
         return res.status(500).json({ message: "Error fetching donation list", error });
     }
@@ -135,19 +135,22 @@ module.exports.getAllDonationsData = async function getAllDonationsData(req, res
 
 // Get all donation amount
 module.exports.getTotalDonationsAmount = async function getTotalDonationsAmount(req, res) {
-    
+
     try {
         const donations = await Donation.find();
 
-        if (!donations || donations.length === 0) {
-            return res.status(200).json({ message: "No donations found", totalAmount: 0 });
+        // if (!donations || donations.length === 0) {
+        //     return res.status(200).json({ message: "No donations found", totalAmount: 0 });
+        // }
+        if (!donations) {
+            return res.status(200).json({ message: "No donations found"});
         }
         
         const totalAmount = donations.reduce((total, donation) => {
             return total + parseFloat(donation.amount);
         }, 0);
 
-        return res.status(200).json({totalAmount});
+        return res.status(200).json({ totalAmount });
 
     } catch (error) {
         return res.status(500).json({ message: "Error calculating total donations sum", error });
@@ -156,6 +159,7 @@ module.exports.getTotalDonationsAmount = async function getTotalDonationsAmount(
 
 // Delete all donations
 module.exports.deleteAllDonations = async function deleteAllDonations(req, res) {
+    
     try {
         const result = await Donation.deleteMany({});
         return res.status(200).json({ message: 'All onations have been deleted', result});
