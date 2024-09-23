@@ -2,17 +2,18 @@ const Donation = require('../models/donationModel');
 
 // Create a new donation
 module.exports.createDonation = async function createDonation(req, res) {
-    const { userId, associationNumber, amount } = req.body;
+    const { userId, associationName, associationNumber, amount } = req.body;
 
     try {
-        if (!associationNumber || !amount) {
+        if (!associationName || !associationNumber || !amount) {
             return res.status(400).json({ message: 'error with associationNumber or donation amount' });
         }
 
         // create new donation
         const newDonation = await Donation.create({
             userId,
-            association: associationNumber.toString(),
+            associationName: associationName,
+            associationNumber: associationNumber.toString(),
             amount,
         });
         return res.status(200).json({ newDonation });

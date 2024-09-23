@@ -19,10 +19,22 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    Association: [{
-      type: String,
-      required: false,
-    }],
+    Association: [
+      {
+        associationName: {
+          type: String,
+          required: false,
+        },
+        associationNumber: {
+          type: Number,
+          required: false,
+        },
+      }
+    ],
+    // Association: [{
+    //   type: String,
+    //   required: false,
+    // }],
   },
   {
     timestamps: true,

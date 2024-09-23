@@ -7,8 +7,12 @@ const donationSchema = mongoose.Schema(
             ref: 'User',
             required: true
         },
-        association: {
+        associationName: {
             type: String,
+            required: true,
+        },
+        associationNumber: {
+            type: Number,
             required: true,
         },
         amount: {

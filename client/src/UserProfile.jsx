@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import "./UserProfile.css";
 
-const UserProfile = ({ userId }) => {
+const UserProfile = () => {
+  const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [donations, setDonations] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const navigate = useNavigate();
 
+  //console.log(userId)
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -28,12 +30,12 @@ const UserProfile = ({ userId }) => {
           const fetchedUser = userResponse.data;
           setUser(fetchedUser);
 
-          if (fetchedUser._id) {
+         // if (fetchedUser._id) {
             try {
               const donationsResponse = await axios.get(
-                `http://localhost:3000/donations/${fetchedUser._id}`
+                `http://localhost:3000/donations/${userId}`
               );
-
+            
               if (donationsResponse.status === 200) {
                 setDonations(donationsResponse.data || []);
               } else {
@@ -45,12 +47,12 @@ const UserProfile = ({ userId }) => {
 
             try {
               const favoritesResponse = await axios.get(
-                `http://localhost:3000/users/favorite/${fetchedUser._id}`
+                `http://localhost:3000/users/favorite/${userId}`
               );
 
               if (favoritesResponse.status === 200) {
-                setFavorites(favoritesResponse.data.favoriteAssociations || []);
-                console.log(favoritesResponse.data);
+                setFavorites(favoritesResponse.data.favoriteAssociations);
+                //console.log(favoritesResponse.data.favorite.associationName);
               } else {
                 console.log("No favorite associations found");
               }
@@ -60,9 +62,9 @@ const UserProfile = ({ userId }) => {
                 error
               );
             }
-          } else {
-            console.log("User ID not found.");
-          }
+          // } else {
+          //   console.log("User ID not found.");
+          // }
         } else {
           console.log("Token verification failed.");
         }
@@ -72,7 +74,7 @@ const UserProfile = ({ userId }) => {
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -87,7 +89,7 @@ const UserProfile = ({ userId }) => {
     ) {
       try {
         const response = await axios.delete(
-          `http://localhost:3000/users/deleteUserById/${user._id}`
+          `http://localhost:3000/users/deleteUserById/${userId}`
         );
         if (response.status === 200) {
           alert("Your account has been successfully deleted.");
@@ -121,7 +123,7 @@ const UserProfile = ({ userId }) => {
           {donations.length > 0 ? (
             donations.map((donation, index) => (
               <div key={index} className="donation-item">
-                תרומה ל-{donation.npo}, סכום: ₪{donation.amount}
+                תרומה ל-{donation.associationName}, סכום: ₪{donation.amount}
               </div>
             ))
           ) : (
@@ -138,20 +140,21 @@ const UserProfile = ({ userId }) => {
         <div className="favorites-container">
           <h3>עמותות מועדפות</h3>
           {favorites.length > 0 ? (
-            favorites.map((favorite, index) => (
+            favorites.map((association, index) => (
               <div
                 key={index}
                 className="favorite-item"
-                onClick={() =>
-                  navigate(`/association/${encodeURIComponent(favorite)}`)
-                }
+                // onClick={() =>
+                //   navigate(`/association/${encodeURIComponent(favorite)}`)
+                // }
                 style={{
                   cursor: "pointer",
                   color: "blue",
                   textDecoration: "underline",
                 }}
               >
-                {favorite}
+                 {association.name}
+                {/* {association.name} (Number: {association.number}) */}
               </div>
             ))
           ) : (

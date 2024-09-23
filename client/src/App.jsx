@@ -12,10 +12,10 @@ import AdvancedSearch from "./components/AdvancedSearch";
 
 const ROUTES = {
   HOME: "/",
-  ASSOCIATION_PAGE: "/AssociationPage/:id",
+  ASSOCIATION_PAGE: "/AssociationPage/:associationNumber",
   LOGIN: "/login",
   SIGNUP: "/signup",
-  PROFILE: "/profile",
+  PROFILE: "/profile/:userId",
   ABOUT_US: "/about-us",
   ADVANCED_SEARCH: "/advanced-search",
   NOT_FOUND: "*",
@@ -40,10 +40,6 @@ const App = () => {
     navigate(ROUTES.SIGNUP);
   };
 
-  const userProfile = () => {
-    navigate(ROUTES.PROFILE);
-  };
-
   return (
     <div style={{ direction: "rtl", textAlign: "right" }}>
       {/* Pass searchTerm and suggestions to Header */}
@@ -51,7 +47,7 @@ const App = () => {
         onSearch={handleSearch}
         suggestions={suggestions} // Pass suggestions here
         handleLogin={handleLogin}
-        userProfile={userProfile}
+       // userProfile={userProfile}
       />
       <Routes>
         <Route

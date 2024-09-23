@@ -8,12 +8,12 @@ userRouter.post('/login', userController.login);
 userRouter.post('/getToken', userController.verifyToken);
 
 userRouter.get('/allUsers', userController.getAllUsers);
-userRouter.get('/favorite/:id', userController.getFavoriteAssociations);
+userRouter.get('/favorite/:userId', userController.getFavoriteAssociations);
 userRouter.get('/:id', userController.getUserById);
 
-userRouter.post('/updateExist/:id', userController.existUserFavorite);
-userRouter.put('/updateAdd/:id', userController.addUserFavorite);
-userRouter.put('/updateRemove/:id', userController.removeUserFavorite);
+userRouter.post('/updateExist/:userId', userController.existUserFavorite);
+userRouter.put('/updateAdd/:userId', userController.addUserFavorite);
+userRouter.put('/updateRemove/:userId', userController.removeUserFavorite);
 
 userRouter.delete('/deleteUserById/:id', userController.deleteUserById )
 userRouter.delete('/deleteAllUsers', userController.deleteAllUsers);

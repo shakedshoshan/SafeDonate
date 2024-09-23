@@ -5,7 +5,8 @@ import axios from "axios";
 import "./AssociationPage.css";
 
 const AssociationPage = () => {
-    const { id } = useParams();
+    const { associationNumber } = useParams();
+    const filterQuery = JSON.stringify({ "מספר עמותה": associationNumber });
     const [association, setAssociation] = useState(null);
     const [approvals, setApprovals] = useState([]);
     const [loadingAssociation, setLoadingAssociation] = useState(true);
@@ -46,7 +47,7 @@ const AssociationPage = () => {
                     setHasCookie(true);
                     setUser(tokenResponse.data);
                     
-                    const cachedData = sessionStorage.getItem(`assoc_${id}`);
+                    const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
                     if (cachedData) {
                         console.log("doing caching")
                         const parsedData = JSON.parse(cachedData);
@@ -54,28 +55,28 @@ const AssociationPage = () => {
                         setLoadingAssociation(false);
 
                         // Call fetchApprovals with the cached association number
-                        const cachedAssociationNumber = parsedData["מספר עמותה"];
-                        await fetchApprovals(cachedAssociationNumber);
+                        //const cachedAssociationNumber = parsedData["מספר עמותה"];
+                        await fetchApprovals(associationNumber);
                         return;
 
                     }
                     console.log("fetching from API")
                     // If no cache, fetch from the server
                     const response = await axios.get(
-                        `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters={"_id":"${id}"}`
+                        `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters=${encodeURIComponent(filterQuery)}`
                     );
 
                     if (response.data.result.records.length > 0) {
                         const associationData = response.data.result.records[0];
 
                         // Store the fetched data in sessionStorage
-                        sessionStorage.setItem(`assoc_${id}`, JSON.stringify(associationData));
+                        sessionStorage.setItem(`assoc_${associationNumber}`, JSON.stringify(associationData));
                         setAssociation(associationData);
                         setLoadingAssociation(false);
 
                         // Extract association number and fetch approvals
-                        const associationNumber = associationData["מספר עמותה"];
-                        await fetchApprovals(associationNumber);
+                        //const associationNumber = associationData["מספר עמותה"];
+                        //await fetchApprovals(associationNumber);
                     } else {
                         setError("No association found");
                     }
@@ -92,13 +93,12 @@ const AssociationPage = () => {
             }
         };
         fetchAssociation();
-    }, [id]);
+    }, [associationNumber]);
 
     // Fetch approvals by association number
-    const fetchApprovals = async (associationNumber) => {
+    const fetchApprovals = async () => {
         try {
             console.log("in fetchApprovals");
-            console.log(associationNumber)
             const response = await axios.get(
                 `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
             );
@@ -124,7 +124,7 @@ const AssociationPage = () => {
 
                 try {
                     // Check if data is in sessionStorage
-                    const cachedScrapingData = sessionStorage.getItem(`scrape_${id}`);
+                    const cachedScrapingData = sessionStorage.getItem(`scrape_${associationNumber}`);
                     if (cachedScrapingData) {
                         console.log("doing caching of scraped Data")
                         setNegativeInfo(JSON.parse(cachedScrapingData))
@@ -141,7 +141,7 @@ const AssociationPage = () => {
                         const scrapedData = response.data;
 
                         // Store the scraped data in sessionStorage
-                        sessionStorage.setItem(`scrape_${id}`, JSON.stringify(scrapedData));
+                        sessionStorage.setItem(`scrape_${associationNumber}`, JSON.stringify(scrapedData));
                         setNegativeInfo(scrapedData); // Save negative info
 
                         // Filter the results by categories (פלילי, פירוק, הליכים)
@@ -179,12 +179,13 @@ const AssociationPage = () => {
             alert("Please enter a valid donation amount.");
             return;
         }
-
+       
         try {
             // Make the POST request
             const response = await axios.post("http://localhost:3000/donations/donate", {
                 userId: user, // Include the userId from the logged-in user
-                associationNumber: association["מספר עמותה"], // Use association number as ID
+                associationName: association["שם עמותה בעברית"],
+                associationNumber: associationNumber, // Use association number as ID
                 amount: donationAmount, // Donation amount from input
             })
 
