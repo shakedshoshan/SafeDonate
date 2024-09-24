@@ -26,6 +26,7 @@ const Login = () => {
       document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
 
       navigate("/", { state: { id: email } });
+      window.location.reload();
     } else {
       console.log("Bad request. Please check your credentials.");
     }

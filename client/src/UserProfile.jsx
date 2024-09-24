@@ -79,6 +79,7 @@ const UserProfile = () => {
   const handleLogout = () => {
     Cookies.remove("token");
     navigate("/login");
+    window.location.reload();
   };
 
   const handleDeleteAccount = async () => {
