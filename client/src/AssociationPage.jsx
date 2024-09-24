@@ -56,7 +56,7 @@ const AssociationPage = () => {
 
                         // Call fetchApprovals with the cached association number
                         //const cachedAssociationNumber = parsedData["מספר עמותה"];
-                        await fetchApprovals(associationNumber);
+                        //await fetchApprovals(associationNumber);
                         return;
 
                     }
@@ -96,24 +96,29 @@ const AssociationPage = () => {
     }, [associationNumber]);
 
     // Fetch approvals by association number
-    const fetchApprovals = async () => {
-        try {
-            console.log("in fetchApprovals");
-            const response = await axios.get(
-                `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
-            );
-            const sortedData = response.data.result.records.sort((a, b) => {
-                const yearA = parseInt(a["שנת האישור"], 10);
-                const yearB = parseInt(b["שנת האישור"], 10);
-                return yearB - yearA;
-            });
-            setApprovals(sortedData);
+    useEffect(() => {
+        if (association) {
+            const fetchApprovals = async () => {
+                try {
+                    console.log("in fetchApprovals");
+                    const response = await axios.get(
+                        `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
+                    );
+                    const sortedData = response.data.result.records.sort((a, b) => {
+                        const yearA = parseInt(a["שנת האישור"], 10);
+                        const yearB = parseInt(b["שנת האישור"], 10);
+                        return yearB - yearA;
+                    });
+                    setApprovals(sortedData);
 
-        } catch (error) {
-            setError(error);
-            //setLoading(false);
+                } catch (error) {
+                    setError(error);
+                    //setLoading(false);
+                }
+            };
+            fetchApprovals();
         }
-    };
+    }, [association]);
 
     // Fetch web scraping data
     useEffect(() => {

@@ -31,19 +31,20 @@ const getUserAgent = () => {
     const userAgent = randomUseragent.getRandom();
 
     if (typeof userAgent === 'string' && userAgent.includes('Chrome') && parseFloat(userAgent.split('Chrome/')[1]) > 80) {
-        console.log("User agent from random") 
+        console.log("User agent from random")
         return userAgent;
     }
     else {
-        console.log("User agent from List") 
+        console.log("User agent from List")
         return selectRandom();
     }
 }
 // Function to scrape Google search results for a given association number and keywords
 const scrapeData = async (associationNumber, category) => {
-    const keywords = keywordDictionary[category] || [];
     const results = [];
     let browser;
+
+    const keywords = keywordDictionary[category] || [];
 
     try {
         browser = await puppeteer.launch({
@@ -59,7 +60,7 @@ const scrapeData = async (associationNumber, category) => {
             const userAgent = getUserAgent();
             await page.setUserAgent(userAgent);
             //console.log(`Using User-Agent: ${userAgent}`);
-            
+
 
             // // Set extra HTTP headers
             // await page.setExtraHTTPHeaders({
@@ -126,4 +127,4 @@ const scrapeData = async (associationNumber, category) => {
 };
 
 // Run the scraping
-module.exports = { scrapeData  }
+module.exports = { scrapeData }

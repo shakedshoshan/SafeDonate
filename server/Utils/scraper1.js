@@ -1,16 +1,46 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const randomUseragent = require('random-useragent');
-const keywordDictionary = require('./keywordDictionary');
+const keywordDictionary = require('./keywordDictionary.js');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 puppeteer.use(StealthPlugin()); // Enable stealth mode
 // const keywords = ['הליכים משפטיים', 'הליכים', 'פלילי', 'פירוק', 'עמותה'];
-const generalKeywords = ['פלילי', 'פירוק', 'הליכים'];
+//const generalKeywords = ['פלילי', 'פירוק', 'הליכים'];
 //const keywords = ['פירוק'];
 
 // Delay function to mimic human-like browsing behavior
+
+const checkCategory = (category) => {
+    const trimmedCategory = category?.trim() || "כללי";
+    const keywords = keywordDictionary[trimmedCategory];
+    
+    // Check if keywords are found
+    // if (keywords) {
+    //   return keywords;
+    // } else {
+    //   // If not found, use "כללי"
+    //   console.warn(`Category "${trimmedCategory}" not found, using "כללי"`);
+    //   return keywordDictionary["כללי"];
+    // }
+    if (!keywords) {
+        return keywordDictionary["כללי"];
+    }
+    return keywords  
+  };
+//     const trimmedCategory = category?.trim() || "כללי";
+//     const keywords = keywordDictionary[trimmedCategory];
+//     console.log(trimmedCategory)
+
+//     if (!keywords) {
+//         console.error(`Category "${trimmedCategory}" not found in keywordDictionary`);
+//         // Handle the case where keywords is undefined or empty
+//         return [];
+//     }
+//     return keywordDictionary[trimmedCategory];
+// }
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const selectRandom = () => {
@@ -31,39 +61,41 @@ const getUserAgent = () => {
     const userAgent = randomUseragent.getRandom();
 
     if (typeof userAgent === 'string' && userAgent.includes('Chrome') && parseFloat(userAgent.split('Chrome/')[1]) > 80) {
-        console.log("User agent from random") 
+        console.log("User agent from random")
         return userAgent;
     }
     else {
-        console.log("User agent from List") 
+        console.log("User agent from List")
         return selectRandom();
     }
 }
 // Function to scrape Google search results for a given association number and keywords
 const scrapeData = async (associationNumber, category) => {
-    const keywords = keywordDictionary[category] || [generalKeywords];
+    const results = [];
     let browser;
-
-    const searchQueries = keywords.map(keyword => `${associationNumber} ${keyword}`);
+    
+    const keywords = checkCategory(category);
 
     try {
         browser = await puppeteer.launch({
             headless: true,
             args: ["--disabled-setuid-sandbox", "--no-sandbox"],
         });
-        const page = await browser.newPage();
 
-        const results = [];
+        //for (const [category, keywords] of Object.entries(keywordDictionary)) {
 
-        for (let query of searchQueries) {
-            //const searchQuery = `"${associationNumber}" ${keyword}`;
-            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            //const page = await browser.newPage();
+        //console.log(`Scraping topic: ${category}`); // For debugging
+
+        for (const keyword of keywords) {
+            console.log("hii")
+            const searchQuery = `"${associationNumber}" ${keyword}`;
+            const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
+            const page = await browser.newPage();
 
             const userAgent = getUserAgent();
             await page.setUserAgent(userAgent);
             //console.log(`Using User-Agent: ${userAgent}`);
-            
+
 
             // // Set extra HTTP headers
             // await page.setExtraHTTPHeaders({
@@ -96,7 +128,7 @@ const scrapeData = async (associationNumber, category) => {
                 });
             });
 
-            //console.log(`Results for keyword '${keyword}':`, searchResults);
+            console.log(`Results for keyword '${keyword}':`, searchResults);
 
             // Filter results where the associationNumber and keyword are found in the title or content
             const filteredResults = searchResults.filter(result =>
@@ -130,4 +162,4 @@ const scrapeData = async (associationNumber, category) => {
 };
 
 // Run the scraping
-module.exports = { scrapeData  }
+module.exports = { scrapeData }
