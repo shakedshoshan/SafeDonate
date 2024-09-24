@@ -46,7 +46,7 @@ const AssociationPage = () => {
                 if (tokenResponse.status === 200) {
                     setHasCookie(true);
                     setUser(tokenResponse.data);
-                    
+
                     const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
                     if (cachedData) {
                         console.log("doing caching")
@@ -120,6 +120,8 @@ const AssociationPage = () => {
         if (association) {
             const fetchScrapedData = async () => {
                 const associationNumber = association["מספר עמותה"];
+                const category = association["סיווג פעילות ענפי"]
+                let cleanedStr = category.replace(/~/g, ''); // Remove all '~' characters
                 //setLoading(true);
 
                 try {
@@ -135,7 +137,10 @@ const AssociationPage = () => {
 
                     console.log("doing only scraping")
                     // Fetch data from the API if not cached
-                    const response = await axios.get(`http://localhost:3000/scrape/${associationNumber}`);
+                    const response = await axios.post('http://localhost:3000/scrape/search', {
+                        associationNumber: associationNumber,
+                        category: cleanedStr
+                    });
 
                     if (response.data.length > 0) {
                         const scrapedData = response.data;
@@ -179,7 +184,7 @@ const AssociationPage = () => {
             alert("Please enter a valid donation amount.");
             return;
         }
-       
+
         try {
             // Make the POST request
             const response = await axios.post("http://localhost:3000/donations/donate", {
@@ -228,7 +233,7 @@ const AssociationPage = () => {
     if (loadingAssociation) return <p>Loading association data...</p>;
     //if (loading) return <p>Loading...</p>;
     //if (error) return <p>Error: {error.message}</p>;
-    
+
     return (
         <div className="association-page">
             {hasCookie ? (

@@ -7,7 +7,7 @@ const cheerio = require('cheerio');
 
 puppeteer.use(StealthPlugin()); // Enable stealth mode
 // const keywords = ['הליכים משפטיים', 'הליכים', 'פלילי', 'פירוק', 'עמותה'];
-//const keywords = ['פלילי', 'פירוק', 'הליכים'];
+const generalKeywords = ['פלילי', 'פירוק', 'הליכים'];
 //const keywords = ['פירוק'];
 
 // Delay function to mimic human-like browsing behavior
@@ -41,20 +41,24 @@ const getUserAgent = () => {
 }
 // Function to scrape Google search results for a given association number and keywords
 const scrapeData = async (associationNumber, category) => {
-    const keywords = keywordDictionary[category] || [];
-    const results = [];
+    const keywords = keywordDictionary[category] || [generalKeywords];
     let browser;
+
+    const searchQueries = keywords.map(keyword => `${associationNumber} ${keyword}`);
 
     try {
         browser = await puppeteer.launch({
             headless: true,
             args: ["--disabled-setuid-sandbox", "--no-sandbox"],
         });
+        const page = await browser.newPage();
 
-        for (const keyword of keywords) {
-            const searchQuery = `"${associationNumber}" ${keyword}`;
-            const searchUrl = `https://www.google.com/search?q=${searchQuery}`;
-            const page = await browser.newPage();
+        const results = [];
+
+        for (let query of searchQueries) {
+            //const searchQuery = `"${associationNumber}" ${keyword}`;
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            //const page = await browser.newPage();
 
             const userAgent = getUserAgent();
             await page.setUserAgent(userAgent);

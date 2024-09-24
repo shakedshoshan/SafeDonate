@@ -3,6 +3,6 @@ const scrapeController = require('../controllers/scrapeController');
 
 const scrapeRouter = express.Router();
 
-scrapeRouter.get('/:associationNumber', scrapeController.scrapeOnline);
+scrapeRouter.post('/search', scrapeController.scrapeOnline);
 
 module.exports = scrapeRouter;

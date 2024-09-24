@@ -176,9 +176,9 @@ import { useNavigate } from "react-router-dom";
               <div className="suggestions-dropdown">
                 {filteredSuggestions.slice(0, 7).map((suggestion) => (
                   <div
-                    key={suggestion._id}
+                    key={suggestion["מספר עמותה"]}
                     className="suggestion-item"
-                    onClick={() => handleSuggestionClick(suggestion._id)}
+                    onClick={() => handleSuggestionClick(suggestion["מספר עמותה"])}
                   >
                     {suggestion["שם עמותה בעברית"]}
                   </div>
