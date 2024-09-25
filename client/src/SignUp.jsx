@@ -12,6 +12,8 @@ const Signup = () => {
   // const [dob, setDob] = useState("");
   // const [phoneNumber, setPhoneNumber] = useState("");
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+  const [emailExists, setEmailExists] = useState(false); // For handling email already in DB
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
 
@@ -24,8 +26,25 @@ const Signup = () => {
     }
 
     if (!showAdditionalFields) {
-      // Move to the next step
-      setShowAdditionalFields(true);
+      // Step 1: Check if email already exists in the DB
+      try {
+        const emailCheckResponse = await axios.post(
+          "http://localhost:3000/users/check-email",
+          { email }
+        );
+
+        if (emailCheckResponse.data.exists) {
+          setEmailExists(true);
+          setErrorMessage("קיים חשבון לכתובת מייל זו");
+        } else {
+          setEmailExists(false);
+          setShowAdditionalFields(true); // Proceed to next step
+          setErrorMessage(""); // Clear any error message
+        }
+      } catch (error) {
+        console.error("Error checking email:", error);
+        setErrorMessage("אירעה שגיאה, נסה שוב.");
+      }
       return;
     }
 
@@ -35,7 +54,7 @@ const Signup = () => {
         lastName: lastName,
         email: email,
         password: password,
-        
+
         // dob: dob,
         // phoneNumber: phoneNumber,
       });
@@ -47,10 +66,11 @@ const Signup = () => {
 
         navigate("/", { state: { id: email } });
       } else {
-        console.log("Signup failed. Please check your input.");
+        setErrorMessage("ההרשמה נכשלה. אנא בדוק את הקלט שלך.");
       }
     } catch (error) {
       console.error("Error during signup:", error);
+      setErrorMessage("אירעה שגיאה בהרשמה, נסה שוב.");
     }
   };
 
@@ -72,7 +92,10 @@ const Signup = () => {
                 id="email"
                 placeholder="הכנס את כתובת האימייל שלך"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMessage(""); // Clear error message when user types
+                }}
                 required
               />
 
@@ -95,6 +118,9 @@ const Signup = () => {
                 onChange={(e) => setVerifyPassword(e.target.value)}
                 required
               />
+
+              {/* Display error message if email already exists */}
+              {emailExists && <p className="error-message">{errorMessage}</p>}
 
               <button type="submit" className="signup-button">
                 המשך
@@ -125,28 +151,12 @@ const Signup = () => {
                 required
               />
 
-              {/* <label htmlFor="dob">תאריך לידה</label>
-              <input
-                type="date"
-                id="dob"
-                max={today}
-                value={dob}
-                onChange={(e) => setDob(e.target.value)}
-                required
-              /> */}
-
-              {/* <label htmlFor="phoneNumber">מספר טלפון (אופציונלי)</label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                placeholder="הכנס את מספר הטלפון שלך"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              /> */}
-
               <button type="submit" className="signup-button">
                 צור חשבון
               </button>
+
+              {/* Display error message */}
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
             </>
           )}
         </form>

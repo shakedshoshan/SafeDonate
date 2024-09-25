@@ -9,29 +9,33 @@ const Login = () => {
   const [email, setEmail] = useState(""); // Email input state
   const [password, setPassword] = useState(""); // Password input state
   const [confirmationMessage, setConfirmationMessage] = useState(""); // Confirmation state
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault(); // Prevent form from refreshing the page
     console.log("Logging in with:", email, password);
 
-    const response = await axios.post("http://localhost:3000/users/login", {
-      email: email,
-      password: password,
-    });
-    if (response.status === 200) {
-      const token = response.data.token;
-      const expires = new Date(Date.now() + 3600000); // 1 hour from now
-      document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
-      document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
+    try {
+      const response = await axios.post("http://localhost:3000/users/login", {
+        email: email,
+        password: password,
+      });
+      if (response.status === 200) {
+        const token = response.data.token;
+        const expires = new Date(Date.now() + 3600000); // 1 hour from now
+        document.cookie = `token=${token}; expires=${expires.toUTCString()}; path=/`;
+        document.cookie = `token=${token}; expires = in 1h for ${Date.now}`;
 
-      navigate("/", { state: { id: email } });
-      window.location.reload();
-    } else {
+        navigate("/", { state: { id: email } });
+        window.location.reload();
+        console.log("Email:", email, "Password:", password);
+      }
+    } catch (error) {
+      // Set error message if login fails
+      setErrorMessage("אופס, כתובת אימייל או סיסמא לא תקינים.");
       console.log("Bad request. Please check your credentials.");
     }
-
-    console.log("Email:", email, "Password:", password);
   }
 
   const handleSignUpRedirect = () => {
@@ -90,6 +94,7 @@ const Login = () => {
           <button type="submit" className="login-button">
             התחבר
           </button>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </form>
 
         <div className="signup-redirect">

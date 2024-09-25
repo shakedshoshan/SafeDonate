@@ -82,3 +82,8 @@ input::placeholder {
   cursor: pointer;
   text-decoration: underline;
 }
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
