@@ -9,6 +9,7 @@ import UserProfile from "./UserProfile";
 import AboutUs from "./AboutUs";
 import NotFound from "./NotFound";
 import AdvancedSearch from "./components/AdvancedSearch";
+import FilteredResultsPage from "./components/FilteredResultsPage";
 
 const ROUTES = {
   HOME: "/",
@@ -18,6 +19,7 @@ const ROUTES = {
   PROFILE: "/profile/:userId",
   ABOUT_US: "/about-us",
   ADVANCED_SEARCH: "/advanced-search",
+  FILTERED_RESULTS: "/filtered-results",
   NOT_FOUND: "*",
 };
 
@@ -47,7 +49,7 @@ const App = () => {
         onSearch={handleSearch}
         suggestions={suggestions} // Pass suggestions here
         handleLogin={handleLogin}
-       // userProfile={userProfile}
+        // userProfile={userProfile}
       />
       <Routes>
         <Route
@@ -76,6 +78,9 @@ const App = () => {
             />
           } // Pass the NPO data here
         />
+        <Route
+          path={ROUTES.FILTERED_RESULTS}
+          element={<FilteredResultsPage />}/>
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
       </Routes>
     </div>
