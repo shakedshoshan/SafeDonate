@@ -1,30 +1,72 @@
-/* src/Home.css */
 .home {
-  padding: 20px;
+  background-image: url('./assets/background.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #333;
 }
 
 .home-title {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 36px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #00C6FF, #0072FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 40px;
 }
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Use auto-fill to create flexible grid items */
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .grid-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-}
-
-.clickable-tab {
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.clickable-tab:hover {
-  background-color: #e0e0e0;
+.grid-item:hover {
+  transform: translateY(-5px);
+}
+
+.grid-item-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.grid-item-content {
+  font-size: 14px;
+  color: #555;
+}
+
+.more-npos-button-container {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.more-npos-button {
+  background-color: #0072ff;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.more-npos-button:hover {
+  background-color: #005ecb;
 }
