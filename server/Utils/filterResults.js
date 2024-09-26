@@ -2,9 +2,6 @@
 const processScrapedResults = (keyword, associationNumber, results) => {
     const filteredResults = results.filter(result => {
         const { title, content } = result;
-        // return title.includes(keyword) || content.includes(keyword) 
-        // && title.includes(associationNumber) || content.includes(associationNumber);
-        // Check if both the keyword and associationNumber are in either title or content
         const isKeywordInTitleOrContent = title.includes(keyword) || content.includes(keyword);
         const isAssociationInTitleOrContent = title.includes(associationNumber) || content.includes(associationNumber);
 

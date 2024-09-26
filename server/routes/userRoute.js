@@ -3,10 +3,6 @@ const userController = require('../controllers/userController');
 
 const userRouter = express.Router();
 
-// userRouter.post('/signup', userController.signup);
-// userRouter.post('/login', userController.login);
-// userRouter.post('/getToken', userController.verifyToken);
-
 userRouter.get('/allUsers', userController.getAllUsers);
 userRouter.get('/favorite/:userId', userController.getFavoriteAssociations);
 userRouter.get('/:id', userController.getUserById);

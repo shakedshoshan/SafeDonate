@@ -5,7 +5,6 @@ const FavoriteButton = ({ association, userId }) => {
   const [favorite, setFavorite] = useState(false);
   const aName = association["שם עמותה בעברית"]
   const aNumber = association["מספר עמותה"]
-  //console.log(aName)
 
   useEffect(() => {
     const checkFavoriteExistence = async () => {

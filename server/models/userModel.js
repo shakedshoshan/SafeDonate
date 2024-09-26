@@ -32,10 +32,6 @@ const userSchema = mongoose.Schema(
         },
       }
     ],
-    // Association: [{
-    //   type: String,
-    //   required: false,
-    // }],
   },
   {
     timestamps: true,

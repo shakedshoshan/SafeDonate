@@ -33,33 +33,14 @@ const AssociationPage = () => {
     useEffect(() => {
         const fetchAssociation = async () => {
             try {
-                // const token = Cookies.get("token");
-
-                // if (!token) {
-                //     setHasCookie(false);
-                //     setLoadingAssociation(false);
-                //     return;
-                // }
-
-                // const tokenResponse = await axios.post(
-                //     "http://localhost:3000/users/getToken", { token }
-
-                // );
 
                 if (authUser) {
-                //     setHasCookie(true);
-                //     setUser(tokenResponse.data);
-
                     const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
                     if (cachedData) {
                         console.log("doing caching")
                         const parsedData = JSON.parse(cachedData);
                         setAssociation(parsedData);
                         setLoadingAssociation(false);
-
-                        // Call fetchApprovals with the cached association number
-                        //const cachedAssociationNumber = parsedData["מספר עמותה"];
-                        //await fetchApprovals(associationNumber);
                         return;
 
                     }
@@ -83,7 +64,7 @@ const AssociationPage = () => {
                     } else {
                         setError("No association found");
                     }
-                } 
+                }
                 setLoadingAssociation(false); // Loading for association is done
 
             } catch (error) {
@@ -267,15 +248,8 @@ const AssociationPage = () => {
                         <button className="donate-button" onClick={handleOpenModal}>
                             לתרומה
                         </button>
-                        {/* <button
-                            className={`favorite-button ${isFavorite ? "liked" : ""}`}
-                            onClick={toggleFavorite}
-                        >
-                            {isFavorite ? "מועדפים" : "הוסף למועדפים"}
-                            <span className="heart-icon">{isFavorite ? "❤️" : "🤍"}</span>
-                        </button> */}
-                        
-                        <FavoriteButton association={association} userId={authUser._id}/>
+
+                        <FavoriteButton association={association} userId={authUser._id} />
                     </div>
 
                     {/* Separator Line */}
