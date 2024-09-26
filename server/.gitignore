@@ -2,7 +2,7 @@
 node_modules/
 
 # Ignore environment variables
-server/.env
+.env
 
 # Ignore logs
 *.log
