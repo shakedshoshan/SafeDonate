@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import "./AssociationPage.css";
+import { useAuthContext } from "./context/AuthContext";
+import FavoriteButton from "./components/FavoriteButton";
+
 
 const AssociationPage = () => {
     const { associationNumber } = useParams();
@@ -12,7 +15,7 @@ const AssociationPage = () => {
     const [loadingAssociation, setLoadingAssociation] = useState(true);
     const [loadingScraping, setLoadingScraping] = useState(true);
     const [error, setError] = useState(null);
-    const [user, setUser] = useState(null);
+    // const [user, setUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [donationType, setDonationType] = useState("חד פעמי");
     const [donationAmount, setDonationAmount] = useState("");
@@ -21,31 +24,31 @@ const AssociationPage = () => {
     const [negativeInfo, setNegativeInfo] = useState([]);
     const [categoryCounts, setCategoryCounts] = useState({});
     const [expandedCategory, setExpandedCategory] = useState(null);
-    const [hasCookie, setHasCookie] = useState(false);
+    // const [hasCookie, setHasCookie] = useState(false);
     const [isFavorite, setIsFavorite] = useState(false);
-
+    const { authUser } = useAuthContext();
     const [donationStatus, setDonationStatus] = useState(null); // Track donation status
 
     // Fetch association data from the API
     useEffect(() => {
         const fetchAssociation = async () => {
             try {
-                const token = Cookies.get("token");
+                // const token = Cookies.get("token");
 
-                if (!token) {
-                    setHasCookie(false);
-                    setLoadingAssociation(false);
-                    return;
-                }
+                // if (!token) {
+                //     setHasCookie(false);
+                //     setLoadingAssociation(false);
+                //     return;
+                // }
 
-                const tokenResponse = await axios.post(
-                    "http://localhost:3000/users/getToken", { token }
+                // const tokenResponse = await axios.post(
+                //     "http://localhost:3000/users/getToken", { token }
 
-                );
+                // );
 
-                if (tokenResponse.status === 200) {
-                    setHasCookie(true);
-                    setUser(tokenResponse.data);
+                if (authUser) {
+                //     setHasCookie(true);
+                //     setUser(tokenResponse.data);
 
                     const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
                     if (cachedData) {
@@ -80,16 +83,14 @@ const AssociationPage = () => {
                     } else {
                         setError("No association found");
                     }
-                } else {
-                    setHasCookie(false);
-                }
+                } 
                 setLoadingAssociation(false); // Loading for association is done
 
             } catch (error) {
                 console.error('Failed to fetch association data:', error);
                 setError(error);
                 setLoadingAssociation(false);
-                setHasCookie(false);
+                // setHasCookie(false);
             }
         };
         fetchAssociation();
@@ -142,7 +143,7 @@ const AssociationPage = () => {
 
                     console.log("doing only scraping")
                     // Fetch data from the API if not cached
-                    const response = await axios.post('http://localhost:3000/scrape/search', {
+                    const response = await axios.post('http://localhost:5000/scrape/search', {
                         associationNumber: associationNumber,
                         category: cleanedStr
                     });
@@ -192,8 +193,8 @@ const AssociationPage = () => {
 
         try {
             // Make the POST request
-            const response = await axios.post("http://localhost:3000/donations/donate", {
-                userId: user, // Include the userId from the logged-in user
+            const response = await axios.post("http://localhost:5000/donations/donate", {
+                userId: authUser, // Include the userId from the logged-in user
                 associationName: association["שם עמותה בעברית"],
                 associationNumber: associationNumber, // Use association number as ID
                 amount: donationAmount, // Donation amount from input
@@ -241,7 +242,7 @@ const AssociationPage = () => {
 
     return (
         <div className="association-page">
-            {hasCookie ? (
+            {authUser ? (
                 <>
                     {/* Right Section */}
                     <div className="right-section">
@@ -266,13 +267,15 @@ const AssociationPage = () => {
                         <button className="donate-button" onClick={handleOpenModal}>
                             לתרומה
                         </button>
-                        <button
+                        {/* <button
                             className={`favorite-button ${isFavorite ? "liked" : ""}`}
                             onClick={toggleFavorite}
                         >
                             {isFavorite ? "מועדפים" : "הוסף למועדפים"}
                             <span className="heart-icon">{isFavorite ? "❤️" : "🤍"}</span>
-                        </button>
+                        </button> */}
+                        
+                        <FavoriteButton association={association} userId={authUser._id}/>
                     </div>
 
                     {/* Separator Line */}
@@ -338,42 +341,6 @@ const AssociationPage = () => {
                                         </tbody>
                                     </table>
                                 )}
-                                {/* 
-                                {expandedCategory === "פירוק" && (
-                                    <table className="category-content">
-                                    <thead>
-                                        <tr>
-                                        <th>כותרת</th>
-                                        <th>קישור</th>
-                                        <th>תוכן</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {negativeInfo
-                                        .filter((item) => item.keyword === "פירוק")[0]
-                                        .filteredResults.map((result, index) => (
-                                            <tr key={index}>
-                                            <td>{result.title}</td>
-                                            <td>
-                                                <a
-                                                href={result.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                >
-                                                קישור
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <div className="scrollable-content">
-                                                {result.content || "No content available"}
-                                                </div>
-                                            </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                    </table>
-                                )} */}
-
                                 {negativeInfo.filter((item) => item.keyword === "פירוק").length >
                                     0 && (
                                         <div
@@ -570,98 +537,5 @@ const AssociationPage = () => {
         </div>
     );
 };
-//export default AssociationPage;
-
-//     return (
-//         <div>
-//             {hasCookie ? (
-//             <div>
-//                 <h1>{association["שם עמותה בעברית"]}</h1>
-//                 <p>{association["מטרות עמותה"]}</p>
-//                 <p>{association["סיווג פעילות ענפי"]}</p>
-//                 <h2>מידע נוסף</h2>
-//                 {approvals.length > 0 ? (
-//                     <table>
-//                         <thead>
-//                             <tr>
-//                                 <th>שנת האישור</th>
-//                                 <th>האם יש אישור</th>
-//                                 <th>הגשת בקשה</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {approvals.map((record, index) => (
-//                                 <tr key={index}>
-//                                     <td>{record["שנת האישור"] ? record["שנת האישור"] : "N/A"}</td>
-//                                     <td>{record["האם יש אישור"] ? record["האם יש אישור"] : "N/A"}</td>
-//                                     <td>{record["הגשת בקשה"] ? record["הגשת בקשה"] : "N/A"}</td>
-//                                 </tr>
-//                             ))}
-//                         </tbody>
-//                     </table>
-//                 ) : (
-//                     <p>No data available for this association.</p>
-//                 )}
-//                 <div className="flex justify-end ml-2">
-//                     {user._id ? (
-//                         <FavoriteButton association={association} userId={user._id}/>)
-//                         :(
-//                             <div> </div>
-//                         )}
-//                 </div>
-//                 <div>
-//                     <button onClick={handleOpenModal} className="donate-button">
-//                         לתרומה
-//                     </button>
-//                     {showModal && (
-//                         <div className="popup-overlay">
-//                             <div className="popup-content">
-//                                 <button onClick={handleCloseModal} className="close-popup">
-//                                     &times;
-//                                 </button>
-//                                 {/* Your donation form or iframe here */}
-//                                 <div className="donation-form">
-//                                     <h2>פרטי התרומה שלי</h2>
-//                                     {/* Include the donation form UI here */}
-//                                     <form>
-//                                         <div className="form-group">
-//                                             <label htmlFor="donationAmount">אני רוצה לתרום:</label>
-//                                             <input type="number" id="donationAmount" name="donationAmount" placeholder="0.00" />
-//                                         </div>
-//                                         <button type="submit" className="submit-donation">
-//                                             תרמו עכשיו
-//                                         </button>
-//                                     </form>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     )}
-//                 </div>
-//                 <div>
-//                     <h1>Negative Information</h1>
-//                     {negativeInfo.length > 0 ? (
-//                         negativeInfo.map((info, index) => (
-//                         <div key={index}>
-//                             <h2>{info.title}</h2>
-//                             <p>{info.snippet}</p>
-//                             <a href={info.link} target="_blank" rel="noopener noreferrer">
-//                             Read more
-//                             </a>
-//                         </div>
-//                         ))
-//                     ) : (
-//                         <p>No negative information found.</p>
-//                     )}
-//                     <p><strong>Disclaimer:</strong> The information displayed is scraped from public sources and may not be entirely accurate or up-to-date.</p>
-//                 </div>
-//             </div>
-//             ) : (
-//                 <div>
-//                     <h1>loser</h1>
-//                 </div>
-//             )}
-//         </div>
-//     )
-// };
 
 export default AssociationPage;

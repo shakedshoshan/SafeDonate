@@ -17,8 +17,8 @@
 
 /* Circle Image for NPO initials */
 .circle-image {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background-color: #3d9bc6;
     color: white;

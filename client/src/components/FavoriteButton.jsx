@@ -10,7 +10,7 @@ const FavoriteButton = ({ association, userId }) => {
   useEffect(() => {
     const checkFavoriteExistence = async () => {
       try {
-        const response = await axios.post(`http://localhost:3000/users/updateExist/${userId}`, {
+        const response = await axios.post(`http://localhost:5000/users/updateExist/${userId}`, {
             associationNumber: aNumber
         });
         const isFavorite = response.data.exists;
@@ -30,12 +30,12 @@ const FavoriteButton = ({ association, userId }) => {
     setFavorite(!favorite);
 
     if (favorite) {
-      const removeFavorite = await axios.put(`http://localhost:3000/users/updateRemove/${userId}`, {
+      const removeFavorite = await axios.put(`http://localhost:5000/users/updateRemove/${userId}`, {
           associationNumber: aNumber       
       })
       //console.log(removeFavorite)
     } else {
-      const addFavorite = await axios.put(`http://localhost:3000/users/updateAdd/${userId}`, {
+      const addFavorite = await axios.put(`http://localhost:5000/users/updateAdd/${userId}`, {
           associationName: aName, 
           associationNumber: aNumber       
       })
@@ -44,23 +44,27 @@ const FavoriteButton = ({ association, userId }) => {
   };
 
   return (
-    <div>
+    <div className="">
       {favorite ? (
         <button
-          className="text-sm font-semibold text-white bg-blue-400 hover:bg-blue-500 p-2 rounded"
+          className="favorite-button flex gap-2 bg-[#e84949] hover:bg-[#c73131]"
           onClick={handleClick}
         >
-          Remove Favorite
+          <p>מחק מהמועדפים</p>
+          <span className="">{"  ❤️"}</span>
         </button>
+        
       ) : (
         <button
-          className="text-sm font-semibold text-white bg-blue-700 p-2 rounded hover:bg-blue-800"
+          className="favorite-button flex gap-2 "
           onClick={handleClick}
         >
-          Add To Favorite
+           <p>הוסף למועדפים</p>
+          <span className="">{"  🤍"}</span>
         </button>
       )}
     </div>
   );
 };
 export default FavoriteButton;
+

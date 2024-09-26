@@ -136,6 +136,7 @@ module.exports.getUserById = async function getUserById(req, res) {
 module.exports.existUserFavorite = async function existUserFavorite(req, res) {
   const { userId } = req.params;
   const { associationNumber } = req.body;
+ 
 
   try {
     const user = await User.findById(userId);
