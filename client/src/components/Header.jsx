@@ -8,6 +8,7 @@ import debounce from "lodash.debounce";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 // const Header = ({
 //   handleLogin,
@@ -18,44 +19,44 @@ import { useNavigate } from "react-router-dom";
 // }) => {
 const Header = ({ handleLogin, onSearch }) => {
   const { t } = useTranslation();
-  const [userId, setUser] = useState(null);
+  // const [userId, setUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
+  const { authUser } = useAuthContext();
 
   const navigate = useNavigate();
   //const link = `/profile/${userId}`
 
   // Fetch user data on mount
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = Cookies.get("token");
-      if (token) {
-        try {
-          const tokenResponse = await axios.post(
-            "http://localhost:3000/users/getToken",
-            { token }
-          );
-          if (tokenResponse.status === 200) {
-            const userData = tokenResponse.data;
-            setUser(userData._id);
-            setUserName(`${userData.firstName} ${userData.lastName}`);
-            setLoggedIn(true); // Ensure this happens in the same sequence
-          } else {
-            setLoggedIn(false);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setLoggedIn(false);
-        }
-      } else {
-        setLoggedIn(false);
-      }
-    };
-    fetchUserData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const token = Cookies.get("token");
+  //     if (token) {
+  //       try {
+  //         const tokenResponse = await axios.post(
+  //           "http://localhost:3000/users/getToken",
+  //           { token }
+  //         );
+  //         if (tokenResponse.status === 200) {
+  //           const userData = tokenResponse.data;
+  //           setUser(userData._id);
+  //           setUserName(`${userData.firstName} ${userData.lastName}`);
+  //           setLoggedIn(true); // Ensure this happens in the same sequence
+  //         } else {
+  //           setLoggedIn(false);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching user data:", error);
+  //         setLoggedIn(false);
+  //       }
+  //     } else {
+  //       setLoggedIn(false);
+  //     }
+  //   };
+  //   fetchUserData();
+  // }, []);
 
   // Debounced search logic to query the API
   const debouncedSearch = useCallback(
@@ -133,25 +134,32 @@ const Header = ({ handleLogin, onSearch }) => {
     setShowSuggestions(false);
   };
 
-  useEffect(() => {
-    if (loggedIn && userName) {
-      console.log("User is logged in:", userName); // For debugging
-    }
-  }, [loggedIn, userName]); // This will trigger a re-render when either state changes
+  // useEffect(() => {
+  //   if (loggedIn && userName) {
+  //     console.log("User is logged in:", userName); // For debugging
+  //   }
+  // }, [loggedIn, userName]); // This will trigger a re-render when either state changes
 
-  const getUserInitials = () => {
-    if (!userName) return "";
-    const nameParts = userName.split(" ");
-    const firstInitial = nameParts[0].charAt(0).toUpperCase();
-    const lastInitial = nameParts[1]
-      ? nameParts[1].charAt(0).toUpperCase()
-      : "";
-    return `${firstInitial}${lastInitial}`;
-  };
+  // const getUserInitials = () => {
+  //   if (!userName) return "";
+  //   const nameParts = userName.split(" ");
+  //   const firstInitial = nameParts[0].charAt(0).toUpperCase();
+  //   const lastInitial = nameParts[1]
+  //     ? nameParts[1].charAt(0).toUpperCase()
+  //     : "";
+  //   return `${firstInitial}${lastInitial}`;
+    
+  // };
 
   const userProfile = () => {
-    navigate(`/profile/${userId}`);
+    navigate(`/profile/${authUser._id}`);
   };
+
+  useEffect(() => {
+    if (authUser) {
+      setLoggedIn(true);
+    }
+  },[authUser])
 
   return (
     <header className="header" aria-label="Main header">
@@ -211,13 +219,21 @@ const Header = ({ handleLogin, onSearch }) => {
 
           {/* Profile Picture or Initials */}
           <div
-            className="profile-circle"
+            className=""//"profile-circle"
             onClick={loggedIn ? userProfile : handleLogin}
           >
             {loggedIn ? (
-              <span className="profile-initials">{getUserInitials()}</span>
+              <div className="profile-circle bg-[#7199e9]  hover:bg-[#264bae] hover:scale-110 transition cursor-pointer">
+                {/* <span className="profile-initials">{getUserInitials()}</span> */}
+                  <span className="z-50 text-2xl text-white flex items-center justify-center">
+                    {authUser.firstName[0].toUpperCase()}{authUser.lastName[0].toUpperCase()}
+                  </span>
+              </div>
             ) : (
-              <img src={profileIcon} alt="Profile" className="profile-icon" />
+              <div>
+                <img src={profileIcon} alt="Profile" className="w-14 h-14 bg-[#ffffff] rounded-full border-white "/>
+                
+              </div>
             )}
           </div>
         </div>

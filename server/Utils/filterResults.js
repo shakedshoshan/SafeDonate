@@ -23,21 +23,6 @@ const processScrapedResults = (keyword, associationNumber, results) => {
 
 module.exports = { processScrapedResults };
 
-// Filter results where the associationNumber and keyword are found in the title or content
-//             const filteredResults = searchResults.filter(result =>
-//                 (result.title.includes(associationNumber) || result.content.includes(associationNumber)) &&
-//                 (result.title.includes(keyword) || result.content.includes(keyword))
-//             );
-
-//             //console.log(`Filtered Results for keyword '${keyword}':`, filteredResults);
-
-//             // Store the filtered results
-//             results.push({
-//                 keyword,
-//                 filteredResults
-//             });
-
-
 
 
 

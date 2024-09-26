@@ -3,9 +3,9 @@ const userController = require('../controllers/userController');
 
 const userRouter = express.Router();
 
-userRouter.post('/signup', userController.signup);
-userRouter.post('/login', userController.login);
-userRouter.post('/getToken', userController.verifyToken);
+// userRouter.post('/signup', userController.signup);
+// userRouter.post('/login', userController.login);
+// userRouter.post('/getToken', userController.verifyToken);
 
 userRouter.get('/allUsers', userController.getAllUsers);
 userRouter.get('/favorite/:userId', userController.getFavoriteAssociations);
@@ -17,7 +17,5 @@ userRouter.put('/updateRemove/:userId', userController.removeUserFavorite);
 
 userRouter.delete('/deleteUserById/:id', userController.deleteUserById )
 userRouter.delete('/deleteAllUsers', userController.deleteAllUsers);
-
-
 
 module.exports = userRouter;

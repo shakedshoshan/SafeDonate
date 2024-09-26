@@ -3,37 +3,42 @@ import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import "./UserProfile.css";
+import { useAuthContext } from "./context/AuthContext";
+import  useLogout  from "./hooks/useLogout";
+
 
 const UserProfile = () => {
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [donations, setDonations] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const navigate = useNavigate();
+  const { authUser } = useAuthContext();
+  const { loading, logout } = useLogout();
 
   //console.log(userId)
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (!token) {
-          console.log("No token");
-          return;
-        }
+      // try {
+        // const token = Cookies.get("token");
+        // if (!token) {
+        //   console.log("No token");
+        //   return;
+        // }
 
-        const userResponse = await axios.post(
-          "http://localhost:3000/users/getToken",
-          { token }
-        );
+        // const userResponse = await axios.post(
+        //   "http://localhost:3000/users/getToken",
+        //   { token }
+        // );
 
-        if (userResponse.status === 200) {
-          const fetchedUser = userResponse.data;
-          setUser(fetchedUser);
+        // if (userResponse.status === 200) {
+        //   const fetchedUser = userResponse.data;
+        //   setUser(fetchedUser);
 
-         // if (fetchedUser._id) {
+         if (authUser) {
             try {
               const donationsResponse = await axios.get(
-                `http://localhost:3000/donations/${userId}`
+                `http://localhost:5000/donations/${userId}`
               );
             
               if (donationsResponse.status === 200) {
@@ -47,12 +52,12 @@ const UserProfile = () => {
 
             try {
               const favoritesResponse = await axios.get(
-                `http://localhost:3000/users/favorite/${userId}`
+                `http://localhost:5000/users/favorite/${userId}`
               );
 
               if (favoritesResponse.status === 200) {
                 setFavorites(favoritesResponse.data.favoriteAssociations);
-                //console.log(favoritesResponse.data.favorite.associationName);
+                // console.log(favoritesResponse.data.favoriteAssociations);
               } else {
                 console.log("No favorite associations found");
               }
@@ -68,17 +73,18 @@ const UserProfile = () => {
         } else {
           console.log("Token verification failed.");
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
+      // } catch (error) {
+      //   console.error("Error fetching user data:", error);
+      // }
     };
 
     fetchUserData();
-  }, [userId]);
+  }, []);
 
-  const handleLogout = () => {
-    Cookies.remove("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    console.log("Logging out...");
+    await logout();
+    console.log(authUser);
     window.location.reload();
   };
 
@@ -90,7 +96,7 @@ const UserProfile = () => {
     ) {
       try {
         const response = await axios.delete(
-          `http://localhost:3000/users/deleteUserById/${userId}`
+          `http://localhost:5000/users/deleteUserById/${userId}`
         );
         if (response.status === 200) {
           alert("Your account has been successfully deleted.");
@@ -104,7 +110,7 @@ const UserProfile = () => {
     }
   };
 
-  if (!user) return <p>You don't have a user account.</p>;
+  if (!authUser) return <p>You don't have a user account.</p>;
 
   return (
     <div className="profile-page">
@@ -113,9 +119,9 @@ const UserProfile = () => {
 
         {/* User Info */}
         <div className="user-info">
-          <div>שם פרטי: {user.firstName}</div>
-          <div>שם משפחה: {user.lastName}</div>
-          <div>אימייל: {user.email}</div>
+          <div>שם פרטי: {authUser.firstName}</div>
+          <div>שם משפחה: {authUser.lastName}</div>
+          <div>אימייל: {authUser.email}</div>
         </div>
 
         {/* Donations */}

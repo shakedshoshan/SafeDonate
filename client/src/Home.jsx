@@ -5,6 +5,8 @@ import AssociationCrusel from "./components/AssociationCrusel";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom"; // Import useLocation
+import { useAuthContext } from "./context/AuthContext";
+
 
 const Home = ({
   filteredData,
@@ -13,6 +15,7 @@ const Home = ({
   setSuggestions,
   setNpoData,
 }) => {
+  const { authUser } = useAuthContext();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,34 +28,34 @@ const Home = ({
   const dataToDisplay = filteredData.length > 0 ? filteredData : data;
 
   // Fetch user info and association data
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const token = Cookies.get("token");
-      if (!token) {
-        console.log("No token found, user is not authenticated.");
-        setUser(null);
-        return;
-      }
-      try {
-        const tokenResponse = await axios.post(
-          "http://localhost:3000/users/getToken",
-          { token }
-        );
-        if (tokenResponse.status === 200) {
-          setUser(tokenResponse.data);
-        } else {
-          throw new Error("Token verification failed.");
-        }
-      } catch (error) {
-        console.error("Error verifying token:", error);
-        Cookies.remove("token");
-        setUser(null);
-        setError(error.toString());
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     const token = Cookies.get("token");
+  //     if (!token) {
+  //       console.log("No token found, user is not authenticated.");
+  //       setUser(null);
+  //       return;
+  //     }
+  //     try {
+  //       const tokenResponse = await axios.post(
+  //         "http://localhost:3000/users/getToken",
+  //         { token }
+  //       );
+  //       if (tokenResponse.status === 200) {
+  //         setUser(tokenResponse.data);
+  //       } else {
+  //         throw new Error("Token verification failed.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error verifying token:", error);
+  //       Cookies.remove("token");
+  //       setUser(null);
+  //       setError(error.toString());
+  //     }
+  //   };
 
-    fetchUserInfo();
-  }, []);
+  //   fetchUserInfo();
+  // }, []);
 
   // Fetch associations or use filteredNPOs
   useEffect(() => {
