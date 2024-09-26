@@ -9,6 +9,7 @@ const Login = () => {
    const [password, setPassword] = useState(""); // Password input state
    const [showForgotPassword, setShowForgotPassword] = useState(false); // Modal state
    const [confirmationMessage, setConfirmationMessage] = useState(""); // Confirmation state
+   const [errorMessage, setErrorMessage] = useState("");
    const navigate = useNavigate();
 
    const { loading, login } = useLogin();
@@ -29,7 +30,7 @@ const Login = () => {
    const handleSendResetEmail = async (e) => {
       e.preventDefault();
       try {
-         await axios.post("http://localhost:3000/users/reset-password", { email }); // API for password reset
+         await axios.post("http://localhost:5000/users/reset-password", { email }); // API for password reset
          setConfirmationMessage("אישור נשלח לדוא'ל שלך");
       } catch (error) {
          console.error("Error sending reset email:", error);

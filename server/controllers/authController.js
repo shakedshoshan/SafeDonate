@@ -39,7 +39,7 @@ module.exports.signup = async function signup(req, res) {
 		const user = await User.findOne({ email });
 
 		if (user) {
-			return res.status(400).json({ error: "Email already exists" });
+			return res.status(400).json({ error: "קיים חשבון לכתובת מייל זו" });
 		}
 
 		
