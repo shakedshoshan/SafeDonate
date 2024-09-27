@@ -20,10 +20,8 @@
 }
 
 .header-logo {
-  height: 100px; /* Default size */
-  max-width: 100%;
-  width: auto;
-  transition: height 0.3s ease-in-out; /* Smooth resizing */
+  height: 100px; /* Fixed height */
+  width: auto; /* Maintain aspect ratio */
 }
 
 

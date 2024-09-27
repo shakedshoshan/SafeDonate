@@ -1,8 +1,13 @@
 /* Main Layout */
+.main-content {
+  margin-top: 120px; /* Adjust this value based on your header's height */
+}
+
 .association-page {
     display: flex;
     justify-content: space-between;
     padding: 20px;
+   
 }
 
 /* Right Side Section Styling */
@@ -358,3 +363,44 @@
   .favorite-button.liked {
     background-color: #ff6b6b;
   }
+
+  .unauthenticated-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content vertically */
+    justify-content: center; /* Centers content horizontally */
+    height: 50vh; /* Full height of the viewport */
+    text-align: center;
+    width: 100%; /* Ensures full width */
+    padding: 20px; /* Optional: Add some padding for better spacing */
+    box-sizing: border-box; /* Makes sure padding is included in the width calculation */
+  }
+  
+  
+  .unauthenticated-message h2 {
+    font-size: 1.8rem;
+    color: #104d8e;
+    margin-bottom: 10px;
+  }
+  
+  .unauthenticated-message p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .login-button {
+    background-color: #3d9bc6;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #217ca6;
+  }
+  
