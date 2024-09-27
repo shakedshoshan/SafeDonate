@@ -1,11 +1,12 @@
 /* Header Styles */
 .header {
-  width: 100%;
-  background-color: transparent;
-  color: blue;
-  padding: 10px 0; /* Reduce padding */
-  box-shadow: none;
-  z-index: 1000;
+  position: fixed; /* Makes the header stick to the top */
+  top: 0; /* Position it at the very top */
+  width: 100%; /* Make sure it stretches across the page */
+  background-color: #fff; /* Set background color */
+  z-index: 1000; /* Ensures the header stays above other elements */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow effect */
+  padding: 10px 20px; /* Adjust padding as needed */
 }
 
 .header-container {

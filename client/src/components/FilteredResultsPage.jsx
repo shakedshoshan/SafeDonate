@@ -44,8 +44,8 @@ const FilteredResultsPage = () => {
 
   return (
     <div className="filtered-results-page">
-      <h2>עמותות נבחרות</h2>
-
+      <h2 className="filtered-results-page-title"></h2>
+      {"עמותות נבחרות"}
       <div className="grid-container">
         {displayedNPOs.map((npo, index) => (
           <div

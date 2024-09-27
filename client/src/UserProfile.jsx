@@ -4,8 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import "./UserProfile.css";
 import { useAuthContext } from "./context/AuthContext";
-import  useLogout  from "./hooks/useLogout";
-
+import useLogout from "./hooks/useLogout";
 
 const UserProfile = () => {
   const { userId } = useParams();
@@ -18,40 +17,37 @@ const UserProfile = () => {
   //console.log(userId)
   useEffect(() => {
     const fetchUserData = async () => {
-         if (authUser) {
-            try {
-              const donationsResponse = await axios.get(
-                `http://localhost:5000/donations/${userId}`
-              );
-            
-              if (donationsResponse.status === 200) {
-                setDonations(donationsResponse.data || []);
-              } else {
-                console.log("No donations found");
-              }
-            } catch (error) {
-              console.error("Failed to fetch user's donation list:", error);
-            }
+      if (authUser) {
+        try {
+          const donationsResponse = await axios.get(
+            `http://localhost:5000/donations/${userId}`
+          );
 
-            try {
-              const favoritesResponse = await axios.get(
-                `http://localhost:5000/users/favorite/${userId}`
-              );
-
-              if (favoritesResponse.status === 200) {
-                setFavorites(favoritesResponse.data.favoriteAssociations);
-              } else {
-                console.log("No favorite associations found");
-              }
-            } catch (error) {
-              console.error(
-                "Failed to fetch user's favorite associations:",
-                error
-              );
-            }
-        } else {
-          console.log("Token verification failed.");
+          if (donationsResponse.status === 200) {
+            setDonations(donationsResponse.data || []);
+          } else {
+            console.log("No donations found");
+          }
+        } catch (error) {
+          console.error("Failed to fetch user's donation list:", error);
         }
+
+        try {
+          const favoritesResponse = await axios.get(
+            `http://localhost:5000/users/favorite/${userId}`
+          );
+
+          if (favoritesResponse.status === 200) {
+            setFavorites(favoritesResponse.data.favoriteAssociations);
+          } else {
+            console.log("No favorite associations found");
+          }
+        } catch (error) {
+          console.error("Failed to fetch user's favorite associations:", error);
+        }
+      } else {
+        console.log("Token verification failed.");
+      }
     };
 
     fetchUserData();
@@ -132,9 +128,11 @@ const UserProfile = () => {
                   color: "blue",
                   textDecoration: "underline",
                 }}
+                onClick={() =>
+                  navigate(`/AssociationPage/${association.number}`)
+                } // Redirect to the AssociationPage with the association number
               >
-                 {association.name}
-                {/* {association.name} (Number: {association.number}) */}
+                {association.name}
               </div>
             ))
           ) : (
