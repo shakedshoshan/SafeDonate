@@ -1,6 +1,6 @@
 const User = require('../models/userModel.js');
 const bcrypt = require('bcryptjs');
-const generateTokenAndSetCookie = require('../utils/generateToken.js');//.default;
+const generateTokenAndSetCookie = require('../utils/generateToken.js');
 
 module.exports.login = async function login(req, res) {
 	try {
@@ -9,7 +9,7 @@ module.exports.login = async function login(req, res) {
 		const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
 		if (!user || !isPasswordCorrect) {
-			return res.status(400).json({ error: "Invalid username or password" });
+			return res.status(400).json({ error: "אימייל וסיסמא לא תואמים" });
 		}
 
 		generateTokenAndSetCookie(user._id, res);
@@ -18,7 +18,7 @@ module.exports.login = async function login(req, res) {
 			_id: user._id,
 			firstName: user.firstName,
 			lastName: user.lastName,
-			email: user.username,
+			email: user.email,
 			//profilePic: user.profilePic,
 		});
 	} catch (error) {
@@ -33,7 +33,7 @@ module.exports.signup = async function signup(req, res) {
 		
 
 		if (password !== confirmPassword) {
-			return res.status(400).json({ error: "Passwords don't match" });
+			return res.status(400).json({ error: "סיסמאות לא תואמות" });
 		}
 
 		const user = await User.findOne({ email });

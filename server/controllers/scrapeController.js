@@ -14,7 +14,7 @@ module.exports.scrapeOnline = async function scrapeOnline(req, res) {
         });
         console.log("yes")
         console.log('final results: ', filteredResults)
-        return res.json({results: filteredResults});
+        return res.status(200).json({results: filteredResults});
 
     } catch (error) {
         console.log("no")

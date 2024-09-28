@@ -39,9 +39,7 @@ const AssociationPage = () => {
     const fetchAssociation = async () => {
       try {
         if (authUser) {
-          const cachedData = sessionStorage.getItem(
-            `assoc_${associationNumber}`
-          );
+          const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
           if (cachedData) {
             console.log("doing caching");
             const parsedData = JSON.parse(cachedData);
@@ -61,16 +59,11 @@ const AssociationPage = () => {
             const associationData = response.data.result.records[0];
 
             // Store the fetched data in sessionStorage
-            sessionStorage.setItem(
-              `assoc_${associationNumber}`,
-              JSON.stringify(associationData)
-            );
+            sessionStorage.setItem(`assoc_${associationNumber}`,JSON.stringify(associationData));
             setAssociation(associationData);
             setLoadingAssociation(false);
 
             // Extract association number and fetch approvals
-            //const associationNumber = associationData["מספר עמותה"];
-            //await fetchApprovals(associationNumber);
           } else {
             setError("No association found");
           }
@@ -80,7 +73,6 @@ const AssociationPage = () => {
         console.error("Failed to fetch association data:", error);
         setError(error);
         setLoadingAssociation(false);
-        // setHasCookie(false);
       }
     };
     fetchAssociation();
@@ -117,13 +109,10 @@ const AssociationPage = () => {
         const associationNumber = association["מספר עמותה"];
         const category = association["סיווג פעילות ענפי"];
         let cleanedStr = category.replace(/~/g, ""); // Remove all '~' characters
-        //setLoading(true);
 
         try {
           // Check if data is in sessionStorage
-          const cachedScrapingData = sessionStorage.getItem(
-            `scrape_${associationNumber}`
-          );
+          const cachedScrapingData = sessionStorage.getItem(`scrape_${associationNumber}`);
           if (cachedScrapingData) {
             console.log("doing caching of scraped Data");
             setNegativeInfo(JSON.parse(cachedScrapingData));
@@ -132,25 +121,21 @@ const AssociationPage = () => {
             return;
           }
 
-          console.log("doing only scraping");
+          console.log("Fetching new scraping data...");
           // Fetch data from the API if not cached
           const response = await axios.post(
             "http://localhost:5000/scrape/search",
             {
-              associationNumber: associationNumber,
+              associationNumber,
               category: cleanedStr,
             }
           );
-
-          if (response.data.length > 0) {
-            const scrapedData = response.data;
-
+          const scrapedData = response.data;
+          if (scrapedData.results.length > 0) {
+            console.log(scrapedData.results)        
             // Store the scraped data in sessionStorage
-            sessionStorage.setItem(
-              `scrape_${associationNumber}`,
-              JSON.stringify(scrapedData)
-            );
-            setNegativeInfo(scrapedData); // Save negative info
+            sessionStorage.setItem(`scrape_${associationNumber}`,JSON.stringify(scrapedData.results));
+            setNegativeInfo(scrapedData.results); // Save negative info
 
             // Filter the results by categories (פלילי, פירוק, הליכים)
             const categories = ["פלילי", "פירוק", "הליכים"];
@@ -163,7 +148,7 @@ const AssociationPage = () => {
 
             setCategoryCounts(counts); // Save counts
           } else {
-            setError("No scraped data found");
+            console.log("No scraped data found");
           }
         } catch (error) {
           console.error("Failed to fetch or process scraped data:", error);
