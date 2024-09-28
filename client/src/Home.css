@@ -15,6 +15,7 @@
   font-size: 36px;
   font-weight: bold;
   background: linear-gradient(90deg, #eff4f5, #d6e4f4);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 40px;
@@ -65,6 +66,7 @@
   text-overflow: ellipsis; /* Adds ellipsis (...) if the text is too long */
   padding: 0 5px; /* Padding from the sides to prevent text from touching borders */
   display: -webkit-box;
+  line-clamp:4;
   -webkit-line-clamp: 4; /* Limit to 4 lines */
   -webkit-box-orient: vertical;
 }
