@@ -27,7 +27,7 @@ const FilteredResultsPage = () => {
     ) {
       setLoading(true);
       setTimeout(() => {
-        setVisibleCount((prev) => prev + 3); // Show 3 more NPOs
+        setVisibleCount((prev) => prev + 9); // Show 3 more NPOs
         setLoading(false);
       }, 1000); // Simulate loading time
     }
@@ -55,7 +55,9 @@ const FilteredResultsPage = () => {
           >
             <div className="grid-item-title">{npo["שם עמותה בעברית"]}</div>
             <div className="grid-item-content">
-              {npo["מטרות עמותה"] || "No description available"}
+              {npo["מטרות עמותה"]
+                ? npo["מטרות עמותה"].replace(/~/g, " ") // Replaces all tildes with spaces
+                : "No description available"}
             </div>
           </div>
         ))}

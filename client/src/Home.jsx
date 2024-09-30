@@ -7,7 +7,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImg from "./assets/background.png";
 import { useAuthContext } from "./context/AuthContext";
 
-
 const Home = ({ setSuggestions, setNpoData }) => {
   const [data, setData] = useState([]); // NPO data fetched from API
   const [randomNPOs, setRandomNPOs] = useState([]); // Random NPOs for display
@@ -90,7 +89,9 @@ const Home = ({ setSuggestions, setNpoData }) => {
           >
             <div className="grid-item-title">{npo["שם עמותה בעברית"]}</div>
             <div className="grid-item-content">
-              {npo["מטרות עמותה"] || "No description available"}
+              {npo["מטרות עמותה"]
+                ? npo["מטרות עמותה"].replace(/~/g, " ") // Replaces all tildes with spaces
+                : "No description available"}
             </div>
           </div>
         ))}
