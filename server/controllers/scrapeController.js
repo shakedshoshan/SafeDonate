@@ -12,13 +12,10 @@ module.exports.scrapeOnline = async function scrapeOnline(req, res) {
            const filtered = processScrapedResults(keyword, associationNumber, scrapedResults);
            filteredResults.push(filtered);
         });
-        console.log("yes")
         console.log('final results: ', filteredResults)
         return res.status(200).json({results: filteredResults});
 
     } catch (error) {
-        console.log("no")
-        console.log("Error during scraping or filtering:", error);
         return res.status(500).json({ error: 'Failed to scrape data' });
     }
 }

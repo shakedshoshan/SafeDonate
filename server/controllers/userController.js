@@ -1,6 +1,4 @@
 const User = require('../models/userModel.js');
-const jwt = require('jsonwebtoken');
-const cookie = require('cookie');
 
 // Get all users
 module.exports.getAllUsers = async function getAllUsers(req, res) {

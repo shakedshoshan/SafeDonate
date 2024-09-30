@@ -141,7 +141,7 @@ const AssociationPage = () => {
             const categories = ["פלילי", "פירוק", "הליכים"];
             const counts = {};
             categories.forEach((category) => {
-              counts[category] = scrapedData.filter(
+              counts[category] = scrapedData.results.filter(
                 (item) => item.keyword === category
               ).length;
             });
