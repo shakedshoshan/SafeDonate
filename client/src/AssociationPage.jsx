@@ -24,6 +24,8 @@ const AssociationPage = () => {
   const [negativeInfo, setNegativeInfo] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState({});
   const [expandedCategory, setExpandedCategory] = useState(null);
+  const [showApprovalTable, setShowApprovalTable] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
   // const [hasCookie, setHasCookie] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { authUser } = useAuthContext();
@@ -34,12 +36,22 @@ const AssociationPage = () => {
     navigate("/login");
   };
 
+  const toggleApprovalTable = () => {
+    setShowApprovalTable((prev) => !prev);
+  };
+
+  const toggleExplanation = () => {
+    setShowExplanation((prev) => !prev);
+  };
+
   // Fetch association data from the API
   useEffect(() => {
     const fetchAssociation = async () => {
       try {
         if (authUser) {
-          const cachedData = sessionStorage.getItem(`assoc_${associationNumber}`);
+          const cachedData = sessionStorage.getItem(
+            `assoc_${associationNumber}`
+          );
           if (cachedData) {
             console.log("doing caching");
             const parsedData = JSON.parse(cachedData);
@@ -59,7 +71,10 @@ const AssociationPage = () => {
             const associationData = response.data.result.records[0];
 
             // Store the fetched data in sessionStorage
-            sessionStorage.setItem(`assoc_${associationNumber}`,JSON.stringify(associationData));
+            sessionStorage.setItem(
+              `assoc_${associationNumber}`,
+              JSON.stringify(associationData)
+            );
             setAssociation(associationData);
             setLoadingAssociation(false);
 
@@ -112,7 +127,9 @@ const AssociationPage = () => {
 
         try {
           // Check if data is in sessionStorage
-          const cachedScrapingData = sessionStorage.getItem(`scrape_${associationNumber}`);
+          const cachedScrapingData = sessionStorage.getItem(
+            `scrape_${associationNumber}`
+          );
           if (cachedScrapingData) {
             console.log("doing caching of scraped Data");
             setNegativeInfo(JSON.parse(cachedScrapingData));
@@ -132,9 +149,12 @@ const AssociationPage = () => {
           );
           const scrapedData = response.data;
           if (scrapedData.results.length > 0) {
-            console.log(scrapedData.results)        
+            console.log(scrapedData.results);
             // Store the scraped data in sessionStorage
-            sessionStorage.setItem(`scrape_${associationNumber}`,JSON.stringify(scrapedData.results));
+            sessionStorage.setItem(
+              `scrape_${associationNumber}`,
+              JSON.stringify(scrapedData.results)
+            );
             setNegativeInfo(scrapedData.results); // Save negative info
 
             // Filter the results by categories (פלילי, פירוק, הליכים)
@@ -320,6 +340,7 @@ const AssociationPage = () => {
                       </tbody>
                     </table>
                   )}
+
                   {negativeInfo.filter((item) => item.keyword === "פירוק")
                     .length > 0 && (
                     <div
@@ -418,106 +439,136 @@ const AssociationPage = () => {
                 </div>
               )}
 
-              {/* Table for Yearly Approval */}
               {approvals && approvals.length > 0 && (
                 <div className="approvals-section">
-                  <h2>היסטוריית אישורים:</h2>
-                  <table className="approvals-table">
-                    <thead>
-                      <tr>
-                        <th>שנת האישור</th>
-                        <th>האם מאושר</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {approvals.map((record, index) => (
-                        <tr key={index}>
-                          <td>{record["שנת האישור"]}</td>
-                          <td>{record["האם יש אישור"]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+                  <div className="approvals-header">
+                    {/* Top Right: טבלת אישורים or הסתר טבלה */}
+                    <span
+                      className="toggle-table-link"
+                      onClick={toggleApprovalTable}
+                    >
+                      {showApprovalTable ? "הסתר טבלה" : "טבלת אישורים"}
+                    </span>
 
-            {/* Donation Popup */}
-            {showModal && (
-              <div className="popup-overlay">
-                <div className="popup-content">
-                  <button onClick={handleCloseModal} className="close-popup">
-                    &times;
-                  </button>
-                  <div className="popup-title">
-                    <span>תשלום מאובטח</span>
-                    <span className="lock-icon">🔒</span>
-                  </div>
-
-                  <div className="radio-group">
-                    <label className="radio-label">
-                      <input
-                        type="radio"
-                        value="חד פעמי"
-                        checked={donationType === "חד פעמי"}
-                        onChange={() => setDonationType("חד פעמי")}
-                      />
-                      תרומה חד פעמית
-                    </label>
-                    <label className="radio-label">
-                      <input
-                        type="radio"
-                        value="הוראת קבע"
-                        checked={donationType === "הוראת קבע"}
-                        onChange={() => setDonationType("הוראת קבע")}
-                      />
-                      הוראת קבע
-                    </label>
-                  </div>
-
-                  <input
-                    type="number"
-                    className="donation-amount"
-                    placeholder="סכום תרומה"
-                    value={donationAmount}
-                    onChange={(e) => setDonationAmount(e.target.value)}
-                  />
-
-                  <div
-                    className={`checkbox-group ${
-                      addDedication ? "show-dedication" : ""
-                    }`}
-                  >
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={addDedication}
-                        onChange={() => setAddDedication(!addDedication)}
-                      />
-                      רוצה להוסיף הקדשה
-                    </label>
-                    {addDedication && (
-                      <textarea
-                        className="dedication-text"
-                        placeholder="כתוב כאן את ההקדשה שלך"
-                        value={dedicationText}
-                        onChange={(e) => setDedicationText(e.target.value)}
-                      />
+                    {/* Top Left: למה צריך את זה (Visible only after table is shown) */}
+                    {showApprovalTable && (
+                      <span
+                        className="explanation-text-link"
+                        onClick={toggleExplanation}
+                      >
+                        למה צריך את זה?
+                      </span>
                     )}
                   </div>
 
-                  <button className="submit-donation" onClick={handleSubmit}>
-                    תרמו עכשיו
-                  </button>
-
-                  {donationAmount && (
-                    <p className="donation-summary">
-                      סכום לתרומה: ₪{donationAmount}
+                  {/* Explanation text above the table */}
+                  {showApprovalTable && showExplanation && (
+                    <p className="explanation-text">
+                      טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
+                      עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
+                      החוק, מה שמגביר את אמינותן.
                     </p>
                   )}
+
+                  {/* Show the approval table only if it's toggled */}
+                  {showApprovalTable && (
+                    <table className="approvals-table">
+                      <thead>
+                        <tr>
+                          <th>שנת האישור</th>
+                          <th>האם מאושר</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {approvals.map((record, index) => (
+                          <tr key={index}>
+                            <td>{record["שנת האישור"]}</td>
+                            <td>{record["האם יש אישור"]}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Donation Popup */}
+              {showModal && (
+                <div className="popup-overlay">
+                  <div className="popup-content">
+                    <button onClick={handleCloseModal} className="close-popup">
+                      &times;
+                    </button>
+                    <div className="popup-title">
+                      <span>תשלום מאובטח</span>
+                      <span className="lock-icon">🔒</span>
+                    </div>
+
+                    <div className="radio-group">
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          value="חד פעמי"
+                          checked={donationType === "חד פעמי"}
+                          onChange={() => setDonationType("חד פעמי")}
+                        />
+                        תרומה חד פעמית
+                      </label>
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          value="הוראת קבע"
+                          checked={donationType === "הוראת קבע"}
+                          onChange={() => setDonationType("הוראת קבע")}
+                        />
+                        הוראת קבע
+                      </label>
+                    </div>
+
+                    <input
+                      type="number"
+                      className="donation-amount"
+                      placeholder="סכום תרומה"
+                      value={donationAmount}
+                      onChange={(e) => setDonationAmount(e.target.value)}
+                    />
+
+                    <div
+                      className={`checkbox-group ${
+                        addDedication ? "show-dedication" : ""
+                      }`}
+                    >
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={addDedication}
+                          onChange={() => setAddDedication(!addDedication)}
+                        />
+                        רוצה להוסיף הקדשה
+                      </label>
+                      {addDedication && (
+                        <textarea
+                          className="dedication-text"
+                          placeholder="כתוב כאן את ההקדשה שלך"
+                          value={dedicationText}
+                          onChange={(e) => setDedicationText(e.target.value)}
+                        />
+                      )}
+                    </div>
+
+                    <button className="submit-donation" onClick={handleSubmit}>
+                      תרמו עכשיו
+                    </button>
+
+                    {donationAmount && (
+                      <p className="donation-summary">
+                        סכום לתרומה: ₪{donationAmount}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <div className="unauthenticated-message">

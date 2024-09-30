@@ -404,3 +404,86 @@
     background-color: #217ca6;
   }
   
+  /* Button for toggling the approval table */
+.toggle-table-button {
+  background-color: #3d9bc6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.toggle-table-button:hover {
+  background-color: #217ca6;
+}
+
+/* Approvals Section */
+
+.approvals-header {
+  display: flex;
+  justify-content: space-between; /* Aligns items on opposite sides */
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Clickable Text for Explanation (left) */
+.explanation-text-link {
+  color: #217ca6;
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-decoration: underline;
+  align-self: flex-start; /* Ensures it's aligned to the left */
+}
+
+.explanation-text-link:hover {
+  color: #104d8e;
+}
+
+/* Clickable Text for Table Toggle (right) */
+.toggle-table-link {
+  color: #217ca6;
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-decoration: underline;
+  align-self: flex-end; /* Ensures it's aligned to the right */
+}
+
+.toggle-table-link:hover {
+  color: #104d8e;
+}
+
+/* Explanation Text */
+.explanation-text {
+  font-size: 1rem;
+  color: #666;
+  background-color: #f0f4f8;
+  padding: 10px;
+  border-left: 4px solid #217ca6;
+  margin-bottom: 15px;
+}
+
+.toggle-table-link, .explanation-text-link {
+  color: #104d8e;
+  font-size: 1.2rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.toggle-table-link:hover, .explanation-text-link:hover {
+  color: #217ca6;
+}
+
+/* Explanation text styling */
+.explanation-text {
+  background-color: #f0f8ff;
+  border-radius: 10px;
+  padding: 15px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: right; /* RTL alignment */
+  font-size: 1.1rem;
+}

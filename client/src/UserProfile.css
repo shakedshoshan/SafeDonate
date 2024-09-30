@@ -1,4 +1,8 @@
 /* Basic page styling */
+.main-content {
+  margin-top: 120px; /* Adjust this value based on your header's height */
+}
+
 .profile-page {
   display: flex;
   justify-content: center;

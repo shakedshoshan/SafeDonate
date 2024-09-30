@@ -85,74 +85,76 @@ const UserProfile = () => {
   if (!authUser) return <p>You don't have a user account.</p>;
 
   return (
-    <div className="profile-page">
-      <div className="profile-container">
-        <h2>פרופיל אישי</h2>
+    <div className="main-content">
+      <div className="profile-page">
+        <div className="profile-container">
+          <h2>פרופיל אישי</h2>
 
-        {/* User Info */}
-        <div className="user-info">
-          <div>שם פרטי: {authUser.firstName}</div>
-          <div>שם משפחה: {authUser.lastName}</div>
-          <div>אימייל: {authUser.email}</div>
-        </div>
+          {/* User Info */}
+          <div className="user-info">
+            <div>שם פרטי: {authUser.firstName}</div>
+            <div>שם משפחה: {authUser.lastName}</div>
+            <div>אימייל: {authUser.email}</div>
+          </div>
 
-        {/* Donations */}
-        <div className="donations-container">
-          <h3>התרומות שלי</h3>
-          {donations.length > 0 ? (
-            donations.map((donation, index) => (
-              <div key={index} className="donation-item">
-                תרומה ל-{donation.associationName}, סכום: ₪{donation.amount}
-              </div>
-            ))
-          ) : (
-            <button
-              onClick={() => navigate("/")}
-              className="start-donating-button"
-            >
-              התחלו לתרום
-            </button>
-          )}
-        </div>
-
-        {/* Favorites */}
-        <div className="favorites-container">
-          <h3>עמותות מועדפות</h3>
-          {favorites.length > 0 ? (
-            favorites.map((association, index) => (
-              <div
-                key={index}
-                className="favorite-item"
-                style={{
-                  cursor: "pointer",
-                  color: "blue",
-                  textDecoration: "underline",
-                }}
-                onClick={() =>
-                  navigate(`/AssociationPage/${association.number}`)
-                } // Redirect to the AssociationPage with the association number
+          {/* Donations */}
+          <div className="donations-container">
+            <h3>התרומות שלי</h3>
+            {donations.length > 0 ? (
+              donations.map((donation, index) => (
+                <div key={index} className="donation-item">
+                  תרומה ל-{donation.associationName}, סכום: ₪{donation.amount}
+                </div>
+              ))
+            ) : (
+              <button
+                onClick={() => navigate("/")}
+                className="start-donating-button"
               >
-                {association.name}
-              </div>
-            ))
-          ) : (
-            <button
-              onClick={() => navigate("/advanced-Search")}
-              className="find-npos-button"
-            >
-              חפשו עמותות להוסיף
-            </button>
-          )}
-        </div>
+                התחלו לתרום
+              </button>
+            )}
+          </div>
 
-        {/* Buttons */}
-        <div className="profile-buttons">
-          <button onClick={handleLogout} className="logout-button">
-            התנתק
-          </button>
-          <button onClick={handleDeleteAccount} className="delete-button">
-            מחק משתמש
-          </button>
+          {/* Favorites */}
+          <div className="favorites-container">
+            <h3>עמותות מועדפות</h3>
+            {favorites.length > 0 ? (
+              favorites.map((association, index) => (
+                <div
+                  key={index}
+                  className="favorite-item"
+                  style={{
+                    cursor: "pointer",
+                    color: "blue",
+                    textDecoration: "underline",
+                  }}
+                  onClick={() =>
+                    navigate(`/AssociationPage/${association.number}`)
+                  } // Redirect to the AssociationPage with the association number
+                >
+                  {association.name}
+                </div>
+              ))
+            ) : (
+              <button
+                onClick={() => navigate("/advanced-Search")}
+                className="find-npos-button"
+              >
+                חפשו עמותות להוסיף
+              </button>
+            )}
+          </div>
+
+          {/* Buttons */}
+          <div className="profile-buttons">
+            <button onClick={handleLogout} className="logout-button">
+              התנתק
+            </button>
+            <button onClick={handleDeleteAccount} className="delete-button">
+              מחק משתמש
+            </button>
+          </div>
         </div>
       </div>
     </div>
