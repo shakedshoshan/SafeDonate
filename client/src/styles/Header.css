@@ -6,46 +6,60 @@
   background-color: #fff; /* Set background color */
   z-index: 1000; /* Ensures the header stays above other elements */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow effect */
-  padding: 10px 20px; /* Adjust padding as needed */
+  padding: 15px 20px; /* Adjust padding as needed */
 }
 
 .header-container {
   display: flex;
   justify-content: space-between; /* Ensure the content is spread out */
   align-items: center;
-  max-width: 1200px; /* Limit the maximum width */
+  max-width: 2000px; /* Limit the maximum width */
   margin: 0 auto; /* Center the header */
   padding: 0 20px; /* Add padding on the sides */
   width: 100%;
 }
 
-.header-logo {
-  height: 100px; /* Fixed height */
-  width: auto; /* Maintain aspect ratio */
-}
-
 
 /* Logo */
-.header-title a {
-  text-decoration: none;
+.header-title {
+  /* text-decoration: none; */
   display: flex;
   align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  /* margin-left: 10px; */
 }
 
-/* .header-logo {
-  height: 80px; /* Adjust height for the logo to reduce size 
-  margin-right: 10px;
-} */
+.header-icon-link,
+.header-logo-link {
+  display: inline-flex; /* Ensures the links don’t break onto separate lines */
+}
+
+.header-icon {
+  height: 60px; /* Fixed height */
+  width: auto; /* Maintain aspect ratio */
+  transform: rotate(15deg);
+  /* block-size: 50px; */
+}
+
+.header-logo {
+  height: 60px; /* Fixed height */
+  width: auto; /* Maintain aspect ratio */
+  block-size: 50px;
+}
 
 /* Navigation */
 .header-nav {
   display: flex;
   align-items: center;
+  gap: 20px;
+  font-size: 23px;
+  
 }
 
 .header-tab {
   margin-left: 10px;
-  padding: 10px 20px;
+  padding: 20px 20px;
   color: blue;
   border: none;
   background: none;
@@ -65,9 +79,10 @@
 }
 
 .search-bar {
-  width: 400px;
+  margin-left: 20px;
+  width: 750px;
   padding: 10px;
-  margin-right: 20px;
+  /* margin-right: 20px; */
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
@@ -84,7 +99,7 @@
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
-  width: 400px;
+  width: 700px;
 }
 
 .suggestion-item {
@@ -123,7 +138,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   cursor: pointer;
-  margin-left: 20px;
+  margin-right: 50px;
   transition: background-color 0.3s ease;
 }
 

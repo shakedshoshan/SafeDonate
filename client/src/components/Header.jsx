@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import "../styles/Header.css";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo11.png";
+import icon from "../assets/icon44.png";
 import profileIcon from "../assets/user-profile-icon.png";
 import debounce from "lodash.debounce";
 import Cookies from "js-cookie";
@@ -91,9 +92,14 @@ const Header = ({ handleLogin }) => {
       <div className="header-container">
         {/* Logo */}
         <div className="header-title">
-          <a href="/">
+        <a href="/" className="header-icon-link">
+            <img src={icon} alt="SafeDonate Icon" className="header-icon" />
+          </a>
+          
+          <a href="/" className="header-logo-link">
             <img src={logo} alt="SafeDonate Logo" className="header-logo" />
           </a>
+         
         </div>
 
         {/* Navigation */}

@@ -22,8 +22,9 @@ const AssociationPage = () => {
   const [addDedication, setAddDedication] = useState(false);
   const [dedicationText, setDedicationText] = useState("");
   const [negativeInfo, setNegativeInfo] = useState([]);
-  const [categoryCounts, setCategoryCounts] = useState({});
-  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [categoryCounts, setCategoryCounts] = useState(0);
+  //const [expandedCategory, setExpandedCategory] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showApprovalTable, setShowApprovalTable] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   // const [hasCookie, setHasCookie] = useState(false);
@@ -31,6 +32,7 @@ const AssociationPage = () => {
   const { authUser } = useAuthContext();
   const [donationStatus, setDonationStatus] = useState(null); // Track donation status
   const navigate = useNavigate();
+  const [isCollapsible, setIsCollapsible] = useState(false);
 
   const handleLoginRedirect = () => {
     navigate("/login");
@@ -158,15 +160,16 @@ const AssociationPage = () => {
             setNegativeInfo(scrapedData.results); // Save negative info
 
             // Filter the results by categories (פלילי, פירוק, הליכים)
-            const categories = ["פלילי", "פירוק", "הליכים"];
-            const counts = {};
-            categories.forEach((category) => {
-              counts[category] = scrapedData.results.filter(
-                (item) => item.keyword === category
-              ).length;
-            });
+            // const categories = ["פלילי", "פירוק", "הליכים"];
 
-            setCategoryCounts(counts); // Save counts
+            // scrapedData.results.forEach((category) => {
+            //   counts[category] = scrapedData.results.filter(
+            //     (item) => item.keyword === category
+            //   ).length;
+            // });
+
+
+
           } else {
             console.log("No scraped data found");
           }
@@ -226,6 +229,10 @@ const AssociationPage = () => {
     setExpandedCategory(expandedCategory === category ? null : category);
   };
 
+  const handleToggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   // Modal handlers
   const handleOpenModal = () => {
     setShowModal(true);
@@ -238,6 +245,16 @@ const AssociationPage = () => {
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
+
+  useEffect(() => {
+    let counts = 0;
+    negativeInfo.forEach((result) => {
+      counts += result.filteredResults.length;
+    });
+    console.log("counts", counts)
+    setCategoryCounts(counts); // Save counts
+
+  }, [negativeInfo]);
 
   //if (loadingScraping) return <p>Loading Scraped data...</p>;
   if (loadingAssociation) return <p>Loading association data...</p>;
@@ -288,60 +305,50 @@ const AssociationPage = () => {
 
               {/* Negative Info Section */}
               {loadingScraping ? (
-                <p>Loading negative information...</p>
+                <p>מחפש מידע על העמותה...</p>
+              ) : categoryCounts === 0 ? (
+                <p>No negative sources were found.</p>
               ) : (
                 <div className="negative-info-summary">
-                  {negativeInfo.filter((item) => item.keyword === "פלילי")
-                    .length > 0 && (
-                    <div
-                      onClick={() => toggleCategory("פלילי")}
-                      className="category-header"
-                    >
-                      מצאתי{" "}
-                      {
-                        negativeInfo.filter(
-                          (item) => item.keyword === "פלילי"
-                        )[0].filteredResults.length
-                      }{" "}
-                      קישורים רלוונטים בהקשר פלילי
-                    </div>
-                  )}
-                  {expandedCategory === "פלילי" && (
+                  <div className="category-header" onClick={handleToggleExpand} style={{ cursor: 'pointer' }}>
+                    <p>
+                      מצאתי {categoryCounts} קישורים הקשורים לעמותה
+                      {isExpanded ? " ▲" : " ▼"}
+                    </p>
+                  </div>
+
+                  {isExpanded && (
                     <table className="category-content">
                       <thead>
                         <tr>
                           <th>כותרת</th>
                           <th>קישור</th>
-                          <th>תוכן</th>
+                          {/* <th>תוכן</th> */}
                         </tr>
                       </thead>
                       <tbody>
-                        {negativeInfo
-                          .filter((item) => item.keyword === "פלילי")[0]
-                          .filteredResults.map((result, index) => (
-                            <tr key={index}>
-                              <td>{result.title}</td>
+                        {negativeInfo.map((result, index) => (
+                          result.filteredResults.map((result1, index1) => (
+                            <tr key={index1}>
+                              <td>{result1.title}</td>
                               <td>
                                 <a
-                                  href={result.link}
+                                  href={result1.link}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
                                   קישור
                                 </a>
                               </td>
-                              <td>
-                                <div className="scrollable-content">
-                                  {result.content || "No content available"}
-                                </div>
-                              </td>
                             </tr>
-                          ))}
+                          ))
+                        ))}
                       </tbody>
                     </table>
                   )}
-
-                  {negativeInfo.filter((item) => item.keyword === "פירוק")
+                </div>
+              )}
+              {/* {negativeInfo.filter((item) => item.keyword === "פירוק")
                     .length > 0 && (
                     <div
                       onClick={() => toggleCategory("פירוק")}
@@ -435,9 +442,8 @@ const AssociationPage = () => {
                           ))}
                       </tbody>
                     </table>
-                  )}
-                </div>
-              )}
+                  )}*/}
+
 
               {approvals && approvals.length > 0 && (
                 <div className="approvals-section">
@@ -534,9 +540,8 @@ const AssociationPage = () => {
                     />
 
                     <div
-                      className={`checkbox-group ${
-                        addDedication ? "show-dedication" : ""
-                      }`}
+                      className={`checkbox-group ${addDedication ? "show-dedication" : ""
+                        }`}
                     >
                       <label>
                         <input
