@@ -49,13 +49,13 @@ const FavoriteButton = ({ association, userId }) => {
           className="favorite-button flex gap-2 bg-[#e84949] hover:bg-[#c73131]"
           onClick={handleClick}
         >
-          <p>מחק מהמועדפים</p>
+          <p>הסר מהמועדפים</p>
           <span className="">{"  ❤️"}</span>
         </button>
         
       ) : (
         <button
-          className="favorite-button flex gap-2 "
+          className="favorite-button flex gap-2"
           onClick={handleClick}
         >
            <p>הוסף למועדפים</p>

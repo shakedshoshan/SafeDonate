@@ -300,14 +300,18 @@ const AssociationPage = () => {
             <div className="left-section">
               <h2 className="goals-headline">מטרות העמותה</h2>
               <p className="npo-goals">
-                {association["מטרות עמותה"] || "No goals available"}
+                {association["מטרות עמותה"]
+                  ? association["מטרות עמותה"].replace(/[^א-ת.:,'()-/ ]/g, "") : "העמותה לא סיפקה תיאור"}
               </p>
 
+              <h2 className="negative-info-headline">מידע שנאסף על אמינות העמותה</h2>
               {/* Negative Info Section */}
               {loadingScraping ? (
                 <p>מחפש מידע על העמותה...</p>
               ) : categoryCounts === 0 ? (
-                <p>No negative sources were found.</p>
+                <p className="safe-to-donate-message">
+                  לא נמצא כל מידע שלילי על העמותה. העמותה נראית בטוחה לתרומה.
+                </p>
               ) : (
                 <div className="negative-info-summary">
                   <div className="category-header" onClick={handleToggleExpand} style={{ cursor: 'pointer' }}>
@@ -323,7 +327,6 @@ const AssociationPage = () => {
                         <tr>
                           <th>כותרת</th>
                           <th>קישור</th>
-                          {/* <th>תוכן</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -348,155 +351,63 @@ const AssociationPage = () => {
                   )}
                 </div>
               )}
-              {/* {negativeInfo.filter((item) => item.keyword === "פירוק")
-                    .length > 0 && (
-                    <div
-                      onClick={() => toggleCategory("פירוק")}
-                      className="category-header"
-                    >
-                      מצאתי{" "}
-                      {
-                        negativeInfo.filter(
-                          (item) => item.keyword === "פירוק"
-                        )[0].filteredResults.length
-                      }{" "}
-                      קישורים רלוונטים בהקשר פירוק
-                    </div>
-                  )}
-                  {expandedCategory === "פירוק" && (
-                    <table className="category-content">
-                      <thead>
-                        <tr>
-                          <th>כותרת</th>
-                          <th>קישור</th>
-                          <th>תוכן</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {negativeInfo
-                          .filter((item) => item.keyword === "פירוק")[0]
-                          .filteredResults.map((result, index) => (
-                            <tr key={index}>
-                              <td>{result.title}</td>
-                              <td>
-                                <a
-                                  href={result.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  קישור
-                                </a>
-                              </td>
-                              <td>
-                                {result.content || "No content available"}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  )}
-
-                  {negativeInfo.filter((item) => item.keyword === "הליכים")
-                    .length > 0 && (
-                    <div
-                      onClick={() => toggleCategory("הליכים")}
-                      className="category-header"
-                    >
-                      מצאתי{" "}
-                      {
-                        negativeInfo.filter(
-                          (item) => item.keyword === "הליכים"
-                        )[0].filteredResults.length
-                      }{" "}
-                      קישורים רלוונטים בהקשר הליכים
-                    </div>
-                  )}
-                  {expandedCategory === "הליכים" && (
-                    <table className="category-content">
-                      <thead>
-                        <tr>
-                          <th>כותרת</th>
-                          <th>קישור</th>
-                          <th>תוכן</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {negativeInfo
-                          .filter((item) => item.keyword === "הליכים")[0]
-                          .filteredResults.map((result, index) => (
-                            <tr key={index}>
-                              <td>{result.title}</td>
-                              <td>
-                                <a
-                                  href={result.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  קישור
-                                </a>
-                              </td>
-                              <td>
-                                {result.content || "No content available"}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  )}*/}
 
 
-              {approvals && approvals.length > 0 && (
-                <div className="approvals-section">
-                  <div className="approvals-header">
-                    {/* Top Right: טבלת אישורים or הסתר טבלה */}
-                    <span
-                      className="toggle-table-link"
-                      onClick={toggleApprovalTable}
-                    >
-                      {showApprovalTable ? "הסתר טבלה" : "טבלת אישורים"}
-                    </span>
-
-                    {/* Top Left: למה צריך את זה (Visible only after table is shown) */}
-                    {showApprovalTable && (
+              <div className="approvals-section">
+                <h2 className="approvals-headline">טבלת אישורים</h2>
+                <span className="explanation-text-link" onClick={toggleExplanation}>
+                  למה צריך את זה?
+                </span>
+                {approvals && approvals.length > 0 ? (
+                  <>
+                     {/* <div className="approvals-header">
                       <span
-                        className="explanation-text-link"
-                        onClick={toggleExplanation}
-                      >
-                        למה צריך את זה?
+                        className="toggle-table-link"
+                        onClick={toggleApprovalTable}>
+                        {showApprovalTable ? "הסתר טבלה" : "טבלת אישורים"}
                       </span>
-                    )}
-                  </div>
 
-                  {/* Explanation text above the table */}
-                  {showApprovalTable && showExplanation && (
-                    <p className="explanation-text">
-                      טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
-                      עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
-                      החוק, מה שמגביר את אמינותן.
-                    </p>
-                  )}
+                      {showApprovalTable && (
+                        <span className="explanation-text-link" onClick={toggleExplanation}>
+                          למה צריך את זה?
+                        </span>
+                      )}
+                    </div>  */}
 
-                  {/* Show the approval table only if it's toggled */}
-                  {showApprovalTable && (
-                    <table className="approvals-table">
-                      <thead>
-                        <tr>
-                          <th>שנת האישור</th>
-                          <th>האם מאושר</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {approvals.map((record, index) => (
-                          <tr key={index}>
-                            <td>{record["שנת האישור"]}</td>
-                            <td>{record["האם יש אישור"]}</td>
+                    {showExplanation && ( 
+                      <p className="explanation-text">
+                        טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
+                        עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
+                        החוק, מה שמגביר את אמינותן.
+                      </p>
+                    )} 
+
+                    {/* Show the approval table only if it's toggled */}
+                    {/* {showApprovalTable && ( */}
+                      <table className="approvals-table">
+                        <thead>
+                          <tr>
+                            <th>שנת האישור</th>
+                            <th>האם מאושר</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  )}
-                </div>
-              )}
+                        </thead>
+                        <tbody>
+                          {approvals.map((record, index) => (
+                            <tr key={index}>
+                              <td>{record["שנת האישור"]}</td>
+                              <td>{record["האם יש אישור"]}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    {/* )} */}
+                  </>
+                ) : (
+                  <p className="no-approvals-message">
+                    העמותה מעולם לא נרשמה כעמותה תקינה על ידי רשם העמותות
+                  </p>
+                )}
+              </div>
 
               {/* Donation Popup */}
               {showModal && (

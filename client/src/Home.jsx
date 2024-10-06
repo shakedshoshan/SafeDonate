@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import backgroundImg from "./assets/background.png";
 import { useAuthContext } from "./context/AuthContext";
+import  AssociationCrusel  from "./components/AssociationCrusel";
 
 const Home = ({ setSuggestions, setNpoData }) => {
   const [data, setData] = useState([]); // NPO data fetched from API
@@ -66,21 +67,23 @@ const Home = ({ setSuggestions, setNpoData }) => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div
-      className="home"
-      style={{
-        backgroundImage: `url(${backgroundImg})`,
-        backgroundSize: "cover",
-        padding: "20px",
-      }}
+    <div className="home pb-5px" 
+      // style={{
+      //   backgroundImage: `url(${backgroundImg})`,
+      //   backgroundSize: "cover",
+      //   padding: "20px",
+      // }}
     >
-      <h1 className="home-title">
+      <h1 className="home-title pb-5px">
         {i18n.language === "he"
           ? "ברוכים הבאים ל-SafeDonate"
           : "Welcome to SafeDonate"}
       </h1>
+      <div>
+        <AssociationCrusel dataList={randomNPOs} userId={authUser?.id} />
+      </div>
 
-      <div className="grid-container">
+      {/* <div className="grid-container">
         {randomNPOs.map((npo, index) => (
           <div
             key={index}
@@ -95,7 +98,7 @@ const Home = ({ setSuggestions, setNpoData }) => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Button to redirect to advanced search */}
       <div className="more-npos-button-container">

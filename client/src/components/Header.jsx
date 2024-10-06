@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import "../styles/Header.css";
 import logo from "../assets/logo11.png";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
 
+
 const Header = ({ handleLogin }) => {
   const { t } = useTranslation();
   const [searchInput, setSearchInput] = useState("");
@@ -18,7 +19,7 @@ const Header = ({ handleLogin }) => {
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const { authUser } = useAuthContext();
-
+  const searchBarRef = useRef(null);
   const navigate = useNavigate();
 
   // Debounced search logic to query the API for suggestions
@@ -85,27 +86,41 @@ const Header = ({ handleLogin }) => {
     if (authUser) {
       setLoggedIn(true);
     }
-  },[authUser])
+  }, [authUser])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+        setSearchInput("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="header" aria-label="Main header">
       <div className="header-container">
         {/* Logo */}
         <div className="header-title">
-        <a href="/" className="header-icon-link">
+          <a href="/" className="header-icon-link">
             <img src={icon} alt="SafeDonate Icon" className="header-icon" />
           </a>
-          
+
           <a href="/" className="header-logo-link">
             <img src={logo} alt="SafeDonate Logo" className="header-logo" />
           </a>
-         
+
         </div>
 
         {/* Navigation */}
         <div className="header-nav">
           {/* Search bar */}
-          <div className="search-bar-wrapper">
+          <div className="search-bar-wrapper"  ref={searchBarRef}>
             <input
               type="text"
               placeholder={t("search")}
@@ -115,16 +130,14 @@ const Header = ({ handleLogin }) => {
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
             />
+            <div id="suggestion-list" className="suggestions-dropdown hidden"></div>
             {showSuggestions && filteredSuggestions.length > 0 && (
               <div className="suggestions-dropdown">
                 {filteredSuggestions.slice(0, 7).map((suggestion) => (
                   <div
                     key={suggestion["מספר עמותה"]}
                     className="suggestion-item"
-                    onClick={() =>
-                      handleSuggestionClick(suggestion["מספר עמותה"])
-                    }
-                  >
+                    onClick={() => handleSuggestionClick(suggestion["מספר עמותה"])}>
                     {suggestion["שם עמותה בעברית"]}
                   </div>
                 ))}
@@ -156,14 +169,14 @@ const Header = ({ handleLogin }) => {
             {loggedIn ? (
               <div className="profile-circle bg-[#7199e9]  hover:bg-[#264bae] hover:scale-110 transition cursor-pointer">
                 {/* <span className="profile-initials">{getUserInitials()}</span> */}
-                  <span className="z-50 text-2xl text-white flex items-center justify-center">
-                    {authUser.firstName[0].toUpperCase()}{authUser.lastName[0].toUpperCase()}
-                  </span>
+                <span className="z-50 text-2xl text-white flex items-center justify-center">
+                  {authUser.firstName[0].toUpperCase()}{authUser.lastName[0].toUpperCase()}
+                </span>
               </div>
             ) : (
               <div>
-                <img src={profileIcon} alt="Profile" className="w-14 h-14 bg-[#ffffff] rounded-full border-white "/>
-                
+                <img src={profileIcon} alt="Profile" className="w-14 h-14 bg-[#ffffff] rounded-full border-white " />
+
               </div>
             )}
           </div>

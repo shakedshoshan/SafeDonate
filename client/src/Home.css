@@ -1,5 +1,5 @@
 .home {
-  background-image: url('./assets/background.png');
+  background-image: url('./assets/bkg1.jpg');
   background-size: cover;
   background-position: center;
   min-height: 100vh;
@@ -9,16 +9,21 @@
   align-items: center;
   text-align: center;
   color: #333;
+  margin-top: 50px;
+  padding: 50px 0 50px 0;
+
+
 }
 
 .home-title {
-  font-size: 36px;
+  font-size: 50px;
   font-weight: bold;
-  background: linear-gradient(90deg, #eff4f5, #d6e4f4);
+  background: linear-gradient(90deg, #1b6b90, #0c2c3a);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 40px;
+  padding-top: 15px;
 }
 
 .grid-container {

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/FilteredResultsPage.css"; // Add relevant CSS for styling
+import { useAuthContext } from "../context/AuthContext";
+import AssociationCrusel from "../components/AssociationCrusel";
 
 const FilteredResultsPage = () => {
   const location = useLocation();
-  const { filteredNPOs } = location.state || {}; // Get the filtered NPOs from state
+  const { authUser } = useAuthContext();
+  const { filteredNPOs, selectedCategories } = location.state || {}; // Get the filtered NPOs from state
   const [displayedNPOs, setDisplayedNPOs] = useState([]);
   const [visibleCount, setVisibleCount] = useState(9); // Number of NPOs to show at a time
   const [loading, setLoading] = useState(false);
@@ -16,6 +19,8 @@ const FilteredResultsPage = () => {
     if (filteredNPOs && filteredNPOs.length > 0) {
       setDisplayedNPOs(filteredNPOs.slice(0, 9));
     }
+
+    console.log("Filtered NPOs:", selectedCategories);
   }, [filteredNPOs]);
 
   // Handle scroll event to load more NPOs
@@ -43,10 +48,13 @@ const FilteredResultsPage = () => {
   }, [handleScroll]);
 
   return (
-    <div className="filtered-results-page">
-      <h2 className="filtered-results-page-title"></h2>
-      {"עמותות נבחרות"}
-      <div className="grid-container">
+    <div className="filtered-results-page ">
+      <h2 className="filtered-results-page-title pb-5px">
+        {`סינון - ${selectedCategories.length > 0 ? selectedCategories.join(", ") : "לא נבחרו קטגוריות"}`}
+      </h2>
+
+      <AssociationCrusel dataList={displayedNPOs} userId={authUser?.id} />
+      {/* <div className="grid-container">
         {displayedNPOs.map((npo, index) => (
           <div
             key={index}
@@ -61,7 +69,7 @@ const FilteredResultsPage = () => {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Loading indicator */}
       {loading && (

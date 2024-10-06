@@ -9,6 +9,7 @@ const AssociationCard = ({ association, userId }) => {
     const address = association["כתובת - ישוב"]
     let target = association["מטרות עמותה"] ? association["מטרות עמותה"] : "לא מוגדר"
     target = target.replaceAll("~", ".\n");
+    if(target.length > 100) target = target.slice(0, 100) + "..."
     const link = `/AssociationPage/${aNumber}`
 
     return (

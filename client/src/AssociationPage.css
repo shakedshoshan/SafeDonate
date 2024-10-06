@@ -11,412 +11,451 @@ body {
 
 /* Main Layout */
 .main-content {
-  margin-top: 120px; /* Adjust this value based on your header's height */
+  margin-top: 120px;
+  /* Adjust this value based on your header's height */
 }
 
 .association-page {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-   
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+
 }
 
 /* Right Side Section Styling */
 .right-section {
-    width: 30%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-left: 2px solid #ccc; /* Vertical line separating right and left */
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-left: 2px solid #ccc;
+  /* Vertical line separating right and left */
 }
 
 /* Circle Image for NPO initials */
 .circle-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #3d9bc6;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 15px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #3d9bc6;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
 }
 
 /* NPO Name Styling */
 .npo-name {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-    text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 /* NPO Place Styling */
 .npo-place {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 10px;
 }
 
 /* NPO Number */
 .npo-number {
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 20px;
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 /* Donate Button */
 .donate-button {
-    background-color: #3d9bc6;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 10px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 20px;
+  background-color: #3d9bc6;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .donate-button:hover {
-    background-color: #217ca6;
-}
-
-/* Left Section for NPO Goals */
-.goals-headline {
-    font-size: 2rem;
-    font-weight: bold;
-    text-decoration: underline;
-    color: #104d8e;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, #104d8e, #00c853); /* Gradient */
-    background-clip: text;
--webkit-background-clip: text;
-
-    padding: 10px;
-    border-radius: 10px;
-}
-
-/* Left Section for NPO Goals */
-.left-section {
-    width: 60%;
-    padding: 20px;
-}
-
-/* Goals Text Styling */
-.npo-goals {
-    font-size: 1.25rem;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 30px;
+  background-color: #217ca6;
 }
 
 /* Separator Line */
 .separator {
-    height: 100%;
-    width: 1px;
-    background-color: #ccc;
-    margin-left: 20px;
+  height: 100vh;
+  width: 0.5px;
+  background-color: #ccc;
+  margin-left: 20px;
+}
+
+/* Left Section for NPO Goals */
+.left-section {
+  width: 60%;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+/* Left Section for NPO Goals */
+.goals-headline {
+  font-size: 2rem;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #104d8e;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #104d8e, #00c853);
+  /* Gradient */
+  background-clip: text;
+  -webkit-background-clip: text;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+}
+
+.negative-info-headline {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: underline;
+  background: linear-gradient(90deg, #0c952e, #124f8f);
+  background-clip: text;
+  -webkit-background-clip: text;
+  padding-top: 10px;
+}
+
+
+/* Goals Text Styling */
+.npo-goals {
+  font-size: 1.25rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+/* Table Styles */
+.category-content {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background-color: #f9f9f9;
+
+}
+
+.category-content th,
+.category-content td {
+  padding: 12px 30px;
+  /* Adding padding for better readability */
+  text-align: right;
+  border-bottom: 2px solid #ddd;
+  /* Add borders for a clean look */
+}
+
+.category-content th {
+  background-color: #104d8e;
+  /* Darker blue for the table header */
+  color: white;
+}
+
+.category-content td a {
+  color: #217ca6;
+  /* Blue for links */
+  text-decoration: none;
+}
+
+.category-content td a:hover {
+  text-decoration: underline;
+  /* Underline links on hover */
+}
+
+/* Scrollable Content */
+.scrollable-content {
+  max-height: 150px;
+  /* Limit the height for scrolling */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  /* Border for scrollable content */
+  border-radius: 5px;
+}
+
+.scrollable-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 
 /* Approvals Section */
 .approvals-section {
-    margin-top: 40px;
+  margin-top: 40px;
+}
+
+.approvals-headline {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: underline;
+  background: linear-gradient(90deg, #0c952e, #124f8f);
+  background-clip: text;
+  -webkit-background-clip: text;
+  padding-top: 10px;
 }
 
 .approvals-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 
-/* Table Styles */
-.category-content {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    background-color: #f9f9f9;
-    
-  }
-  
-  .category-content th, .category-content td {
-    padding: 12px 30px;  /* Adding padding for better readability */
-    text-align: right;
-    border-bottom: 2px solid #ddd;  /* Add borders for a clean look */
-  }
-  
-  .category-content th {
-    background-color: #104d8e; /* Darker blue for the table header */
-    color: white;
-  }
-  
-  .category-content td a {
-    color: #217ca6; /* Blue for links */
-    text-decoration: none;
-  }
-  
-  .category-content td a:hover {
-    text-decoration: underline;  /* Underline links on hover */
-  }
-  
-  /* Scrollable Content */
-  .scrollable-content {
-    max-height: 150px;  /* Limit the height for scrolling */
-    overflow-y: auto;   /* Enable vertical scrolling */
-    padding: 10px;
-    background-color: #ffffff;
-    border: 1px solid #ccc; /* Border for scrollable content */
-    border-radius: 5px;
-  }
-  
-  .scrollable-content::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .scrollable-content::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 5px;
-  }
-  
-  .scrollable-content::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-  }
-
-  
 .approvals-table th,
 .approvals-table td {
-    padding: 10px;
-    border: 1px solid #ccc;
-    text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
 }
 
 .approvals-table th {
-    background-color: #3d9bc6;
-    color: white;
-    font-weight: bold;
+  background-color: #3d9bc6;
+  color: white;
+  font-weight: bold;
 }
 
 /* Negative Info Section */
 .negative-info-summary {
-    margin-top: 30px;
-  }
-  
-  /* Category header style (clickable section) */
-  .category-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #104d8e;
-    cursor: pointer;
-    padding: 10px 0;
-    transition: background-color 0.3s ease;
-  }
-  
-  .category-header:hover {
-    background-color: #f0f0f0;
-  }
-  
-  /* Category content style (hidden by default, shown when expanded) */
-  .category-content {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #f9f9f9;
-    border-left: 3px solid #104d8e;
-  }
-  
-  /* Link styles */
-  .category-content a {
-    color: #217ca6;
-    text-decoration: underline;
-    font-size: 1.1rem;
-  }
-  
-  .category-content a:hover {
-    color: #0056b3;
-  }
+  margin-top: 30px;
+}
+
+/* Category header style (clickable section) */
+.category-header {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #104d8e;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.category-header:hover {
+  background-color: #f0f0f0;
+}
+
+/* Category content style (hidden by default, shown when expanded) */
+.category-content {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-left: 3px solid #104d8e;
+}
+
+/* Link styles */
+.category-content a {
+  color: #217ca6;
+  text-decoration: underline;
+  font-size: 1.1rem;
+}
+
+.category-content a:hover {
+  color: #0056b3;
+}
+
 /* Popup Overlay */
 .popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 /* Popup Content */
 .popup-content {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    text-align: right;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  text-align: right;
 }
 
 /* Title with Lock Symbol */
 .popup-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    color: #104d8e;
-    margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  color: #104d8e;
+  margin-bottom: 20px;
 }
 
 .popup-title .lock-icon {
-    margin-left: 10px;
-    font-size: 1.5rem;
+  margin-left: 10px;
+  font-size: 1.5rem;
 }
 
 /* Radio Button Styling */
 .radio-group {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .radio-label {
-    margin-right: 10px;
-    font-size: 1.1rem;
-    color: #333;
+  margin-right: 10px;
+  font-size: 1.1rem;
+  color: #333;
 }
 
 /* Donation Amount Input */
 .donation-amount {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
 }
 
 /* Checkbox for Dedication */
 .checkbox-group {
-    margin-bottom: 20px;
-    font-size: 1rem;
+  margin-bottom: 20px;
+  font-size: 1rem;
 }
 
 .dedication-text {
-    display: none;
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: none;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .show-dedication .dedication-text {
-    display: block;
+  display: block;
 }
 
 /* Donation Button */
 .submit-donation {
-    background-color: #104d8e;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.2rem;
-    text-align: center;
-    width: 100%;
-    margin-top: 20px;
+  background-color: #104d8e;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .submit-donation:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 /* Donation Summary */
 .donation-summary {
-    margin-top: 10px;
-    font-size: 1.1rem;
-    color: #666;
-    text-align: left;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #666;
+  text-align: left;
 }
 
 .favorite-button {
-    background-color: #3d9bc6;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 10px 40px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-  }
-  
-  .favorite-button .heart-icon {
-    font-size: 1.5rem;
-    margin-left: 10px;
-  }
-  
-  .favorite-button:hover {
-    background-color: #217ca6;
-  }
-  
-  .favorite-button.liked {
-    background-color: #ff6b6b;
-  }
+  background-color: #3d9bc6;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 40px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
 
-  .unauthenticated-message {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centers content vertically */
-    justify-content: center; /* Centers content horizontally */
-    height: 50vh; /* Full height of the viewport */
-    text-align: center;
-    width: 100%; /* Ensures full width */
-    padding: 20px; /* Optional: Add some padding for better spacing */
-    box-sizing: border-box; /* Makes sure padding is included in the width calculation */
-  }
-  
-  
-  .unauthenticated-message h2 {
-    font-size: 1.8rem;
-    color: #104d8e;
-    margin-bottom: 10px;
-  }
-  
-  .unauthenticated-message p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 20px;
-  }
-  
-  .login-button {
-    background-color: #3d9bc6;
-    color: white;
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .login-button:hover {
-    background-color: #217ca6;
-  }
-  
-  /* Button for toggling the approval table */
+.favorite-button .heart-icon {
+  font-size: 1.5rem;
+  margin-left: 10px;
+}
+
+.favorite-button:hover {
+  background-color: #217ca6;
+}
+
+.favorite-button.liked {
+  background-color: #ff6b6b;
+}
+
+.unauthenticated-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Centers content vertically */
+  justify-content: center;
+  /* Centers content horizontally */
+  height: 50vh;
+  /* Full height of the viewport */
+  text-align: center;
+  width: 100%;
+  /* Ensures full width */
+  padding: 20px;
+  /* Optional: Add some padding for better spacing */
+  box-sizing: border-box;
+  /* Makes sure padding is included in the width calculation */
+}
+
+
+.unauthenticated-message h2 {
+  font-size: 1.8rem;
+  color: #104d8e;
+  margin-bottom: 10px;
+}
+
+.unauthenticated-message p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.login-button {
+  background-color: #3d9bc6;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #217ca6;
+}
+
+/* Button for toggling the approval table */
 .toggle-table-button {
   background-color: #3d9bc6;
   color: white;
@@ -437,7 +476,8 @@ body {
 
 .approvals-header {
   display: flex;
-  justify-content: space-between; /* Aligns items on opposite sides */
+  justify-content: space-between;
+  /* Aligns items on opposite sides */
   align-items: center;
   margin-bottom: 10px;
 }
@@ -448,7 +488,8 @@ body {
   cursor: pointer;
   font-size: 1.1rem;
   text-decoration: underline;
-  align-self: flex-start; /* Ensures it's aligned to the left */
+  align-self: flex-start;
+  /* Ensures it's aligned to the left */
 }
 
 .explanation-text-link:hover {
@@ -461,7 +502,8 @@ body {
   cursor: pointer;
   font-size: 1.1rem;
   text-decoration: underline;
-  align-self: flex-end; /* Ensures it's aligned to the right */
+  align-self: flex-end;
+  /* Ensures it's aligned to the right */
 }
 
 .toggle-table-link:hover {
@@ -478,14 +520,16 @@ body {
   margin-bottom: 15px;
 }
 
-.toggle-table-link, .explanation-text-link {
+.toggle-table-link,
+.explanation-text-link {
   color: #104d8e;
   font-size: 1.2rem;
   cursor: pointer;
   text-decoration: underline;
 }
 
-.toggle-table-link:hover, .explanation-text-link:hover {
+.toggle-table-link:hover,
+.explanation-text-link:hover {
   color: #217ca6;
 }
 
@@ -496,6 +540,7 @@ body {
   padding: 15px;
   color: #333;
   margin-bottom: 20px;
-  text-align: right; /* RTL alignment */
+  text-align: right;
+  /* RTL alignment */
   font-size: 1.1rem;
 }
