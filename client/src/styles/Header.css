@@ -19,7 +19,6 @@
   width: 100%;
 }
 
-
 /* Logo */
 .header-title {
   /* text-decoration: none; */
@@ -99,7 +98,7 @@
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
-  width: 700px;
+  width: 750px;
 }
 
 .suggestion-item {
