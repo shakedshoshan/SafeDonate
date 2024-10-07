@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "./context/AuthContext";
-import  AssociationCrusel  from "./components/AssociationCrusel";
+import AssociationCarousel from "./components/AssociationCarousel";
 
 const Home = ({ setSuggestions, setNpoData }) => {
   const [data, setData] = useState([]); // NPO data fetched from API
@@ -13,7 +13,6 @@ const Home = ({ setSuggestions, setNpoData }) => {
   const [loading, setLoading] = useState(true);
   const { authUser } = useAuthContext();
   const [error, setError] = useState(null);
-  const [user, setUser] = useState();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,11 +55,11 @@ const Home = ({ setSuggestions, setNpoData }) => {
     }
   }, [filteredNPOs, setSuggestions, setNpoData]);
 
-  const getWelcomeMessage = () => {
-    return i18n.language === "he"
-      ? "ברוכים הבאים ל SafeDonate"
-      : t("welcome_message");
-  };
+  // const getWelcomeMessage = () => {
+  //   return i18n.language === "he"
+  //     ? "ברוכים הבאים ל SafeDonate"
+  //     : t("welcome_message");
+  // };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -73,7 +72,7 @@ const Home = ({ setSuggestions, setNpoData }) => {
           : "Welcome to SafeDonate"}
       </h1>
       <div>
-        <AssociationCrusel dataList={randomNPOs} userId={authUser?.id} />
+        <AssociationCarousel dataList={randomNPOs} userId={authUser?.id} />
       </div>
 
       {/* Button to redirect to advanced search */}

@@ -7,7 +7,7 @@ import { useAuthContext } from "./context/AuthContext";
 import FavoriteButton from "./components/FavoriteButton";
 import { useNavigate } from "react-router-dom";
 import useAssociationLink from "./hooks/useAssociationLink.js";
-import {replaceTildeWithQuote, removeChars, removeTilde } from "./utils/filterText.js";
+import {removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 
 const AssociationPage = () => {
   const { associationNumber } = useParams();
@@ -26,19 +26,13 @@ const AssociationPage = () => {
   const [negativeInfo, setNegativeInfo] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
-  // const [showApprovalTable, setShowApprovalTable] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const { authUser } = useAuthContext();
   const navigate = useNavigate();
 
   const handleLoginRedirect = () => {
     navigate("/login");
   };
-
-  // const toggleApprovalTable = () => {
-  //   setShowApprovalTable((prev) => !prev);
-  // };
 
   const toggleExplanation = () => {
     setShowExplanation((prev) => !prev);
@@ -218,11 +212,6 @@ const AssociationPage = () => {
     }
   };
 
-  // Expand/collapse category
-  // const toggleCategory = (category) => {
-  //   setExpandedCategory(expandedCategory === category ? null : category);
-  // };
-
   const handleOpenLink = () => {
     window.open(link);
   }
@@ -273,7 +262,7 @@ const AssociationPage = () => {
               </div>
 
               <div className="npo-name">
-                {replaceTildeWithQuote(association["שם עמותה בעברית"]) || "שם עמותה לא זמין"}
+                {replaceTildesAlgorithm(association["שם עמותה בעברית"]) || "שם עמותה לא זמין"}
               </div>
 
               <div className="npo-place">
@@ -308,7 +297,7 @@ const AssociationPage = () => {
             <div className="left-section">
               <h2 className="goals-headline">מטרות העמותה</h2>
               <p className="npo-goals">
-                {removeChars(association["מטרות עמותה"]) || "העמותה לא סיפקה תיאור"}
+                {replaceTildesAlgorithm(association["מטרות עמותה"]) || "העמותה טרם שיתפה את מטרותיה. נשמח לעדכן אותך ברגע שיתווסף מידע נוסף."}
               </p>
 
               <h2 className="negative-info-headline">מידע שנאסף על אמינות העמותה</h2>

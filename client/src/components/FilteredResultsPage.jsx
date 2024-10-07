@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/FilteredResultsPage.css"; // Add relevant CSS for styling
 import { useAuthContext } from "../context/AuthContext";
-import AssociationCrusel from "../components/AssociationCrusel";
+import AssociationCarousel from "../components/AssociationCarousel";
 
 const FilteredResultsPage = () => {
   const location = useLocation();
@@ -53,24 +53,8 @@ const FilteredResultsPage = () => {
         {`סינון - ${selectedCategories.length > 0 ? selectedCategories.join(", ") : "לא נבחרו קטגוריות"}`}
       </h2>
 
-      <AssociationCrusel dataList={displayedNPOs} userId={authUser?.id} />
-      {/* <div className="grid-container">
-        {displayedNPOs.map((npo, index) => (
-          <div
-            key={index}
-            className="grid-item"
-            onClick={() => navigate(`/AssociationPage/${npo["מספר עמותה"]}`)}
-          >
-            <div className="grid-item-title">{npo["שם עמותה בעברית"]}</div>
-            <div className="grid-item-content">
-              {npo["מטרות עמותה"]
-                ? npo["מטרות עמותה"].replace(/~/g, " ") // Replaces all tildes with spaces
-                : "No description available"}
-            </div>
-          </div>
-        ))}
-      </div> */}
-
+      <AssociationCarousel dataList={displayedNPOs} userId={authUser?.id} />
+    
       {/* Loading indicator */}
       {loading && (
         <div className="loading-indicator">

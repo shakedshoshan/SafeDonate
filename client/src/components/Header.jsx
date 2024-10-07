@@ -153,7 +153,7 @@ const Header = ({ handleLogin }) => {
             className="header-tab"
             onClick={() => navigate("/advanced-search")}
           >
-            {t("חיפוש קטגוריות")}
+            {t("חיפוש מתקדם")}
           </button>
 
           {/* About Us */}
