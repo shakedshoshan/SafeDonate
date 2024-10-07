@@ -1,21 +1,23 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import axios from "axios";
 import "./AssociationPage.css";
 import { useAuthContext } from "./context/AuthContext";
 import FavoriteButton from "./components/FavoriteButton";
 import { useNavigate } from "react-router-dom";
+import useAssociationLink from "./hooks/useAssociationLink.js";
+import {replaceTildeWithQuote, removeChars, removeTilde } from "./utils/filterText.js";
 
 const AssociationPage = () => {
   const { associationNumber } = useParams();
   const filterQuery = JSON.stringify({ "מספר עמותה": associationNumber });
   const [association, setAssociation] = useState(null);
+  const { loading, link, associationLink } = useAssociationLink();
   const [approvals, setApprovals] = useState([]);
   const [loadingAssociation, setLoadingAssociation] = useState(true);
   const [loadingScraping, setLoadingScraping] = useState(true);
   const [error, setError] = useState(null);
-  // const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [donationType, setDonationType] = useState("חד פעמי");
   const [donationAmount, setDonationAmount] = useState("");
@@ -23,24 +25,20 @@ const AssociationPage = () => {
   const [dedicationText, setDedicationText] = useState("");
   const [negativeInfo, setNegativeInfo] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState(0);
-  //const [expandedCategory, setExpandedCategory] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showApprovalTable, setShowApprovalTable] = useState(false);
+  // const [showApprovalTable, setShowApprovalTable] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-  // const [hasCookie, setHasCookie] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { authUser } = useAuthContext();
-  const [donationStatus, setDonationStatus] = useState(null); // Track donation status
   const navigate = useNavigate();
-  const [isCollapsible, setIsCollapsible] = useState(false);
 
   const handleLoginRedirect = () => {
     navigate("/login");
   };
 
-  const toggleApprovalTable = () => {
-    setShowApprovalTable((prev) => !prev);
-  };
+  // const toggleApprovalTable = () => {
+  //   setShowApprovalTable((prev) => !prev);
+  // };
 
   const toggleExplanation = () => {
     setShowExplanation((prev) => !prev);
@@ -95,6 +93,14 @@ const AssociationPage = () => {
     fetchAssociation();
   }, [associationNumber]);
 
+
+  useEffect(() => {
+    if (associationNumber) {
+      associationLink({ associationNumber });
+      console.log("link: ", link);
+    }
+  }, [associationNumber]);
+
   // Fetch approvals by association number
   useEffect(() => {
     if (association) {
@@ -124,8 +130,8 @@ const AssociationPage = () => {
     if (association) {
       const fetchScrapedData = async () => {
         const associationNumber = association["מספר עמותה"];
-        const category = association["סיווג פעילות ענפי"];
-        let cleanedStr = category.replace(/~/g, ""); // Remove all '~' characters
+        const category = removeTilde(association["סיווג פעילות ענפי"]);
+        //let cleanedStr = category.replace(/~/g, ""); // Remove all '~' characters
 
         try {
           // Check if data is in sessionStorage
@@ -146,7 +152,7 @@ const AssociationPage = () => {
             "http://localhost:5000/scrape/search",
             {
               associationNumber,
-              category: cleanedStr,
+              category,
             }
           );
           const scrapedData = response.data;
@@ -158,18 +164,6 @@ const AssociationPage = () => {
               JSON.stringify(scrapedData.results)
             );
             setNegativeInfo(scrapedData.results); // Save negative info
-
-            // Filter the results by categories (פלילי, פירוק, הליכים)
-            // const categories = ["פלילי", "פירוק", "הליכים"];
-
-            // scrapedData.results.forEach((category) => {
-            //   counts[category] = scrapedData.results.filter(
-            //     (item) => item.keyword === category
-            //   ).length;
-            // });
-
-
-
           } else {
             console.log("No scraped data found");
           }
@@ -225,9 +219,13 @@ const AssociationPage = () => {
   };
 
   // Expand/collapse category
-  const toggleCategory = (category) => {
-    setExpandedCategory(expandedCategory === category ? null : category);
-  };
+  // const toggleCategory = (category) => {
+  //   setExpandedCategory(expandedCategory === category ? null : category);
+  // };
+
+  const handleOpenLink = () => {
+    window.open(link);
+  }
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -242,9 +240,9 @@ const AssociationPage = () => {
     setShowModal(false);
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  // const toggleFavorite = () => {
+  //   setIsFavorite(!isFavorite);
+  // };
 
   useEffect(() => {
     let counts = 0;
@@ -275,15 +273,15 @@ const AssociationPage = () => {
               </div>
 
               <div className="npo-name">
-                {association["שם עמותה בעברית"] || "No name available"}
+                {replaceTildeWithQuote(association["שם עמותה בעברית"]) || "שם עמותה לא זמין"}
               </div>
 
               <div className="npo-place">
-                {association["כתובת - ישוב"] || "No place available"}
+                {association["כתובת - ישוב"] || "כתובת עמותה לא זמינה"}
               </div>
 
               <div className="npo-number">
-                מספר עמותה: {association["מספר עמותה"] || "No number available"}
+                מספר עמותה: {association["מספר עמותה"] || "מספר עמותה לא זמין"}
               </div>
 
               <button className="donate-button" onClick={handleOpenModal}>
@@ -291,6 +289,16 @@ const AssociationPage = () => {
               </button>
 
               <FavoriteButton association={association} userId={authUser._id} />
+
+              {link === "NO_CONTACT_INFO" ? (
+                <button className="donate-button">
+                  לעמותה אין כל אמצעי תקשורת
+                </button>
+              ) : (
+                <button className="donate-button" onClick={handleOpenLink}>
+                  {link}
+                </button>
+              )}
             </div>
 
             {/* Separator Line */}
@@ -300,8 +308,7 @@ const AssociationPage = () => {
             <div className="left-section">
               <h2 className="goals-headline">מטרות העמותה</h2>
               <p className="npo-goals">
-                {association["מטרות עמותה"]
-                  ? association["מטרות עמותה"].replace(/[^א-ת.:,'()-/ ]/g, "") : "העמותה לא סיפקה תיאור"}
+                {removeChars(association["מטרות עמותה"]) || "העמותה לא סיפקה תיאור"}
               </p>
 
               <h2 className="negative-info-headline">מידע שנאסף על אמינות העמותה</h2>
@@ -360,7 +367,7 @@ const AssociationPage = () => {
                 </span>
                 {approvals && approvals.length > 0 ? (
                   <>
-                     {/* <div className="approvals-header">
+                    {/* <div className="approvals-header">
                       <span
                         className="toggle-table-link"
                         onClick={toggleApprovalTable}>
@@ -374,32 +381,32 @@ const AssociationPage = () => {
                       )}
                     </div>  */}
 
-                    {showExplanation && ( 
+                    {showExplanation && (
                       <p className="explanation-text">
                         טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
                         עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
                         החוק, מה שמגביר את אמינותן.
                       </p>
-                    )} 
+                    )}
 
                     {/* Show the approval table only if it's toggled */}
                     {/* {showApprovalTable && ( */}
-                      <table className="approvals-table">
-                        <thead>
-                          <tr>
-                            <th>שנת האישור</th>
-                            <th>האם מאושר</th>
+                    <table className="approvals-table">
+                      <thead>
+                        <tr>
+                          <th>שנת האישור</th>
+                          <th>האם מאושר</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {approvals.map((record, index) => (
+                          <tr key={index}>
+                            <td>{record["שנת האישור"]}</td>
+                            <td>{record["האם יש אישור"]}</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {approvals.map((record, index) => (
-                            <tr key={index}>
-                              <td>{record["שנת האישור"]}</td>
-                              <td>{record["האם יש אישור"]}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                        ))}
+                      </tbody>
+                    </table>
                     {/* )} */}
                   </>
                 ) : (

@@ -4,7 +4,6 @@ import "./Home.css";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import backgroundImg from "./assets/background.png";
 import { useAuthContext } from "./context/AuthContext";
 import  AssociationCrusel  from "./components/AssociationCrusel";
 
@@ -67,13 +66,7 @@ const Home = ({ setSuggestions, setNpoData }) => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="home pb-5px" 
-      // style={{
-      //   backgroundImage: `url(${backgroundImg})`,
-      //   backgroundSize: "cover",
-      //   padding: "20px",
-      // }}
-    >
+    <div className="home pb-5px" >
       <h1 className="home-title pb-5px">
         {i18n.language === "he"
           ? "ברוכים הבאים ל-SafeDonate"
@@ -82,23 +75,6 @@ const Home = ({ setSuggestions, setNpoData }) => {
       <div>
         <AssociationCrusel dataList={randomNPOs} userId={authUser?.id} />
       </div>
-
-      {/* <div className="grid-container">
-        {randomNPOs.map((npo, index) => (
-          <div
-            key={index}
-            className="grid-item"
-            onClick={() => navigate(`/AssociationPage/${npo["מספר עמותה"]}`)}
-          >
-            <div className="grid-item-title">{npo["שם עמותה בעברית"]}</div>
-            <div className="grid-item-content">
-              {npo["מטרות עמותה"]
-                ? npo["מטרות עמותה"].replace(/~/g, " ") // Replaces all tildes with spaces
-                : "No description available"}
-            </div>
-          </div>
-        ))}
-      </div> */}
 
       {/* Button to redirect to advanced search */}
       <div className="more-npos-button-container">

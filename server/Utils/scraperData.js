@@ -49,7 +49,7 @@ const scrapeData = async (associationNumber, category, onScrapedResult) => {
                 });
             });
 
-            console.log(`Results befor filtering for keyword '${keyword}':`, searchResults);
+            // console.log(`Results befor filtering for keyword '${keyword}':`, searchResults);
 
             // Pass the scraped result for this keyword to the filtering function
             onScrapedResult(keyword, searchResults);

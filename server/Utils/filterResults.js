@@ -9,13 +9,13 @@ const processScrapedResults = (keyword, associationNumber, results) => {
         return isKeywordInTitleOrContent && isAssociationInTitleOrContent;
     });
 
-    console.log(`Results after Filtering for keyword '${keyword}':`, filteredResults);
+    // console.log(`Results after Filtering for keyword '${keyword}':`, filteredResults);
 
     // Filter out duplicate links using a Set
     const uniqueLinks = new Set(filteredResults.map(result => result.link));
     const filteredResultsWithUniqueLinks = filteredResults.filter(result => uniqueLinks.has(result.link));
 
-    console.log(`Results after Filtering links for keyword '${keyword}':`, filteredResultsWithUniqueLinks);
+    // console.log(`Results after Filtering links for keyword '${keyword}':`, filteredResultsWithUniqueLinks);
 
     // Store the filtered results
     return {
