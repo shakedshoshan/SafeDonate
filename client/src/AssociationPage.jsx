@@ -7,6 +7,8 @@ import FavoriteButton from "./components/FavoriteButton.jsx";
 import { useNavigate } from "react-router-dom";
 import useAssociationData from "./hooks/useAssociationData.js";
 import useAssociationLink from "./hooks/useAssociationLink.js";
+import useApprovals from "./hooks/useApprovals.js";
+import useScraping from "./hooks/useScraping.js";
 
 import { removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 
@@ -14,23 +16,18 @@ const AssociationPage = () => {
   const { associationNumber } = useParams();
   const { authUser } = useAuthContext();
   const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
-  //const filterQuery = JSON.stringify({ "מספר עמותה": associationNumber });
-  //const [association, setAssociation] = useState(null);
   const { loading, link, fetchAssociationLink } = useAssociationLink();
-  const [approvals, setApprovals] = useState([]);
-  //const [loadingAssociation, setLoadingAssociation] = useState(false);
-  const [loadingScraping, setLoadingScraping] = useState(true);
+  const { loadingApprovals, approvals, fetchApprovals } = useApprovals();
+  const { loadingScraping, negativeInfo, fetchScrapedData } = useScraping();
   const [errorr, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [donationType, setDonationType] = useState("חד פעמי");
   const [donationAmount, setDonationAmount] = useState("");
   const [addDedication, setAddDedication] = useState(false);
   const [dedicationText, setDedicationText] = useState("");
-  const [negativeInfo, setNegativeInfo] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-
   const navigate = useNavigate();
 
   const handleLoginRedirect = () => {
@@ -41,152 +38,29 @@ const AssociationPage = () => {
     setShowExplanation((prev) => !prev);
   };
 
-  // useEffect(() => {
-  //   if (authUser) {
-  //     const fetchedAssosiation =  useAssociationData(associationNumber);
-  //     console.log("Association fetched", fetchedAssosiation);
-  //     setAssociation(fetchedAssosiation)
-  //   }
-  // },[])
-
-  useEffect(() => {
+  useEffect(() => {   // fetch association Data
     fetchAssociation({ associationNumber });
   }, [associationNumber]);
 
-  useEffect(() => {
+
+  useEffect(() => {   // fetch association Link
     fetchAssociationLink({ associationNumber });
   }, [associationNumber]);
 
-  // useEffect(() => {
-  //   const fetchAssociation = async () => {
-  //     try {
-  //       if (authUser) {
-  //         const cachedData = sessionStorage.getItem(
-  //           `assoc_${associationNumber}`
-  //         );
-  //         if (cachedData) {
-  //           console.log("doing caching");
-  //           const parsedData = JSON.parse(cachedData);
-  //           setAssociation(parsedData);
-  //           setLoadingAssociation(false);
-  //           return;
-  //         }
-  //         console.log("fetching from API");
-  //         // If no cache, fetch from the server
-  //         const response = await axios.get(
-  //           `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters=${encodeURIComponent(
-  //             filterQuery
-  //           )}`
-  //         );
-
-  //         if (response.data.result.records.length > 0) {
-  //           const associationData = response.data.result.records[0];
-
-  //           // Store the fetched data in sessionStorage
-  //           sessionStorage.setItem(
-  //             `assoc_${associationNumber}`,
-  //             JSON.stringify(associationData)
-  //           );
-  //           setAssociation(associationData);
-  //           setLoadingAssociation(false);
-
-  //           // Extract association number and fetch approvals
-  //         } else {
-  //           setError("No association found");
-  //         }
-  //       }
-  //       setLoadingAssociation(false); // Loading for association is done
-  //     } catch (error) {
-  //       console.error("Failed to fetch association data:", error);
-  //       setError(error);
-  //       setLoadingAssociation(false);
-  //     }
-  //   };
-  //   fetchAssociation();
-  // }, [associationNumber]);
-
-
-
-  // Fetch approvals by association number
-  useEffect(() => {
+  useEffect(() => {   // Fetch approvals by association number
     if (association) {
-      console.log(association)
-      console.log("hi2")
-      const fetchApprovals = async () => {
-        try {
-          console.log("in fetchApprovals");
-          const response = await axios.get(
-            `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
-          );
-          const sortedData = response.data.result.records.sort((a, b) => {
-            const yearA = parseInt(a["שנת האישור"], 10);
-            const yearB = parseInt(b["שנת האישור"], 10);
-            return yearB - yearA;
-          });
-          setApprovals(sortedData);
-        } catch (error) {
-          setError(error);
-          //setLoading(false);
-        }
-      };
-      fetchApprovals();
+      fetchApprovals({ associationNumber });
+    }
+  }, [associationNumber]);
+
+  useEffect(() => {   // Fetch web scraping data
+    if (association) {
+      const category = removeTilde(association["סיווג פעילות ענפי"]);
+      fetchScrapedData({associationNumber, category})
     }
   }, [association]);
 
-  // Fetch web scraping data
-  useEffect(() => {
-    if (association) {
-      console.log("hi3")
-      const fetchScrapedData = async () => {
-        const associationNumber = association["מספר עמותה"];
-        const category = removeTilde(association["סיווג פעילות ענפי"]);
-
-        try {
-          // Check if data is in sessionStorage
-          const cachedScrapingData = sessionStorage.getItem(
-            `scrape_${associationNumber}`
-          );
-          if (cachedScrapingData) {
-            console.log("doing caching of scraped Data");
-            setNegativeInfo(JSON.parse(cachedScrapingData));
-            //setLoading(false);
-            setLoadingScraping(false);
-            return;
-          }
-
-          console.log("Fetching new scraping data...");
-          // Fetch data from the API if not cached
-          const response = await axios.post(
-            "http://localhost:5000/scrape/search",
-            {
-              associationNumber,
-              category,
-            }
-          );
-          const scrapedData = response.data;
-          if (scrapedData.results.length > 0) {
-            console.log(scrapedData.results);
-            // Store the scraped data in sessionStorage
-            sessionStorage.setItem(
-              `scrape_${associationNumber}`,
-              JSON.stringify(scrapedData.results)
-            );
-            setNegativeInfo(scrapedData.results); // Save negative info
-          } else {
-            console.log("No scraped data found");
-          }
-        } catch (error) {
-          console.error("Failed to fetch or process scraped data:", error);
-          setError("Error fetching scraping information");
-        } finally {
-          // setLoading(false); // Ensure loading is false in all cases
-          setLoadingScraping(false); // Ensure loadingScraping is false in all cases
-        }
-      };
-
-      fetchScrapedData();
-    }
-  }, [association]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -259,16 +133,7 @@ const AssociationPage = () => {
     }
 
   }, [negativeInfo]);
-  console.log(loadingAssoc)
 
-  //if (loadingScraping) return <p>Loading Scraped data...</p>;
-  //if (loadingAssoc) return <p>Loading association data...</p>;
-  //if (loading) return <p>Loading...</p>;
-  //if (error) return <p>Error: {error.message}</p>;
-  //if (!association) return <div>No association found</div>;
-  //if (loadingAssociation) return <div>טוען...</div>;
-  //if (error) return <div>{error}</div>;
-  // if (!link) return <div>No link found</div>;
 
   return (
     <div className="main-content">
@@ -300,7 +165,7 @@ const AssociationPage = () => {
               </button>
 
               <FavoriteButton association={association} userId={authUser._id} />
-                
+
               {link === "NO_CONTACT_INFO" ? (
                 <button className="donate-button">
                   לעמותה אין כל אמצעי תקשורת
@@ -376,19 +241,17 @@ const AssociationPage = () => {
                 <span className="explanation-text-link" onClick={toggleExplanation}>
                   למה צריך את זה?
                 </span>
+                {showExplanation && (
+                  <p className="explanation-text">
+                    טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
+                    עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
+                    החוק, מה שמגביר את אמינותן.
+                  </p>
+                )}
+
                 {approvals && approvals.length > 0 ? (
                   <>
-
-                    {showExplanation && (
-                      <p className="explanation-text">
-                        טבלת האישורים מספקת מידע לגבי העמותה והאישורים שקיבלה.
-                        עמותות מאושרות הן עמותות שקיבלו את האישורים הנדרשים על פי
-                        החוק, מה שמגביר את אמינותן.
-                      </p>
-                    )}
-
                     {/* Show the approval table only if it's toggled */}
-                    {/* {showApprovalTable && ( */}
                     <table className="approvals-table">
                       <thead>
                         <tr>
@@ -405,7 +268,6 @@ const AssociationPage = () => {
                         ))}
                       </tbody>
                     </table>
-                    {/* )} */}
                   </>
                 ) : (
                   <p className="no-approvals-message">
@@ -500,3 +362,142 @@ const AssociationPage = () => {
 };
 
 export default AssociationPage;
+
+// useEffect(() => {
+  //   const fetchAssociation = async () => {
+  //     try {
+  //       if (authUser) {
+  //         const cachedData = sessionStorage.getItem(
+  //           `assoc_${associationNumber}`
+  //         );
+  //         if (cachedData) {
+  //           console.log("doing caching");
+  //           const parsedData = JSON.parse(cachedData);
+  //           setAssociation(parsedData);
+  //           setLoadingAssociation(false);
+  //           return;
+  //         }
+  //         console.log("fetching from API");
+  //         // If no cache, fetch from the server
+  //         const response = await axios.get(
+  //           `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters=${encodeURIComponent(
+  //             filterQuery
+  //           )}`
+  //         );
+
+  //         if (response.data.result.records.length > 0) {
+  //           const associationData = response.data.result.records[0];
+
+  //           // Store the fetched data in sessionStorage
+  //           sessionStorage.setItem(
+  //             `assoc_${associationNumber}`,
+  //             JSON.stringify(associationData)
+  //           );
+  //           setAssociation(associationData);
+  //           setLoadingAssociation(false);
+
+  //           // Extract association number and fetch approvals
+  //         } else {
+  //           setError("No association found");
+  //         }
+  //       }
+  //       setLoadingAssociation(false); // Loading for association is done
+  //     } catch (error) {
+  //       console.error("Failed to fetch association data:", error);
+  //       setError(error);
+  //       setLoadingAssociation(false);
+  //     }
+  //   };
+  //   fetchAssociation();
+  // }, [associationNumber]);
+
+
+  // useEffect(() => {
+  //   if (association) {
+  //     console.log(association)
+  //     console.log("hi2")
+  //     const fetchApprovals = async () => {
+  //       try {
+  //         console.log("in fetchApprovals");
+  //         const response = await axios.get(
+  //           `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
+  //         );
+  //         const sortedData = response.data.result.records.sort((a, b) => {
+  //           const yearA = parseInt(a["שנת האישור"], 10);
+  //           const yearB = parseInt(b["שנת האישור"], 10);
+  //           return yearB - yearA;
+  //         });
+  //         setApprovals(sortedData);
+  //       } catch (error) {
+  //         setError(error);
+  //         //setLoading(false);
+  //       }
+  //     };
+  //     fetchApprovals();
+  //   }
+  // }, [association]);
+
+
+ 
+  // useEffect(() => {
+  //   if (association) {
+  //     console.log("hi3")
+  //     const fetchScrapedData = async () => {
+  //       const associationNumber = association["מספר עמותה"];
+  //       const category = removeTilde(association["סיווג פעילות ענפי"]);
+
+  //       try {
+  //         // Check if data is in sessionStorage
+  //         const cachedScrapingData = sessionStorage.getItem(
+  //           `scrape_${associationNumber}`
+  //         );
+  //         if (cachedScrapingData) {
+  //           console.log("doing caching of scraped Data");
+  //           setNegativeInfo(JSON.parse(cachedScrapingData));
+  //           //setLoading(false);
+  //           setLoadingScraping(false);
+  //           return;
+  //         }
+
+  //         console.log("Fetching new scraping data...");
+  //         // Fetch data from the API if not cached
+  //         const response = await axios.post(
+  //           "http://localhost:5000/scrape/search",
+  //           {
+  //             associationNumber,
+  //             category,
+  //           }
+  //         );
+  //         const scrapedData = response.data;
+  //         if (scrapedData.results.length > 0) {
+  //           console.log(scrapedData.results);
+  //           // Store the scraped data in sessionStorage
+  //           sessionStorage.setItem(
+  //             `scrape_${associationNumber}`,
+  //             JSON.stringify(scrapedData.results)
+  //           );
+  //           setNegativeInfo(scrapedData.results); // Save negative info
+  //         } else {
+  //           console.log("No scraped data found");
+  //         }
+  //       } catch (error) {
+  //         console.error("Failed to fetch or process scraped data:", error);
+  //         setError("Error fetching scraping information");
+  //       } finally {
+  //         // setLoading(false); // Ensure loading is false in all cases
+  //         setLoadingScraping(false); // Ensure loadingScraping is false in all cases
+  //       }
+  //     };
+
+  //     fetchScrapedData();
+  //   }
+  // }, [association]);
+
+    //if (loadingScraping) return <p>Loading Scraped data...</p>;
+  //if (loadingAssoc) return <p>Loading association data...</p>;
+  //if (loading) return <p>Loading...</p>;
+  //if (error) return <p>Error: {error.message}</p>;
+  //if (!association) return <div>No association found</div>;
+  //if (loadingAssociation) return <div>טוען...</div>;
+  //if (error) return <div>{error}</div>;
+  // if (!link) return <div>No link found</div>;
