@@ -1,28 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-//import { useAuthContext } from "../context/AuthContext";
 
 const useAssociationLink = () => {
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [link, setLink] = useState(null);
-	//const { setAuthUser } = useAuthContext();
 
-	const associationLink = async ({ associationNumber }) => {
-		const success = handleInputErrors({ associationNumber });
-		if (!success) return;
-
-		setLoading(true);
+	const fetchAssociationLink = async ({ associationNumber }) => {
 		try {
-			const res = await axios.post(
+			const response = await axios.post(
 				"http://localhost:5000/scrape/link",
 				{ associationNumber }
 			);
 
-			if (res.data.error) {
-				throw new Error(res.data.error);
+			if (response.data.error) {
+				throw new Error(response.data.error);
 			}
-			setLink(res.data.link);
+			setLink(response.data.link);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
@@ -30,17 +24,8 @@ const useAssociationLink = () => {
 		}
 	};
 
-	return { loading, link, associationLink };
+	return { loading, link, fetchAssociationLink };
 };
-
-function handleInputErrors({ associationNumber }) {
-	if (!associationNumber) {
-		toast.error("Association number is required.");
-		return false;
-	}
-
-	return true;
-}
 
 export default useAssociationLink;
 // const res = await fetch("/api/auth/link", {

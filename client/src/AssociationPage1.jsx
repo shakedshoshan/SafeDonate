@@ -2,21 +2,21 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./AssociationPage.css";
-import { useAuthContext } from "./context/AuthContext.jsx";
-import FavoriteButton from "./components/FavoriteButton.jsx";
+import { useAuthContext } from "./context/AuthContext";
+import FavoriteButton from "./components/FavoriteButton";
 import { useNavigate } from "react-router-dom";
 import useAssociationData from "./hooks/useAssociationData.js";
-import useAssociationLink from "./hooks/useAssociationLink.js";
+// import useAssociationLink from "./hooks/useAssociationLink.js";
 
 import { removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 
-const AssociationPage = () => {
+const AssociationPage1 = () => {
   const { associationNumber } = useParams();
   const { authUser } = useAuthContext();
   const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
-  //const filterQuery = JSON.stringify({ "מספר עמותה": associationNumber });
+  const filterQuery = JSON.stringify({ "מספר עמותה": associationNumber });
   //const [association, setAssociation] = useState(null);
-  const { loading, link, fetchAssociationLink } = useAssociationLink();
+  // const { loading, link, fetchAssociationLink } = useAssociationLink();
   const [approvals, setApprovals] = useState([]);
   //const [loadingAssociation, setLoadingAssociation] = useState(false);
   const [loadingScraping, setLoadingScraping] = useState(true);
@@ -50,11 +50,12 @@ const AssociationPage = () => {
   // },[])
 
   useEffect(() => {
-    fetchAssociation({ associationNumber });
-  }, [associationNumber]);
-
-  useEffect(() => {
-    fetchAssociationLink({ associationNumber });
+    if (authUser){
+      fetchAssociation({ associationNumber });
+    } else {
+      loadingAssoc(false)
+    }
+    // console.log("Association fetched", assoc);  
   }, [associationNumber]);
 
   // useEffect(() => {
@@ -105,7 +106,12 @@ const AssociationPage = () => {
   //   fetchAssociation();
   // }, [associationNumber]);
 
-
+  // useEffect(() => {
+  //   if (userAuth) {
+  //     fetchAssociationLink({ associationNumber });
+  //     console.log("link: ", link);
+  //   }
+  // }, [associationNumber]);
 
   // Fetch approvals by association number
   useEffect(() => {
@@ -134,59 +140,59 @@ const AssociationPage = () => {
   }, [association]);
 
   // Fetch web scraping data
-  useEffect(() => {
-    if (association) {
-      console.log("hi3")
-      const fetchScrapedData = async () => {
-        const associationNumber = association["מספר עמותה"];
-        const category = removeTilde(association["סיווג פעילות ענפי"]);
+  // useEffect(() => {
+  //   if (association) {
+  //     console.log("hi3")
+  //     const fetchScrapedData = async () => {
+  //       const associationNumber = association["מספר עמותה"];
+  //       const category = removeTilde(association["סיווג פעילות ענפי"]);
 
-        try {
-          // Check if data is in sessionStorage
-          const cachedScrapingData = sessionStorage.getItem(
-            `scrape_${associationNumber}`
-          );
-          if (cachedScrapingData) {
-            console.log("doing caching of scraped Data");
-            setNegativeInfo(JSON.parse(cachedScrapingData));
-            //setLoading(false);
-            setLoadingScraping(false);
-            return;
-          }
+  //       try {
+  //         // Check if data is in sessionStorage
+  //         const cachedScrapingData = sessionStorage.getItem(
+  //           `scrape_${associationNumber}`
+  //         );
+  //         if (cachedScrapingData) {
+  //           console.log("doing caching of scraped Data");
+  //           setNegativeInfo(JSON.parse(cachedScrapingData));
+  //           //setLoading(false);
+  //           setLoadingScraping(false);
+  //           return;
+  //         }
 
-          console.log("Fetching new scraping data...");
-          // Fetch data from the API if not cached
-          const response = await axios.post(
-            "http://localhost:5000/scrape/search",
-            {
-              associationNumber,
-              category,
-            }
-          );
-          const scrapedData = response.data;
-          if (scrapedData.results.length > 0) {
-            console.log(scrapedData.results);
-            // Store the scraped data in sessionStorage
-            sessionStorage.setItem(
-              `scrape_${associationNumber}`,
-              JSON.stringify(scrapedData.results)
-            );
-            setNegativeInfo(scrapedData.results); // Save negative info
-          } else {
-            console.log("No scraped data found");
-          }
-        } catch (error) {
-          console.error("Failed to fetch or process scraped data:", error);
-          setError("Error fetching scraping information");
-        } finally {
-          // setLoading(false); // Ensure loading is false in all cases
-          setLoadingScraping(false); // Ensure loadingScraping is false in all cases
-        }
-      };
+  //         console.log("Fetching new scraping data...");
+  //         // Fetch data from the API if not cached
+  //         const response = await axios.post(
+  //           "http://localhost:5000/scrape/search",
+  //           {
+  //             associationNumber,
+  //             category,
+  //           }
+  //         );
+  //         const scrapedData = response.data;
+  //         if (scrapedData.results.length > 0) {
+  //           console.log(scrapedData.results);
+  //           // Store the scraped data in sessionStorage
+  //           sessionStorage.setItem(
+  //             `scrape_${associationNumber}`,
+  //             JSON.stringify(scrapedData.results)
+  //           );
+  //           setNegativeInfo(scrapedData.results); // Save negative info
+  //         } else {
+  //           console.log("No scraped data found");
+  //         }
+  //       } catch (error) {
+  //         console.error("Failed to fetch or process scraped data:", error);
+  //         setError("Error fetching scraping information");
+  //       } finally {
+  //         // setLoading(false); // Ensure loading is false in all cases
+  //         setLoadingScraping(false); // Ensure loadingScraping is false in all cases
+  //       }
+  //     };
 
-      fetchScrapedData();
-    }
-  }, [association]);
+  //     fetchScrapedData();
+  //   }
+  // }, [association]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -262,7 +268,7 @@ const AssociationPage = () => {
   console.log(loadingAssoc)
 
   //if (loadingScraping) return <p>Loading Scraped data...</p>;
-  //if (loadingAssoc) return <p>Loading association data...</p>;
+  if (loadingAssoc) return <p>Loading association data...</p>;
   //if (loading) return <p>Loading...</p>;
   //if (error) return <p>Error: {error.message}</p>;
   //if (!association) return <div>No association found</div>;
@@ -273,7 +279,7 @@ const AssociationPage = () => {
   return (
     <div className="main-content">
       <div className="association-page">
-        {!loadingAssoc ? (
+        {authUser ? (
           <>
             {/* Right Section */}
             <div className="right-section">
@@ -300,8 +306,8 @@ const AssociationPage = () => {
               </button>
 
               <FavoriteButton association={association} userId={authUser._id} />
-                
-              {link === "NO_CONTACT_INFO" ? (
+
+              {/* {link === "NO_CONTACT_INFO" ? (
                 <button className="donate-button">
                   לעמותה אין כל אמצעי תקשורת
                 </button>
@@ -309,7 +315,7 @@ const AssociationPage = () => {
                 <button className="donate-button" onClick={handleOpenLink}>
                   {link}
                 </button>
-              )}
+              )} */}
             </div>
 
             {/* Separator Line */}
@@ -378,6 +384,19 @@ const AssociationPage = () => {
                 </span>
                 {approvals && approvals.length > 0 ? (
                   <>
+                    {/* <div className="approvals-header">
+                      <span
+                        className="toggle-table-link"
+                        onClick={toggleApprovalTable}>
+                        {showApprovalTable ? "הסתר טבלה" : "טבלת אישורים"}
+                      </span>
+
+                      {showApprovalTable && (
+                        <span className="explanation-text-link" onClick={toggleExplanation}>
+                          למה צריך את זה?
+                        </span>
+                      )}
+                    </div>  */}
 
                     {showExplanation && (
                       <p className="explanation-text">
@@ -492,11 +511,17 @@ const AssociationPage = () => {
             </div>
           </>
         ) : (
-          <p>Loading association data...</p>
+          <div className="unauthenticated-message">
+            <h2>אינכם מחוברים</h2>
+            <p>על מנת לצפות במידע על העמותה, עליכם להתחבר למערכת.</p>
+            <button className="login-button" onClick={handleLoginRedirect}>
+              התחבר כאן
+            </button>
+          </div>
         )}
       </div >
     </div >
   );
 };
 
-export default AssociationPage;
+export default AssociationPage1;

@@ -9,6 +9,7 @@ import Signup from "./pages/Signup";
 import UserProfile from "./UserProfile";
 import AboutUs from "./AboutUs";
 import NotFound from "./NotFound";
+import NotConnected from "./pages/NotConnected";
 import AdvancedSearch from "./components/AdvancedSearch";
 import FilteredResultsPage from "./components/FilteredResultsPage";
 import { Toaster } from "react-hot-toast";
@@ -24,6 +25,7 @@ const ROUTES = {
   ADVANCED_SEARCH: "/advanced-search",
   FILTERED_RESULTS: "/filtered-results",
   NOT_FOUND: "*",
+  NOT_CONNECTED: "/not-connected",
 };
 
 const App = () => {
@@ -69,10 +71,11 @@ const App = () => {
             />
           }
         />
-        <Route path={ROUTES.ASSOCIATION_PAGE} element={<AssociationPage />} />
+        {/* <Route path={ROUTES.ASSOCIATION_PAGE} element={<AssociationPage />} /> */}
+        <Route path={ROUTES.ASSOCIATION_PAGE} element={authUser? <AssociationPage /> : <Navigate to= '/not-connected'/>} />
         <Route path={ROUTES.LOGIN} element={authUser? <Navigate to='/' /> : <Login />} />
         <Route path={ROUTES.SIGNUP} element={authUser? <Navigate to='/' /> : <Signup />} />
-        <Route path={ROUTES.PROFILE} element={authUser?  <UserProfile /> :<Navigate to='/login'/>} />
+        <Route path={ROUTES.PROFILE} element={authUser? <UserProfile /> :<Navigate to='/login'/>} />
         <Route path={ROUTES.ABOUT_US} element={<AboutUs />} />
         <Route
           path={ROUTES.ADVANCED_SEARCH}
@@ -87,6 +90,7 @@ const App = () => {
           path={ROUTES.FILTERED_RESULTS}
           element={<FilteredResultsPage />}/>
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+        <Route path={ROUTES.NOT_CONNECTED} element={<NotConnected />} />
       </Routes>
       <Toaster />
     </div>
