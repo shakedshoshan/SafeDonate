@@ -272,7 +272,7 @@ body {
 }
 
 /* Popup Overlay */
-.popup-overlay {
+/* .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -283,10 +283,10 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
+} */
 
 /* Popup Content */
-.popup-content {
+/* .popup-content {
   background-color: white;
   padding: 30px;
   border-radius: 10px;
@@ -295,10 +295,10 @@ body {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   position: relative;
   text-align: right;
-}
+} */
 
 /* Title with Lock Symbol */
-.popup-title {
+/* .popup-title {
   font-size: 1.5rem;
   font-weight: bold;
   display: flex;
@@ -310,10 +310,10 @@ body {
 .popup-title .lock-icon {
   margin-left: 10px;
   font-size: 1.5rem;
-}
+} */
 
 /* Radio Button Styling */
-.radio-group {
+/* .radio-group {
   margin-bottom: 20px;
 }
 
@@ -321,20 +321,20 @@ body {
   margin-right: 10px;
   font-size: 1.1rem;
   color: #333;
-}
+} */
 
 /* Donation Amount Input */
-.donation-amount {
+/* .donation-amount {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
-}
+} */
 
 /* Checkbox for Dedication */
-.checkbox-group {
+/* .checkbox-group {
   margin-bottom: 20px;
   font-size: 1rem;
 }
@@ -350,10 +350,10 @@ body {
 
 .show-dedication .dedication-text {
   display: block;
-}
+} */
 
 /* Donation Button */
-.submit-donation {
+/* .submit-donation {
   background-color: #104d8e;
   color: white;
   padding: 12px 20px;
@@ -369,15 +369,15 @@ body {
 
 .submit-donation:hover {
   background-color: #0056b3;
-}
+} */
 
 /* Donation Summary */
-.donation-summary {
+/* .donation-summary {
   margin-top: 10px;
   font-size: 1.1rem;
   color: #666;
   text-align: left;
-}
+} */
 
 .favorite-button {
   background-color: #3d9bc6;

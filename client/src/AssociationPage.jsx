@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import "./AssociationPage.css";
 import { useAuthContext } from "./context/AuthContext.jsx";
 import FavoriteButton from "./components/FavoriteButton.jsx";
-import { useNavigate } from "react-router-dom";
 import useAssociationData from "./hooks/useAssociationData.js";
 import useAssociationLink from "./hooks/useAssociationLink.js";
 import useApprovals from "./hooks/useApprovals.js";
 import useScraping from "./hooks/useScraping.js";
+import DonationPopup from "./components/DonationPopup.jsx";
 
 import { removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 
@@ -19,20 +18,9 @@ const AssociationPage = () => {
   const { loading, link, fetchAssociationLink } = useAssociationLink();
   const { loadingApprovals, approvals, fetchApprovals } = useApprovals();
   const { loadingScraping, negativeInfo, fetchScrapedData } = useScraping();
-  const [errorr, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [donationType, setDonationType] = useState("חד פעמי");
-  const [donationAmount, setDonationAmount] = useState("");
-  const [addDedication, setAddDedication] = useState(false);
-  const [dedicationText, setDedicationText] = useState("");
-  const [categoryCounts, setCategoryCounts] = useState(0);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
 
   const toggleExplanation = () => {
     setShowExplanation((prev) => !prev);
@@ -61,78 +49,23 @@ const AssociationPage = () => {
   }, [association]);
 
   
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(donationAmount);
-
-    if (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) {
-      alert("Please enter a valid donation amount.");
-      return;
-    }
-
-    try {
-      // Make the POST request
-      const response = await axios.post(
-        "http://localhost:5000/donations/donate",
-        {
-          userId: authUser, // Include the userId from the logged-in user
-          associationName: association["שם עמותה בעברית"],
-          associationNumber: associationNumber, // Use association number as ID
-          amount: donationAmount, // Donation amount from input
-        }
-      );
-
-      // Handle successful donation
-      if (response.status === 200) {
-        alert("Donation successful! Thank you for your contribution.");
-        setShowModal(false); // Close the donation popup
-        setDonationAmount(""); // Clear the donation amount field
-        setDedicationText(""); // Clear the dedication text
-        setAddDedication(false); // Reset the dedication checkbox
-        handleCloseModal();
-      } else {
-        alert("There was an issue with your donation. Please try again.");
-      }
-    } catch (error) {
-      console.error("Failed to make a donation:", error);
-      alert("Failed to process the donation. Please try again later.");
-    }
-  };
-
-  const handleOpenLink = () => {
-    window.open(link);
-  }
-
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
-  // Modal handlers
-  const handleOpenModal = () => {
-    setShowModal(true);
+  const handleDonateClick = () => {
+    setIsPopupOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
   };
 
-  // const toggleFavorite = () => {
-  //   setIsFavorite(!isFavorite);
-  // };
+  const handleOpenLink = () => {
+    window.open(link);
+  };
 
-  useEffect(() => {
-    if (association) {
-      console.log("hi4")
-      let counts = 0;
-      negativeInfo.forEach((result) => {
-        counts += result.filteredResults.length;
-      });
-      console.log("counts", counts)
-      setCategoryCounts(counts); // Save counts
-    }
-
-  }, [negativeInfo]);
+  const categoryCounts = negativeInfo ? negativeInfo.reduce((total, result) => total + result.filteredResults.length, 0) : 0;
 
 
   return (
@@ -160,9 +93,12 @@ const AssociationPage = () => {
                 מספר עמותה: {association["מספר עמותה"] || "מספר עמותה לא זמין"}
               </div>
 
-              <button className="donate-button" onClick={handleOpenModal}>
-                לתרומה
-              </button>
+              <div>
+                <button className="donate-button" onClick={handleDonateClick}>
+                  לתרומה
+                </button>
+                <DonationPopup authUser={authUser} association={association} isOpen={isPopupOpen} onClose={handleClosePopup}/>
+              </div>
 
               <FavoriteButton association={association} userId={authUser._id} />
 
@@ -235,7 +171,6 @@ const AssociationPage = () => {
                 </div>
               )}
 
-
               <div className="approvals-section">
                 <h2 className="approvals-headline">טבלת אישורים</h2>
                 <span className="explanation-text-link" onClick={toggleExplanation}>
@@ -275,82 +210,6 @@ const AssociationPage = () => {
                   </p>
                 )}
               </div>
-
-              {/* Donation Popup */}
-              {showModal && (
-                <div className="popup-overlay">
-                  <div className="popup-content">
-                    <button onClick={handleCloseModal} className="close-popup">
-                      &times;
-                    </button>
-                    <div className="popup-title">
-                      <span>תשלום מאובטח</span>
-                      <span className="lock-icon">🔒</span>
-                    </div>
-
-                    <div className="radio-group">
-                      <label className="radio-label">
-                        <input
-                          type="radio"
-                          value="חד פעמי"
-                          checked={donationType === "חד פעמי"}
-                          onChange={() => setDonationType("חד פעמי")}
-                        />
-                        תרומה חד פעמית
-                      </label>
-                      <label className="radio-label">
-                        <input
-                          type="radio"
-                          value="הוראת קבע"
-                          checked={donationType === "הוראת קבע"}
-                          onChange={() => setDonationType("הוראת קבע")}
-                        />
-                        הוראת קבע
-                      </label>
-                    </div>
-
-                    <input
-                      type="number"
-                      className="donation-amount"
-                      placeholder="סכום תרומה"
-                      value={donationAmount}
-                      onChange={(e) => setDonationAmount(e.target.value)}
-                    />
-
-                    <div
-                      className={`checkbox-group ${addDedication ? "show-dedication" : ""
-                        }`}
-                    >
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={addDedication}
-                          onChange={() => setAddDedication(!addDedication)}
-                        />
-                        רוצה להוסיף הקדשה
-                      </label>
-                      {addDedication && (
-                        <textarea
-                          className="dedication-text"
-                          placeholder="כתוב כאן את ההקדשה שלך"
-                          value={dedicationText}
-                          onChange={(e) => setDedicationText(e.target.value)}
-                        />
-                      )}
-                    </div>
-
-                    <button className="submit-donation" onClick={handleSubmit}>
-                      תרמו עכשיו
-                    </button>
-
-                    {donationAmount && (
-                      <p className="donation-summary">
-                        סכום לתרומה: ₪{donationAmount}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </>
         ) : (
@@ -362,6 +221,21 @@ const AssociationPage = () => {
 };
 
 export default AssociationPage;
+
+// const [donationType, setDonationType] = useState("חד פעמי");
+// const [donationAmount, setDonationAmount] = useState("");
+// const [addDedication, setAddDedication] = useState(false);
+// const [dedicationText, setDedicationText] = useState("");
+
+    //if (loadingScraping) return <p>Loading Scraped data...</p>;
+  //if (loadingAssoc) return <p>Loading association data...</p>;
+  //if (loading) return <p>Loading...</p>;
+  //if (error) return <p>Error: {error.message}</p>;
+  //if (!association) return <div>No association found</div>;
+  //if (loadingAssociation) return <div>טוען...</div>;
+  //if (error) return <div>{error}</div>;
+  // if (!link) return <div>No link found</div>;
+
 
 // useEffect(() => {
   //   const fetchAssociation = async () => {
@@ -493,11 +367,167 @@ export default AssociationPage;
   //   }
   // }, [association]);
 
-    //if (loadingScraping) return <p>Loading Scraped data...</p>;
-  //if (loadingAssoc) return <p>Loading association data...</p>;
-  //if (loading) return <p>Loading...</p>;
-  //if (error) return <p>Error: {error.message}</p>;
-  //if (!association) return <div>No association found</div>;
-  //if (loadingAssociation) return <div>טוען...</div>;
-  //if (error) return <div>{error}</div>;
-  // if (!link) return <div>No link found</div>;
+    // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log(donationAmount);
+  //   await donation({association, donationAmount})
+
+  //   try {
+  //     // Make the POST request
+  //     const response = await axios.post(
+  //       "http://localhost:5000/donations/donate",
+  //       {
+  //         userId: authUser, // Include the userId from the logged-in user
+  //         associationName: association["שם עמותה בעברית"],
+  //         associationNumber: associationNumber, // Use association number as ID
+  //         amount: donationAmount, // Donation amount from input
+  //       }
+  //     );
+
+  //     // Handle successful donation
+  //     if (response.status === 200) {
+  //       alert("Donation successful! Thank you for your contribution.");
+  //       setIsPopupOpen(false); // Close the donation popup
+  //       setDonationAmount(""); // Clear the donation amount field
+  //       setDedicationText(""); // Clear the dedication text
+  //       setAddDedication(false); // Reset the dedication checkbox
+  //       handleClosePopup();
+  //     } else {
+  //       alert("There was an issue with your donation. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to make a donation:", error);
+  //     alert("Failed to process the donation. Please try again later.");
+  //   }
+  // };
+
+  
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log(donationAmount);
+
+  //   if (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) {
+  //     alert("Please enter a valid donation amount.");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Make the POST request
+  //     const response = await axios.post(
+  //       "http://localhost:5000/donations/donate",
+  //       {
+  //         userId: authUser, // Include the userId from the logged-in user
+  //         associationName: association["שם עמותה בעברית"],
+  //         associationNumber: associationNumber, // Use association number as ID
+  //         amount: donationAmount, // Donation amount from input
+  //       }
+  //     );
+
+  //     // Handle successful donation
+  //     if (response.status === 200) {
+  //       alert("Donation successful! Thank you for your contribution.");
+  //       setIsPopupOpen(false); // Close the donation popup
+  //       setDonationAmount(""); // Clear the donation amount field
+  //       setDedicationText(""); // Clear the dedication text
+  //       setAddDedication(false); // Reset the dedication checkbox
+  //       handleClosePopup();
+  //     } else {
+  //       alert("There was an issue with your donation. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to make a donation:", error);
+  //     alert("Failed to process the donation. Please try again later.");
+  //   }
+  // };
+
+    // const categoryCounts = negativeInfo.reduce((total, result) => total + result.filteredResults.length, 0);
+
+  // useEffect(() => {
+  //   if (association) {
+  //     console.log("hi4")
+  //     let counts = 0;
+  //     negativeInfo.forEach((result) => {
+  //       counts += result.filteredResults.length;
+  //     });
+  //     console.log("counts", counts)
+  //     setCategoryCounts(counts); // Save counts
+  //   }
+
+  // }, [negativeInfo]);
+  
+              {/* Donation Popup */}
+              {/* {isPopupOpen && (
+                <div className="popup-overlay">
+                  <div className="popup-content">
+                    <button onClick={handleClosePopup} className="close-popup">
+                      &times;
+                    </button>
+                    <div className="popup-title">
+                      <span>תשלום מאובטח</span>
+                      <span className="lock-icon">🔒</span>
+                    </div>
+
+                    <div className="radio-group">
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          value="חד פעמי"
+                          checked={donationType === "חד פעמי"}
+                          onChange={() => setDonationType("חד פעמי")}
+                        />
+                        תרומה חד פעמית
+                      </label>
+                      <label className="radio-label">
+                        <input
+                          type="radio"
+                          value="הוראת קבע"
+                          checked={donationType === "הוראת קבע"}
+                          onChange={() => setDonationType("הוראת קבע")}
+                        />
+                        הוראת קבע
+                      </label>
+                    </div>
+
+                    <input
+                      type="number"
+                      className="donation-amount"
+                      placeholder="סכום תרומה"
+                      value={donationAmount}
+                      onChange={(e) => setDonationAmount(e.target.value)}
+                    />
+
+                    <div
+                      className={`checkbox-group ${addDedication ? "show-dedication" : ""
+                        }`}
+                    >
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={addDedication}
+                          onChange={() => setAddDedication(!addDedication)}
+                        />
+                        רוצה להוסיף הקדשה
+                      </label>
+                      {addDedication && (
+                        <textarea
+                          className="dedication-text"
+                          placeholder="כתוב כאן את ההקדשה שלך"
+                          value={dedicationText}
+                          onChange={(e) => setDedicationText(e.target.value)}
+                        />
+                      )}
+                    </div>
+
+                    <button className="submit-donation" onClick={handleSubmit}>
+                      תרמו עכשיו
+                    </button>
+
+                    {donationAmount && (
+                      <p className="donation-summary">
+                        סכום לתרומה: ₪{donationAmount}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )} */}
