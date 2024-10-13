@@ -8,7 +8,8 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
   const [npoNumber, setNpoNumber] = useState("");
   const categories = Array.from(
     new Set(npoData.map((npo) => npo["סיווג פעילות ענפי"]))
-  );
+  ).sort((a, b) => a.localeCompare(b, "he"));
+
   const navigate = useNavigate();
 
   const handleCategoryClick = (category) => {
@@ -24,9 +25,11 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
       const filteredNPOs = npoData.filter((npo) =>
         selectedCategories.includes(npo["סיווג פעילות ענפי"])
       );
-      console.log("Npo Data:", selectedCategories[0])
+      console.log("Npo Data:", selectedCategories[0]);
       setFilteredData(filteredNPOs);
-      navigate("/filtered-results", { state: { filteredNPOs, selectedCategories } }); // Pass filtered NPOs to FilteredResultsPage
+      navigate("/filtered-results", {
+        state: { filteredNPOs, selectedCategories },
+      }); // Pass filtered NPOs to FilteredResultsPage
     } else if (activeTab === "מספר עמותה" && npoNumber) {
       const filteredNPOs = npoData.filter(
         (npo) => npo["מספר עמותה"].toString() === npoNumber

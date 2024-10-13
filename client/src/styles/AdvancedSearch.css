@@ -37,7 +37,8 @@
     width: 49%;
     padding: 10px;
     text-align: center;
-    background-color: #f1f1f1;
+    background-color: #ddd; /* Lighter color for contrast */
+    color: #333; /* Darker color for readability */
     border-radius: 5px;
     cursor: pointer;
     font-size: 18px;
@@ -45,9 +46,10 @@
   }
   
   .tab.active {
-    background-color: #0072FF;
-    color: white;
+    background-color: #005bb5; /* Darker blue for contrast */
+    color: #fff; /* White text for active tab */
   }
+
   
   .tab-divider {
     width: 2px;
