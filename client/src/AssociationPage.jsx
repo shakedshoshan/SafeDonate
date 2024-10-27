@@ -14,7 +14,8 @@ import { removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 const AssociationPage = () => {
   const { associationNumber } = useParams();
   const { authUser } = useAuthContext();
-  const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
+  const { loadingAssoc, association, error, fetchAssociation } =
+    useAssociationData();
   const { loading, link, fetchAssociationLink } = useAssociationLink();
   const { loadingApprovals, approvals, fetchApprovals } = useApprovals();
   const { loadingScraping, negativeInfo, fetchScrapedData } = useScraping();
@@ -26,29 +27,31 @@ const AssociationPage = () => {
     setShowExplanation((prev) => !prev);
   };
 
-  useEffect(() => {   // fetch association Data
+  useEffect(() => {
+    // fetch association Data
     fetchAssociation({ associationNumber });
   }, [associationNumber]);
 
-
-  useEffect(() => {   // fetch association Link
+  useEffect(() => {
+    // fetch association Link
     fetchAssociationLink({ associationNumber });
   }, [associationNumber]);
 
-  useEffect(() => {   // Fetch approvals by association number
+  useEffect(() => {
+    // Fetch approvals by association number
     if (association) {
       fetchApprovals({ associationNumber });
     }
   }, [associationNumber]);
 
-  useEffect(() => {   // Fetch web scraping data
+  useEffect(() => {
+    // Fetch web scraping data
     if (association) {
       const category = removeTilde(association["סיווג פעילות ענפי"]);
-      fetchScrapedData({associationNumber, category})
+      fetchScrapedData({ associationNumber, category });
     }
   }, [association]);
 
-  
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -65,8 +68,12 @@ const AssociationPage = () => {
     window.open(link);
   };
 
-  const categoryCounts = negativeInfo ? negativeInfo.reduce((total, result) => total + result.filteredResults.length, 0) : 0;
-
+  const categoryCounts = negativeInfo
+    ? negativeInfo.reduce(
+        (total, result) => total + result.filteredResults.length,
+        0
+      )
+    : 0;
 
   return (
     <div className="main-content">
@@ -82,7 +89,8 @@ const AssociationPage = () => {
               </div>
 
               <div className="npo-name">
-                {replaceTildesAlgorithm(association["שם עמותה בעברית"]) || "שם עמותה לא זמין"}
+                {replaceTildesAlgorithm(association["שם עמותה בעברית"]) ||
+                  "שם עמותה לא זמין"}
               </div>
 
               <div className="npo-place">
@@ -95,9 +103,14 @@ const AssociationPage = () => {
 
               <div>
                 <button className="donate-button" onClick={handleDonateClick}>
-                  לתרומה
+                  לתיעוד התרומה
                 </button>
-                <DonationPopup authUser={authUser} association={association} isOpen={isPopupOpen} onClose={handleClosePopup}/>
+                <DonationPopup
+                  authUser={authUser}
+                  association={association}
+                  isOpen={isPopupOpen}
+                  onClose={handleClosePopup}
+                />
               </div>
 
               <FavoriteButton association={association} userId={authUser._id} />
@@ -120,10 +133,13 @@ const AssociationPage = () => {
             <div className="left-section">
               <h2 className="goals-headline">מטרות העמותה</h2>
               <p className="npo-goals">
-                {replaceTildesAlgorithm(association["מטרות עמותה"]) || "העמותה טרם שיתפה את מטרותיה. נשמח לעדכן אותך ברגע שיתווסף מידע נוסף."}
+                {replaceTildesAlgorithm(association["מטרות עמותה"]) ||
+                  "העמותה טרם שיתפה את מטרותיה. נשמח לעדכן אותך ברגע שיתווסף מידע נוסף."}
               </p>
 
-              <h2 className="negative-info-headline">מידע שנאסף על אמינות העמותה</h2>
+              <h2 className="negative-info-headline">
+                מידע שנאסף על אמינות העמותה
+              </h2>
               {/* Negative Info Section */}
               {loadingScraping ? (
                 <p>מחפש מידע על העמותה...</p>
@@ -133,7 +149,11 @@ const AssociationPage = () => {
                 </p>
               ) : (
                 <div className="negative-info-summary">
-                  <div className="category-header" onClick={handleToggleExpand} style={{ cursor: 'pointer' }}>
+                  <div
+                    className="category-header"
+                    onClick={handleToggleExpand}
+                    style={{ cursor: "pointer" }}
+                  >
                     <p>
                       מצאתי {categoryCounts} קישורים הקשורים לעמותה
                       {isExpanded ? " ▲" : " ▼"}
@@ -149,7 +169,7 @@ const AssociationPage = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {negativeInfo.map((result, index) => (
+                        {negativeInfo.map((result, index) =>
                           result.filteredResults.map((result1, index1) => (
                             <tr key={index1}>
                               <td>{result1.title}</td>
@@ -164,7 +184,7 @@ const AssociationPage = () => {
                               </td>
                             </tr>
                           ))
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   )}
@@ -173,7 +193,10 @@ const AssociationPage = () => {
 
               <div className="approvals-section">
                 <h2 className="approvals-headline">טבלת אישורים</h2>
-                <span className="explanation-text-link" onClick={toggleExplanation}>
+                <span
+                  className="explanation-text-link"
+                  onClick={toggleExplanation}
+                >
                   למה צריך את זה?
                 </span>
                 {showExplanation && (
@@ -215,8 +238,8 @@ const AssociationPage = () => {
         ) : (
           <p>Loading association data...</p>
         )}
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
@@ -227,237 +250,234 @@ export default AssociationPage;
 // const [addDedication, setAddDedication] = useState(false);
 // const [dedicationText, setDedicationText] = useState("");
 
-    //if (loadingScraping) return <p>Loading Scraped data...</p>;
-  //if (loadingAssoc) return <p>Loading association data...</p>;
-  //if (loading) return <p>Loading...</p>;
-  //if (error) return <p>Error: {error.message}</p>;
-  //if (!association) return <div>No association found</div>;
-  //if (loadingAssociation) return <div>טוען...</div>;
-  //if (error) return <div>{error}</div>;
-  // if (!link) return <div>No link found</div>;
-
+//if (loadingScraping) return <p>Loading Scraped data...</p>;
+//if (loadingAssoc) return <p>Loading association data...</p>;
+//if (loading) return <p>Loading...</p>;
+//if (error) return <p>Error: {error.message}</p>;
+//if (!association) return <div>No association found</div>;
+//if (loadingAssociation) return <div>טוען...</div>;
+//if (error) return <div>{error}</div>;
+// if (!link) return <div>No link found</div>;
 
 // useEffect(() => {
-  //   const fetchAssociation = async () => {
-  //     try {
-  //       if (authUser) {
-  //         const cachedData = sessionStorage.getItem(
-  //           `assoc_${associationNumber}`
-  //         );
-  //         if (cachedData) {
-  //           console.log("doing caching");
-  //           const parsedData = JSON.parse(cachedData);
-  //           setAssociation(parsedData);
-  //           setLoadingAssociation(false);
-  //           return;
-  //         }
-  //         console.log("fetching from API");
-  //         // If no cache, fetch from the server
-  //         const response = await axios.get(
-  //           `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters=${encodeURIComponent(
-  //             filterQuery
-  //           )}`
-  //         );
+//   const fetchAssociation = async () => {
+//     try {
+//       if (authUser) {
+//         const cachedData = sessionStorage.getItem(
+//           `assoc_${associationNumber}`
+//         );
+//         if (cachedData) {
+//           console.log("doing caching");
+//           const parsedData = JSON.parse(cachedData);
+//           setAssociation(parsedData);
+//           setLoadingAssociation(false);
+//           return;
+//         }
+//         console.log("fetching from API");
+//         // If no cache, fetch from the server
+//         const response = await axios.get(
+//           `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95&filters=${encodeURIComponent(
+//             filterQuery
+//           )}`
+//         );
 
-  //         if (response.data.result.records.length > 0) {
-  //           const associationData = response.data.result.records[0];
+//         if (response.data.result.records.length > 0) {
+//           const associationData = response.data.result.records[0];
 
-  //           // Store the fetched data in sessionStorage
-  //           sessionStorage.setItem(
-  //             `assoc_${associationNumber}`,
-  //             JSON.stringify(associationData)
-  //           );
-  //           setAssociation(associationData);
-  //           setLoadingAssociation(false);
+//           // Store the fetched data in sessionStorage
+//           sessionStorage.setItem(
+//             `assoc_${associationNumber}`,
+//             JSON.stringify(associationData)
+//           );
+//           setAssociation(associationData);
+//           setLoadingAssociation(false);
 
-  //           // Extract association number and fetch approvals
-  //         } else {
-  //           setError("No association found");
-  //         }
-  //       }
-  //       setLoadingAssociation(false); // Loading for association is done
-  //     } catch (error) {
-  //       console.error("Failed to fetch association data:", error);
-  //       setError(error);
-  //       setLoadingAssociation(false);
-  //     }
-  //   };
-  //   fetchAssociation();
-  // }, [associationNumber]);
+//           // Extract association number and fetch approvals
+//         } else {
+//           setError("No association found");
+//         }
+//       }
+//       setLoadingAssociation(false); // Loading for association is done
+//     } catch (error) {
+//       console.error("Failed to fetch association data:", error);
+//       setError(error);
+//       setLoadingAssociation(false);
+//     }
+//   };
+//   fetchAssociation();
+// }, [associationNumber]);
 
+// useEffect(() => {
+//   if (association) {
+//     console.log(association)
+//     console.log("hi2")
+//     const fetchApprovals = async () => {
+//       try {
+//         console.log("in fetchApprovals");
+//         const response = await axios.get(
+//           `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
+//         );
+//         const sortedData = response.data.result.records.sort((a, b) => {
+//           const yearA = parseInt(a["שנת האישור"], 10);
+//           const yearB = parseInt(b["שנת האישור"], 10);
+//           return yearB - yearA;
+//         });
+//         setApprovals(sortedData);
+//       } catch (error) {
+//         setError(error);
+//         //setLoading(false);
+//       }
+//     };
+//     fetchApprovals();
+//   }
+// }, [association]);
 
-  // useEffect(() => {
-  //   if (association) {
-  //     console.log(association)
-  //     console.log("hi2")
-  //     const fetchApprovals = async () => {
-  //       try {
-  //         console.log("in fetchApprovals");
-  //         const response = await axios.get(
-  //           `https://data.gov.il/api/3/action/datastore_search?resource_id=cb12ac14-7429-4268-bc03-460f48157858&q=${associationNumber}`
-  //         );
-  //         const sortedData = response.data.result.records.sort((a, b) => {
-  //           const yearA = parseInt(a["שנת האישור"], 10);
-  //           const yearB = parseInt(b["שנת האישור"], 10);
-  //           return yearB - yearA;
-  //         });
-  //         setApprovals(sortedData);
-  //       } catch (error) {
-  //         setError(error);
-  //         //setLoading(false);
-  //       }
-  //     };
-  //     fetchApprovals();
-  //   }
-  // }, [association]);
+// useEffect(() => {
+//   if (association) {
+//     console.log("hi3")
+//     const fetchScrapedData = async () => {
+//       const associationNumber = association["מספר עמותה"];
+//       const category = removeTilde(association["סיווג פעילות ענפי"]);
 
+//       try {
+//         // Check if data is in sessionStorage
+//         const cachedScrapingData = sessionStorage.getItem(
+//           `scrape_${associationNumber}`
+//         );
+//         if (cachedScrapingData) {
+//           console.log("doing caching of scraped Data");
+//           setNegativeInfo(JSON.parse(cachedScrapingData));
+//           //setLoading(false);
+//           setLoadingScraping(false);
+//           return;
+//         }
 
- 
-  // useEffect(() => {
-  //   if (association) {
-  //     console.log("hi3")
-  //     const fetchScrapedData = async () => {
-  //       const associationNumber = association["מספר עמותה"];
-  //       const category = removeTilde(association["סיווג פעילות ענפי"]);
+//         console.log("Fetching new scraping data...");
+//         // Fetch data from the API if not cached
+//         const response = await axios.post(
+//           "http://localhost:5000/scrape/search",
+//           {
+//             associationNumber,
+//             category,
+//           }
+//         );
+//         const scrapedData = response.data;
+//         if (scrapedData.results.length > 0) {
+//           console.log(scrapedData.results);
+//           // Store the scraped data in sessionStorage
+//           sessionStorage.setItem(
+//             `scrape_${associationNumber}`,
+//             JSON.stringify(scrapedData.results)
+//           );
+//           setNegativeInfo(scrapedData.results); // Save negative info
+//         } else {
+//           console.log("No scraped data found");
+//         }
+//       } catch (error) {
+//         console.error("Failed to fetch or process scraped data:", error);
+//         setError("Error fetching scraping information");
+//       } finally {
+//         // setLoading(false); // Ensure loading is false in all cases
+//         setLoadingScraping(false); // Ensure loadingScraping is false in all cases
+//       }
+//     };
 
-  //       try {
-  //         // Check if data is in sessionStorage
-  //         const cachedScrapingData = sessionStorage.getItem(
-  //           `scrape_${associationNumber}`
-  //         );
-  //         if (cachedScrapingData) {
-  //           console.log("doing caching of scraped Data");
-  //           setNegativeInfo(JSON.parse(cachedScrapingData));
-  //           //setLoading(false);
-  //           setLoadingScraping(false);
-  //           return;
-  //         }
+//     fetchScrapedData();
+//   }
+// }, [association]);
 
-  //         console.log("Fetching new scraping data...");
-  //         // Fetch data from the API if not cached
-  //         const response = await axios.post(
-  //           "http://localhost:5000/scrape/search",
-  //           {
-  //             associationNumber,
-  //             category,
-  //           }
-  //         );
-  //         const scrapedData = response.data;
-  //         if (scrapedData.results.length > 0) {
-  //           console.log(scrapedData.results);
-  //           // Store the scraped data in sessionStorage
-  //           sessionStorage.setItem(
-  //             `scrape_${associationNumber}`,
-  //             JSON.stringify(scrapedData.results)
-  //           );
-  //           setNegativeInfo(scrapedData.results); // Save negative info
-  //         } else {
-  //           console.log("No scraped data found");
-  //         }
-  //       } catch (error) {
-  //         console.error("Failed to fetch or process scraped data:", error);
-  //         setError("Error fetching scraping information");
-  //       } finally {
-  //         // setLoading(false); // Ensure loading is false in all cases
-  //         setLoadingScraping(false); // Ensure loadingScraping is false in all cases
-  //       }
-  //     };
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   console.log(donationAmount);
+//   await donation({association, donationAmount})
 
-  //     fetchScrapedData();
-  //   }
-  // }, [association]);
+//   try {
+//     // Make the POST request
+//     const response = await axios.post(
+//       "http://localhost:5000/donations/donate",
+//       {
+//         userId: authUser, // Include the userId from the logged-in user
+//         associationName: association["שם עמותה בעברית"],
+//         associationNumber: associationNumber, // Use association number as ID
+//         amount: donationAmount, // Donation amount from input
+//       }
+//     );
 
-    // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log(donationAmount);
-  //   await donation({association, donationAmount})
+//     // Handle successful donation
+//     if (response.status === 200) {
+//       alert("Donation successful! Thank you for your contribution.");
+//       setIsPopupOpen(false); // Close the donation popup
+//       setDonationAmount(""); // Clear the donation amount field
+//       setDedicationText(""); // Clear the dedication text
+//       setAddDedication(false); // Reset the dedication checkbox
+//       handleClosePopup();
+//     } else {
+//       alert("There was an issue with your donation. Please try again.");
+//     }
+//   } catch (error) {
+//     console.error("Failed to make a donation:", error);
+//     alert("Failed to process the donation. Please try again later.");
+//   }
+// };
 
-  //   try {
-  //     // Make the POST request
-  //     const response = await axios.post(
-  //       "http://localhost:5000/donations/donate",
-  //       {
-  //         userId: authUser, // Include the userId from the logged-in user
-  //         associationName: association["שם עמותה בעברית"],
-  //         associationNumber: associationNumber, // Use association number as ID
-  //         amount: donationAmount, // Donation amount from input
-  //       }
-  //     );
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   console.log(donationAmount);
 
-  //     // Handle successful donation
-  //     if (response.status === 200) {
-  //       alert("Donation successful! Thank you for your contribution.");
-  //       setIsPopupOpen(false); // Close the donation popup
-  //       setDonationAmount(""); // Clear the donation amount field
-  //       setDedicationText(""); // Clear the dedication text
-  //       setAddDedication(false); // Reset the dedication checkbox
-  //       handleClosePopup();
-  //     } else {
-  //       alert("There was an issue with your donation. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to make a donation:", error);
-  //     alert("Failed to process the donation. Please try again later.");
-  //   }
-  // };
+//   if (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) {
+//     alert("Please enter a valid donation amount.");
+//     return;
+//   }
 
-  
+//   try {
+//     // Make the POST request
+//     const response = await axios.post(
+//       "http://localhost:5000/donations/donate",
+//       {
+//         userId: authUser, // Include the userId from the logged-in user
+//         associationName: association["שם עמותה בעברית"],
+//         associationNumber: associationNumber, // Use association number as ID
+//         amount: donationAmount, // Donation amount from input
+//       }
+//     );
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   console.log(donationAmount);
+//     // Handle successful donation
+//     if (response.status === 200) {
+//       alert("Donation successful! Thank you for your contribution.");
+//       setIsPopupOpen(false); // Close the donation popup
+//       setDonationAmount(""); // Clear the donation amount field
+//       setDedicationText(""); // Clear the dedication text
+//       setAddDedication(false); // Reset the dedication checkbox
+//       handleClosePopup();
+//     } else {
+//       alert("There was an issue with your donation. Please try again.");
+//     }
+//   } catch (error) {
+//     console.error("Failed to make a donation:", error);
+//     alert("Failed to process the donation. Please try again later.");
+//   }
+// };
 
-  //   if (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) {
-  //     alert("Please enter a valid donation amount.");
-  //     return;
-  //   }
+// const categoryCounts = negativeInfo.reduce((total, result) => total + result.filteredResults.length, 0);
 
-  //   try {
-  //     // Make the POST request
-  //     const response = await axios.post(
-  //       "http://localhost:5000/donations/donate",
-  //       {
-  //         userId: authUser, // Include the userId from the logged-in user
-  //         associationName: association["שם עמותה בעברית"],
-  //         associationNumber: associationNumber, // Use association number as ID
-  //         amount: donationAmount, // Donation amount from input
-  //       }
-  //     );
+// useEffect(() => {
+//   if (association) {
+//     console.log("hi4")
+//     let counts = 0;
+//     negativeInfo.forEach((result) => {
+//       counts += result.filteredResults.length;
+//     });
+//     console.log("counts", counts)
+//     setCategoryCounts(counts); // Save counts
+//   }
 
-  //     // Handle successful donation
-  //     if (response.status === 200) {
-  //       alert("Donation successful! Thank you for your contribution.");
-  //       setIsPopupOpen(false); // Close the donation popup
-  //       setDonationAmount(""); // Clear the donation amount field
-  //       setDedicationText(""); // Clear the dedication text
-  //       setAddDedication(false); // Reset the dedication checkbox
-  //       handleClosePopup();
-  //     } else {
-  //       alert("There was an issue with your donation. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Failed to make a donation:", error);
-  //     alert("Failed to process the donation. Please try again later.");
-  //   }
-  // };
+// }, [negativeInfo]);
 
-    // const categoryCounts = negativeInfo.reduce((total, result) => total + result.filteredResults.length, 0);
-
-  // useEffect(() => {
-  //   if (association) {
-  //     console.log("hi4")
-  //     let counts = 0;
-  //     negativeInfo.forEach((result) => {
-  //       counts += result.filteredResults.length;
-  //     });
-  //     console.log("counts", counts)
-  //     setCategoryCounts(counts); // Save counts
-  //   }
-
-  // }, [negativeInfo]);
-  
-              {/* Donation Popup */}
-              {/* {isPopupOpen && (
+{
+  /* Donation Popup */
+}
+{
+  /* {isPopupOpen && (
                 <div className="popup-overlay">
                   <div className="popup-content">
                     <button onClick={handleClosePopup} className="close-popup">
@@ -530,4 +550,5 @@ export default AssociationPage;
                     )}
                   </div>
                 </div>
-              )} */}
+              )} */
+}
