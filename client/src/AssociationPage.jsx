@@ -22,6 +22,9 @@ const AssociationPage = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [isContactLoading, setIsContactLoading] = useState(false);
+  const [contactMessage, setContactMessage] = useState("");
+  const [linkLoaded, setLinkLoaded] = useState(false);
 
   const toggleExplanation = () => {
     setShowExplanation((prev) => !prev);
@@ -33,9 +36,15 @@ const AssociationPage = () => {
   }, [associationNumber]);
 
   useEffect(() => {
-    // fetch association Link
-    fetchAssociationLink({ associationNumber });
-  }, [associationNumber]);
+    // Fetch the association link
+    fetchAssociationLink({ associationNumber }).then(() => {
+      if (link === "NO_CONTACT_INFO") {
+        setContactMessage("אין דרך ליצור כרגע קשר, נא לנסות שנית מאוחר יותר");
+      } else {
+        setLinkLoaded(true); // Only set to true if the link is valid
+      }
+    });
+  }, [associationNumber, link]);
 
   useEffect(() => {
     // Fetch approvals by association number
@@ -56,6 +65,13 @@ const AssociationPage = () => {
     setIsExpanded(!isExpanded);
   };
 
+  const handleMoreInfo = () => {
+    window.open(
+      `https://www.guidestar.org.il/organization/${associationNumber}`,
+      "_blank"
+    );
+  };
+
   const handleDonateClick = () => {
     setIsPopupOpen(true);
   };
@@ -66,6 +82,19 @@ const AssociationPage = () => {
 
   const handleOpenLink = () => {
     window.open(link);
+  };
+
+  const handleContactClick = () => {
+    setTimeout(() => {
+      if (link && link !== "NO_CONTACT_INFO") {
+        // Open /loading page in a new tab with the redirect URL
+        window.open(
+          `/loading?redirectUrl=${encodeURIComponent(link)}`,
+          "_blank"
+        );
+        setContactMessage(""); // Clear any existing message
+      }
+    }, 10000); // Wait 8 seconds before taking action
   };
 
   const categoryCounts = negativeInfo
@@ -115,15 +144,34 @@ const AssociationPage = () => {
 
               <FavoriteButton association={association} userId={authUser._id} />
 
-              {link === "NO_CONTACT_INFO" ? (
-                <button className="donate-button">
-                  לעמותה אין כל אמצעי תקשורת
-                </button>
-              ) : (
-                <button className="donate-button" onClick={handleOpenLink}>
-                  {link}
-                </button>
+              <button
+                className="donate-button"
+                onClick={handleContactClick}
+                disabled={!linkLoaded} // Disable button if link isn't loaded or is invalid
+                style={{
+                  cursor: linkLoaded ? "pointer" : "not-allowed",
+                  opacity: linkLoaded ? 1 : 0.6, // Style to indicate loading
+                }}
+              >
+                {linkLoaded ? "יצירת קשר לתרומה" : "טוען..."}
+              </button>
+
+              {/* Conditional Popup for Loading or Contact Message */}
+              {isContactLoading && (
+                <div className="contact-popup">
+                  <p>טוען מידע על אמצעי קשר, יש לחכות כ10 שניות...</p>
+                </div>
               )}
+              {contactMessage && (
+                <div className="contact-popup">
+                  <p>{contactMessage}</p>
+                  <button onClick={() => setContactMessage("")}>סגור</button>
+                </div>
+              )}
+
+              <button className="donate-button" onClick={handleMoreInfo}>
+                מידע נוסף על העמותה
+              </button>
             </div>
 
             {/* Separator Line */}
@@ -232,6 +280,15 @@ const AssociationPage = () => {
                     העמותה מעולם לא נרשמה כעמותה תקינה על ידי רשם העמותות
                   </p>
                 )}
+              </div>
+              <div className="disclaimer-section">
+                <p className="disclaimer-text">
+                  כל המידע המוצג בעמוד זה נאסף ממקורות ציבוריים זמינים ברשת.
+                  למרות שאנו משתדלים להציג מידע מדויק ועדכני, אנו לא נושאים
+                  באחריות לכל טעות או אי דיוק במידע המוצג. המידע המוצג הינו
+                  לצורכי שקיפות בלבד ואין לראות בו כהמלצה חד משמעית לתרומה
+                  לעמותה מסוימת.
+                </p>
               </div>
             </div>
           </>

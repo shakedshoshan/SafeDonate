@@ -12,6 +12,7 @@ import NotFound from "./NotFound";
 import NotConnected from "./pages/NotConnected";
 import AdvancedSearch from "./components/AdvancedSearch";
 import FilteredResultsPage from "./components/FilteredResultsPage";
+import Loading from "./pages/Loading";
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
 
@@ -24,6 +25,7 @@ const ROUTES = {
   ABOUT_US: "/about-us",
   ADVANCED_SEARCH: "/advanced-search",
   FILTERED_RESULTS: "/filtered-results",
+  LOADING: "/loading",
   NOT_FOUND: "*",
   NOT_CONNECTED: "/not-connected",
 };
@@ -34,7 +36,7 @@ const App = () => {
   const [suggestions, setSuggestions] = useState([]); // This is important: make sure `setSuggestions` is defined
   const [npoData, setNpoData] = useState([]); // This will store NPO data
   const [filteredData, setFilteredData] = useState([]);
-  
+
   const navigate = useNavigate();
 
   const handleSearch = (term) => {
@@ -72,11 +74,26 @@ const App = () => {
           }
         />
         {/* <Route path={ROUTES.ASSOCIATION_PAGE} element={<AssociationPage />} /> */}
-        <Route path={ROUTES.ASSOCIATION_PAGE} element={authUser? <AssociationPage /> : <Navigate to= '/not-connected'/>} />
-        <Route path={ROUTES.LOGIN} element={authUser? <Navigate to='/' /> : <Login />} />
-        <Route path={ROUTES.SIGNUP} element={authUser? <Navigate to='/' /> : <Signup />} />
-        <Route path={ROUTES.PROFILE} element={authUser? <UserProfile /> :<Navigate to='/login'/>} />
+        <Route
+          path={ROUTES.ASSOCIATION_PAGE}
+          element={
+            authUser ? <AssociationPage /> : <Navigate to="/not-connected" />
+          }
+        />
+        <Route
+          path={ROUTES.LOGIN}
+          element={authUser ? <Navigate to="/" /> : <Login />}
+        />
+        <Route
+          path={ROUTES.SIGNUP}
+          element={authUser ? <Navigate to="/" /> : <Signup />}
+        />
+        <Route
+          path={ROUTES.PROFILE}
+          element={authUser ? <UserProfile /> : <Navigate to="/login" />}
+        />
         <Route path={ROUTES.ABOUT_US} element={<AboutUs />} />
+        <Route path={ROUTES.LOADING} element={<Loading />} />
         <Route
           path={ROUTES.ADVANCED_SEARCH}
           element={
@@ -88,7 +105,8 @@ const App = () => {
         />
         <Route
           path={ROUTES.FILTERED_RESULTS}
-          element={<FilteredResultsPage />}/>
+          element={<FilteredResultsPage />}
+        />
         <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
         <Route path={ROUTES.NOT_CONNECTED} element={<NotConnected />} />
       </Routes>
