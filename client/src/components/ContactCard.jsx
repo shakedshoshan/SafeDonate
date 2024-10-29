@@ -3,26 +3,14 @@ import React from 'react';
 const ContactCard = ({
   mainTitle = 'יצירת קשר',
   subtitle = 'מידע רשמי',
-  phoneNumbers = [],
-  website,
-  email,
-  address,
+  contactInfo,
   isLoading,
   onClose,
   noContactMessage = 'העמותה לא סיפקה אמצעים ליצירת קשר'
 }) => {
 
-  const phone1 = phoneNumbers[0] || '';  // First phone number if it exists
-  const phone2 = phoneNumbers[1] || '';  // Second phone number if it exists
-
-  // Destructuring contact information from contactInfo prop
-  // const { website, email, , address,  } = contactInfo || {};
-
-  // Combine phone numbers if both are provided
-  //const fullPhone = phone1 && phone2 ? `${phone1} | ${phone2}` : phone1 || phone2;
-
   // Check if we have any contact details
-  const hasContactDetails = website || email || phone1 || phone2 || address ;
+  const hasContactDetails = contactInfo?.website || contactInfo?.email || contactInfo?.phoneNumbers?.length || contactInfo?.address;
 
   // Function to ensure website has proper format
   const formatLink = (url) => {
@@ -32,14 +20,11 @@ const ContactCard = ({
 
   return (
   <>
-  {/* Overlay backdrop */}
   <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center">
-    {/* Card container */}
     <div 
       className="relative bg-white rounded-xl shadow-md p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto font-sans" 
       dir="rtl"
     >
-      {/* Close button positioned absolutely */}
       <button 
         onClick={onClose} 
         className="absolute top-4 left-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
@@ -69,11 +54,11 @@ const ContactCard = ({
         <p className="text-gray-500">טוען פרטי קשר...</p>
       ) : hasContactDetails ? (
         <>
-          {website && (
+          {contactInfo?.website && (
             <div className="flex items-center mb-4 gap-3">
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">🔗</div>
               <a 
-                href={formatLink(website)} 
+                href={formatLink(contactInfo.website)} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-[#45B5AA] hover:text-[#3a9990] transition-colors font-medium"
@@ -83,47 +68,37 @@ const ContactCard = ({
             </div>
           )}
 
-          {email && (
+          {contactInfo?.email && (
             <div className="flex items-center mb-4 gap-3">
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">
                 ✉️
               </div>
-              <a href={`mailto:${email}`} className="text-gray-700 hover:text-[#45B5AA] transition-colors">
-                {email}
+              <a href={`mailto:${contactInfo.email}`} className="text-gray-700 hover:text-[#45B5AA] transition-colors">
+                {contactInfo.email}
               </a>
             </div>
-          )}
+          )}   
 
-          {(phone1 || phone2) && (
+          {contactInfo?.phoneNumbers && Array.isArray(contactInfo.phoneNumbers) && contactInfo.phoneNumbers.length > 0 && (
             <div className="flex items-center mb-4 gap-3">
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">
                 📞
               </div>
-              <a href={`tel:${phone1}`} className="text-gray-700 hover:text-[#45B5AA] transition-colors">
-                {phone1}{phone2 && ` | ${phone2}`}
-              </a>
+              <span className="text-gray-700 hover:text-[#45B5AA] transition-colors">
+                    {contactInfo.phoneNumbers.join(' | ')}
+              </span>           
             </div>
           )}
 
-
-          {/* {phoneNumbers && (
-            <div className="flex items-center mb-4 gap-3">
-              <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">
-                📞
-              </div>
-              <a href={`tel:${phone1}`} className="text-gray-700 hover:text-[#45B5AA] transition-colors">
-                {phoneNumbers }
-              </a>
-            </div>
-          )} */}
-
-          {address && (
+          {contactInfo?.address && (
             <div className="flex items-center mb-4 gap-3">
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white p-2">
                 🏠
               </div>
               <span className="text-gray-700">
-                {address || 'כתובת מלאה לא זמינה'}
+                <strong>כתובת רשמית:</strong> {contactInfo.address || (
+                  <span className="text-gray-500">כתובת מלאה לא זמינה</span>
+                )}
               </span>
             </div>
           )}

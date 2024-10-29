@@ -12,8 +12,6 @@ const fetchContactInfo = async (associationNumber) => {
         const $ = cheerio.load(data);
         const websiteLink = $(".malkar-contact-web .malkar-contact-section a[href^='http']").first().attr("href");
         const emailLink = $(".malkar-contact-info .malkar-contact-detail a[href^='mailto']").first().attr("href");
-        //const phone = $(".malkar-contact-phone a[href^='tel']").first().text();
-        const fullAddress = $(".malkar-contact-detail ng-star-inserted").first().text();
         const phoneNumbers = [];
         $(".malkar-contact-phone-num-wrapper .malkar-contact-detail.malkar-contact-phone a[href^='tel']").each((index, element) => {
             const phoneNumber = $(element).text().trim();
@@ -21,6 +19,7 @@ const fetchContactInfo = async (associationNumber) => {
                 phoneNumbers.push(phoneNumber);
             }
         })
+        const fullAddress = $(".malkar-contact-detail.ng-star-inserted").text().trim();
 
         await browser.close();
 
@@ -29,8 +28,8 @@ const fetchContactInfo = async (associationNumber) => {
         if (websiteLink) contactInfo.website = websiteLink;
         if (emailLink) contactInfo.email = emailLink.replace("mailto:", "");
         if (phoneNumbers) contactInfo.phoneNumbers = phoneNumbers;
-        if (fullAddress) contactInfo.address = fullAddress.replace(/\s+/g, " "); // Remove extra spaces in the address string
-
+        if (fullAddress) contactInfo.address = fullAddress;
+            //console.log(fullAddress)
         return Object.keys(contactInfo).length > 0 ? contactInfo : "NO_CONTACT_INFO";
 
     } catch (error) {

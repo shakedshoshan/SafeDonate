@@ -6,7 +6,7 @@ const getContactInfo = async (req, res) => {
     const { associationNumber } = req.body;
     try {
         const contactInfo = await fetchContactInfo(associationNumber);
-        console.log('Contact Information:', contactInfo);
+        console.log('Contact Information:', contactInfo.address);
         return res.status(200).json({ contactInfo });
 
     } catch (error) {
