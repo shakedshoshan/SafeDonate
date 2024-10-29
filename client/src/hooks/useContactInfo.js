@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const useAssociationLink = () => {
+const useContactInfo = () => {
 	const [loading, setLoading] = useState(true);
-	const [link, setLink] = useState(null);
+	const [contactInfo, setContactInfo] = useState(null);
 
-	const fetchAssociationLink = async ({ associationNumber }) => {
+	const fetchContactInfo = async ({ associationNumber }) => {
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/scrape/link",
+				"http://localhost:5000/scrape/contact",
 				{ associationNumber }
 			);
 
 			if (response.data.error) {
 				throw new Error(response.data.error);
 			}
-			setLink(response.data.link);
+			setContactInfo(response.data.contactInfo);
 		} catch (error) {
 			toast.error(error.message);
 		} finally {
@@ -24,10 +24,10 @@ const useAssociationLink = () => {
 		}
 	};
 
-	return { loading, link, fetchAssociationLink };
+	return { loading, contactInfo, fetchContactInfo };
 };
 
-export default useAssociationLink;
+export default useContactInfo;
 // const res = await fetch("/api/auth/link", {
 // 	method: "POST",
 // 	headers: { "Content-Type": "application/json" },

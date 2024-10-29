@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSignup from "../hooks/useSignup";
-import "../Signup.css";
+import "../styles/Signup.css";
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
@@ -13,6 +13,7 @@ const Signup = () => {
   });
   
   const { loading, signup } = useSignup();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
 		e.preventDefault();

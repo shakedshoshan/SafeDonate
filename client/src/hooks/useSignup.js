@@ -38,17 +38,17 @@ export default useSignup;
 
 function handleInputErrors({ firstName, lastName, email, password, confirmPassword }) {
 	if (!firstName || !lastName || !email || !password || !confirmPassword) {
-		toast.error("Please fill in all fields");
+		toast.error("מלא את כל השדות");
 		return false;
 	}
 
 	if (password !== confirmPassword) {
-		toast.error("Passwords do not match");
+		toast.error("הסיסמאות לא מתאימות");
 		return false;
 	}
 
 	if (password.length < 4) {
-		toast.error("Password must be at least 4 characters");
+		toast.error("סיסמה חייבת להכיל 4 ספרות לפחות");
 		return false;
 	}
 

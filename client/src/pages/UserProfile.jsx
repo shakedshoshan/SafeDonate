@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
-import "./UserProfile.css";
-import { useAuthContext } from "./context/AuthContext";
-import useLogout from "./hooks/useLogout";
+import "../styles/UserProfile.css";
+import { useAuthContext } from "../context/AuthContext";
+import useLogout from "../hooks/useLogout";
 
 const UserProfile = () => {
   const { userId } = useParams();

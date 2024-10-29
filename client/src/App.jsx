@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { Navigate, Routes, Route, useNavigate } from "react-router-dom";
-import "./App.css";
-import Header from "./components/Header";
-import Home from "./Home";
-import AssociationPage from "./AssociationPage";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import UserProfile from "./UserProfile";
-import AboutUs from "./AboutUs";
-import NotFound from "./NotFound";
-import NotConnected from "./pages/NotConnected";
-import AdvancedSearch from "./components/AdvancedSearch";
-import FilteredResultsPage from "./components/FilteredResultsPage";
-import Loading from "./pages/Loading";
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
+import "./App.css";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import AssociationPage from "./pages/AssociationPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import UserProfile from "./pages/UserProfile";
+import AboutUs from "./pages/AboutUs";
+import NotFound from "./pages/NotFound";
+import NotConnected from "./pages/NotConnected";
+import AdvancedSearch from "./components/AdvancedSearch";
+import FilteredResultsPage from "./pages/FilteredResultsPage";
+//import Loading from "./pages/Loading";
 
 const ROUTES = {
   HOME: "/",
@@ -25,7 +25,7 @@ const ROUTES = {
   ABOUT_US: "/about-us",
   ADVANCED_SEARCH: "/advanced-search",
   FILTERED_RESULTS: "/filtered-results",
-  LOADING: "/loading",
+  //LOADING: "/loading",
   NOT_FOUND: "*",
   NOT_CONNECTED: "/not-connected",
 };
@@ -93,7 +93,7 @@ const App = () => {
           element={authUser ? <UserProfile /> : <Navigate to="/login" />}
         />
         <Route path={ROUTES.ABOUT_US} element={<AboutUs />} />
-        <Route path={ROUTES.LOADING} element={<Loading />} />
+        {/* <Route path={ROUTES.LOADING} element={<Loading />} /> */}
         <Route
           path={ROUTES.ADVANCED_SEARCH}
           element={

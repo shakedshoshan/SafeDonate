@@ -1,16 +1,16 @@
 const scraper = require('../utils/scraperData.js');
 const { processScrapedResults } = require('../utils/filterResults.js');
-const { fetchAssociationLink } = require('../utils/scrapeLink.js');
+const { fetchContactInfo } = require('../utils/scrapeContactInfo.js');
 
-const getLink = async (req, res) => {
+const getContactInfo = async (req, res) => {
     const { associationNumber } = req.body;
     try {
-        const link = await fetchAssociationLink(associationNumber);
-        console.log('controller link: ', link)
-        return res.status(200).json({ link });
+        const contactInfo = await fetchContactInfo(associationNumber);
+        console.log('Contact Information:', contactInfo);
+        return res.status(200).json({ contactInfo });
 
     } catch (error) {
-        return res.status(500).json({ error: 'Failed to scrape link' });
+        return res.status(500).json({ error: 'Failed to retrieve contact information' });
 
     }
 }
@@ -35,4 +35,4 @@ const scrapeOnline = async (req, res) => {
     }
 }
 
-module.exports = { getLink, scrapeOnline };
+module.exports = { getContactInfo, scrapeOnline };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../styles/FilteredResultsPage.css"; // Add relevant CSS for styling
 import { useAuthContext } from "../context/AuthContext";
 import AssociationCarousel from "../components/AssociationCarousel";
+import "../styles/FilteredResultsPage.css";
 
 const FilteredResultsPage = () => {
   const location = useLocation();

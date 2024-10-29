@@ -3,7 +3,7 @@ const scrapeController = require('../controllers/scrapeController');
 
 const scrapeRouter = express.Router();
 
-scrapeRouter.post('/link', scrapeController.getLink);
+scrapeRouter.post('/contact', scrapeController.getContactInfo);
 scrapeRouter.post('/search', scrapeController.scrapeOnline);
 
 

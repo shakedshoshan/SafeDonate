@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 //import useSignup from "../hooks/useSignup";
-import "../NotConnected.css";
+import "../styles/NotConnected.css";
 
 const NotConnected = () => {
     const navigate = useNavigate();
