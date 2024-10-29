@@ -25,11 +25,6 @@ const DonationPopup = ({ authUser, association, isOpen, onClose }) => {
 
   const handleInputErrors = (value) => {
     return !isNaN(value) && value > 0;
-    // return (!donationAmount || isNaN(donationAmount) || donationAmount <= 0) //{
-    // alert("Please enter a valid donation amount.");
-    //    return false;
-    // }
-    // return true
   };
 
   //useEffect(() => {

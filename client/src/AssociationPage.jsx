@@ -14,8 +14,7 @@ import { removeTilde, replaceTildesAlgorithm } from "./utils/filterText.js";
 const AssociationPage = () => {
   const { associationNumber } = useParams();
   const { authUser } = useAuthContext();
-  const { loadingAssoc, association, error, fetchAssociation } =
-    useAssociationData();
+  const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
   const { loading, link, fetchAssociationLink } = useAssociationLink();
   const { loadingApprovals, approvals, fetchApprovals } = useApprovals();
   const { loadingScraping, negativeInfo, fetchScrapedData } = useScraping();

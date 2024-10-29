@@ -6,10 +6,6 @@ const getLink = async (req, res) => {
     const { associationNumber } = req.body;
     try {
         const link = await fetchAssociationLink(associationNumber);
-        // console.log(link.message)
-        // if (!link) {
-        //     throw new Error('Link not found');
-        // }
         console.log('controller link: ', link)
         return res.status(200).json({ link });
 
