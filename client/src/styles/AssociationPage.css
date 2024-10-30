@@ -21,7 +21,7 @@ body {
 
 /* Right Side Section */
 .right-section {
-  width: 30%;
+  width: 20%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,20 +72,31 @@ body {
 
 /* Action Buttons */
 .donate-button {
-  background-color: #1a6bc7;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  padding: 10px 40px;
-  font-size: 1.2rem;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: white;
+  color: #4a4a4a;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition-property: all;
+  transition-duration: 300ms;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  font-size: 1.125rem;
   cursor: pointer;
-  text-align: center;
+  transform: translateY(0);
   margin-top: 20px;
+  width: fit-content;
+  min-width: 200px;
+  max-width: 100%;
 }
 
 .donate-button:hover {
-  background-color: #1558a6;
+  background-color: #f9fafb;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-0.125rem);
 }
 
 /* Content Divider */

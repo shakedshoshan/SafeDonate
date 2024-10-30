@@ -17,7 +17,7 @@ const AssociationPage = () => {
   const { associationNumber } = useParams();
   const { authUser } = useAuthContext();
   const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
-  const { loading, contactInfo, fetchContactInfo } = useContactInfo();
+  const { loading, contactInfo } = useContactInfo(associationNumber);
   const { loadingApprovals, approvals, fetchApprovals } = useApprovals();
   const { loadingScraping, negativeInfo, fetchScrapedData } = useScraping();
   
@@ -32,7 +32,7 @@ const AssociationPage = () => {
     window.open(`https://www.guidestar.org.il/organization/${associationNumber}`,"_blank");
   const handleDonateClick = () => setIsPopupOpen(true);
   const handleClosePopup = () => setIsPopupOpen(false);
-  const handleContactClick = () => setIsCardOpen(true);
+  //const handleContactClick = () => setIsCardOpen(true);
 
 
   // fetch association Data
@@ -50,9 +50,9 @@ const AssociationPage = () => {
   }, [association]);
 
 //  fetch association Link
-  useEffect(() => {
-      fetchContactInfo({ associationNumber })
-  }, []);
+  // useEffect(() => {
+  //     fetchContactInfo({ associationNumber })
+  // }, []);
 
   const categoryCounts = negativeInfo ? negativeInfo.reduce((total, result) =>
      total + result.filteredResults.length,0) : 0;
@@ -81,19 +81,20 @@ const AssociationPage = () => {
               </div>
 
               <div>
-                <button className="donate-button" onClick={handleContactClick}>
+                <button className="donate-button" onClick={() => setIsCardOpen(true)}>
                     יצירת קשר
                 </button>
                 
                 {isCardOpen && (
                   <ContactCard 
                     isLoading={loading} 
-                    contactInfo={contactInfo} 
+                    contactInfo={Object.keys(contactInfo).length ? contactInfo : null}
+                    // contactInfo={contactInfo} 
                     onClose={() => setIsCardOpen(false)} 
                   />
                 )}
               </div>
-          
+
               <div>
                 <button className="donate-button" onClick={handleDonateClick}>
                   לתיעוד התרומה
@@ -205,8 +206,8 @@ const AssociationPage = () => {
               </div>
               
               {/* Disclaimer Section */}
-              <div className="disclaimer-section">
-                <p className="disclaimer-text">
+              <div className="disclaimer-section bg-gray-50 border border-gray-200 rounded-lg p-6 mt-8 mx-4">
+                <p className="disclaimer-text text-gray-600 text-sm leading-relaxed text-right">
                   כל המידע המוצג בעמוד זה נאסף ממקורות ציבוריים זמינים ברשת.
                   למרות שאנו משתדלים להציג מידע מדויק ועדכני, אנו לא נושאים
                   באחריות לכל טעות או אי דיוק במידע המוצג. המידע המוצג הינו

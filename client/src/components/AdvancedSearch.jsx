@@ -41,6 +41,9 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
     }
   };
 
+  const isSearchDisabled = (activeTab === "קטגוריות" && selectedCategories.length === 0) || 
+                          (activeTab === "מספר עמותה" && !npoNumber);
+
   return (
     <div className="about-page">
       <div className="about-container">
@@ -109,8 +112,11 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
         </div>
 
         <button
-          className="search-button w-full py-3 bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white rounded-lg transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 hover:from-[#00C6FF] hover:to-[#0072FF] hover:opacity-90"
+          className={`search-button w-full py-3 bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white rounded-lg transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 hover:from-[#00C6FF] hover:to-[#0072FF] ${
+            isSearchDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'
+          }`}
           onClick={handleSearch}
+          disabled={isSearchDisabled}
         >
           חפש
         </button>

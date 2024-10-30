@@ -1,5 +1,7 @@
 .main-content {
   margin-top: 100px;
+  min-height: 100vh;
+  background-color: #f5f8fa;
 }
 
 .profile-page {
@@ -7,99 +9,161 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  padding-top: 10px;
-  padding-bottom: 50px;
-  background-color: #E6F7FF; 
+  min-height: 100vh;
+  padding: 60px 30px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
 }
 
 .profile-container {
   background-color: white;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 1000px;
+  padding: 60px;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 1100px;
   text-align: right;
   direction: rtl;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-h2 {
-  font-size: 20px;
+.profile-container:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* h2 {
+  font-size: 32px;
   background: linear-gradient(90deg, #00C6FF, #0072FF);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 20px;
-}
+  margin-bottom: 40px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.5px;
+  position: relative;
+} */
+
+/* h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #2B4F71, #45B5AA);
+  border-radius: 2px;
+} */
 
 .user-info {
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   text-align: right;
+  padding: 25px;
+  background-color: #f8fbff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 118, 255, 0.1);
 }
 
 .user-info div {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  font-size: 23px;
-  color: #333;
+  margin-bottom: 14px;
+  margin-top: 14px;
+  font-size: 22px;
+  color: #1a2b3c;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 118, 255, 0.1);
 }
 
 .profile-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 40px;
+  gap: 25px;
 }
 
 .logout-button {
-  background-color: #104d8e;
+  background: linear-gradient(135deg, #1976D2 0%, #2196F3 100%);
   color: white;
-  padding: 12px;
+  padding: 16px 35px;
   border: none;
   border-radius: 30px;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
 .logout-button:hover {
-  background-color: #3d9bc6;
+  background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
 }
 
 .delete-button {
-  background-color: #e74c3c;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
   color: white;
-  padding: 12px;
+  padding: 16px 35px;
   border: none;
   border-radius: 30px;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
 }
 
 .delete-button:hover {
-  background-color: #c0392b;
+  background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
 }
 
 .donations-container, .favorites-container {
-  margin-top: 40px;
+  margin-top: 50px;
   text-align: right;
+  padding: 30px;
+  background-color: #f8fbff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 118, 255, 0.1);
 }
 
 .donations-container h3, .favorites-container h3 {
-  font-size: 23px;
-  color: #104d8e;
-  margin-bottom: 15px;
+  font-size: 26px;
+  color: #1976D2;
+  margin-bottom: 25px;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.donations-container h3:after, .favorites-container h3:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #2196F3, #0D47A1);
+  border-radius: 4px;
 }
 
 .donation-item, .favorite-item {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  font-size: 19px;
+  color: #1a2b3c;
+  margin-bottom: 18px;
+  padding: 20px;
+  border: 1px solid rgba(0, 118, 255, 0.15);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  background-color: white;
 }
 
 .donation-item:hover, .favorite-item:hover {
-  background-color: #f0f0f0; /* Light gray on hover */
+  background-color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 118, 255, 0.1);
+  border-color: #2196F3;
 }

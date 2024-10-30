@@ -10,6 +10,7 @@ const UserProfile = () => {
   const { userId } = useParams();
   const [donations, setDonations] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [activeTab, setActiveTab] = useState("donations");
   const navigate = useNavigate();
   const { authUser } = useAuthContext();
   const { loading, logout } = useLogout();
@@ -90,60 +91,154 @@ const UserProfile = () => {
           <h2>פרופיל אישי</h2>
 
           {/* User Info */}
-          <div className="user-info">
-            <div>שם פרטי: {authUser.firstName}</div>
-            <div>שם משפחה: {authUser.lastName}</div>
-            <div>אימייל: {authUser.email}</div>
+          <div className="bg-white rounded-xl shadow-md p-8 mb-8">
+            <div className="space-y-4">
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100">
+                <div className="w-10 h-10 bg-[#0072FF] bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-[#0072FF] text-xl">👤</span>
+                </div>
+                <div className="mr-4">
+                  <p className="text-sm text-gray-500">שם פרטי</p>
+                  <p className="text-lg font-medium text-gray-800">{authUser.firstName}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100">
+                <div className="w-10 h-10 bg-[#0072FF] bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-[#0072FF] text-xl">👥</span>
+                </div>
+                <div className="mr-4">
+                  <p className="text-sm text-gray-500">שם משפחה</p>
+                  <p className="text-lg font-medium text-gray-800">{authUser.lastName}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100">
+                <div className="w-10 h-10 bg-[#0072FF] bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-[#0072FF] text-xl">✉️</span>
+                </div>
+                <div className="mr-4">
+                  <p className="text-sm text-gray-500">כתובת אימייל</p>
+                  <a 
+                    href={`mailto:${authUser.email}`}
+                    className="text-lg font-medium text-[#0072FF] hover:text-[#00C6FF] transition-colors"
+                  >
+                    {authUser.email}
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Donations */}
-          <div className="donations-container">
-            <h3>התרומות שלי</h3>
-            {donations.length > 0 ? (
-              donations.map((donation, index) => (
-                <div key={index} className="donation-item">
-                  תרומה ל-{donation.associationName}, סכום: ₪{donation.amount}
-                </div>
-              ))
-            ) : (
-              <button
-                onClick={() => navigate("/")}
-                className="start-donating-button"
-              >
-                התחלו לתרום
-              </button>
-            )}
+          {/* Tabs */}
+          <div className="flex mb-6 border-b">
+            <button
+              className={`px-6 py-3 text-lg font-medium ${
+                activeTab === "donations"
+                  ? "text-[#0072FF] border-b-2 border-[#0072FF]"
+                  : "text-gray-500 hover:text-[#00C6FF]"
+              }`}
+              onClick={() => setActiveTab("donations")}
+            >
+              התרומות שלי
+            </button>
+            <button
+              className={`px-6 py-3 text-lg font-medium ${
+                activeTab === "favorites"
+                  ? "text-[#0072FF] border-b-2 border-[#0072FF]"
+                  : "text-gray-500 hover:text-[#00C6FF]"
+              }`}
+              onClick={() => setActiveTab("favorites")}
+            >
+              עמותות מועדפות
+            </button>
           </div>
 
-          {/* Favorites */}
-          <div className="favorites-container">
-            <h3>עמותות מועדפות</h3>
-            {favorites.length > 0 ? (
-              favorites.map((association, index) => (
-                <div
-                  key={index}
-                  className="favorite-item"
-                  style={{
-                    cursor: "pointer",
-                    color: "blue",
-                    textDecoration: "underline",
-                  }}
-                  onClick={() =>
-                    navigate(`/AssociationPage/${association.number}`)
-                  } // Redirect to the AssociationPage with the association number
-                >
-                  {association.name}
+          {/* Donations Tab Content */}
+          {activeTab === "donations" && (
+            <div className="bg-white rounded-xl shadow-md p-8 mb-8">
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-[#0072FF] bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-[#0072FF] text-xl">💰</span>
                 </div>
-              ))
-            ) : (
-              <button
-                onClick={() => navigate("/advanced-Search")}
-                className="find-npos-button"
-              >
-                חפשו עמותות להוסיף
-              </button>
-            )}
-          </div>
+                <h3 className="mr-4 text-2xl font-bold text-gray-800">התרומות שלי</h3>
+              </div>
+
+              {donations.length > 0 ? (
+                <div className="space-y-4">
+                  {donations.map((donation, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg transition-all hover:bg-gray-100">
+                      <div className="flex items-center flex-1">
+                        <div className="w-8 h-8 bg-[#104d8e] bg-opacity-10 rounded-full flex items-center justify-center">
+                          <span className="text-[#104d8e] text-sm">₪</span>
+                        </div>
+                        <div className="mr-4 flex-1">
+                          <p className="text-lg font-medium text-gray-800">{donation.associationName}</p>
+                          <div className="flex justify-between items-center">
+                            <p className="text-sm text-gray-500">סכום: ₪{donation.amount}</p>
+                            <p className="text-sm text-gray-500">
+                              {new Date(donation.createdAt).toLocaleDateString('he-IL')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center p-8 bg-gray-50 rounded-lg">
+                  <p className="text-gray-500 mb-4">עדיין לא ביצעת תרומות</p>
+                  <button
+                    onClick={() => navigate("/")}
+                    className="bg-[#0072FF] text-white px-6 py-3 rounded-full font-medium hover:bg-[#00C6FF] transition-colors"
+                  >
+                    התחלו לתרום
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Favorites Tab Content */}
+          {activeTab === "favorites" && (
+            <div className="bg-white rounded-xl shadow-md p-8">
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-[#0072FF] bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-[#0072FF] text-xl">⭐</span>
+                </div>
+                <h3 className="mr-4 text-2xl font-bold text-gray-800">עמותות מועדפות</h3>
+              </div>
+
+              {favorites.length > 0 ? (
+                <div className="space-y-4">
+                  {favorites.map((association, index) => (
+                    <div
+                      key={index}
+                      onClick={() => navigate(`/AssociationPage/${association.number}`)}
+                      className="flex items-center p-4 bg-gray-50 rounded-lg cursor-pointer transition-all hover:bg-gray-100"
+                    >
+                      <div className="w-8 h-8 bg-[#104d8e] bg-opacity-10 rounded-full flex items-center justify-center">
+                        <span className="text-[#104d8e] text-sm">🏢</span>
+                      </div>
+                      <span className="mr-4 text-lg font-medium text-[#104d8e] hover:text-[#00C6FF] transition-colors">
+                        {association.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center p-8 bg-gray-50 rounded-lg">
+                  <p className="text-gray-500 mb-4">אין עמותות מועדפות</p>
+                  <button
+                    onClick={() => navigate("/advanced-Search")}
+                    className="bg-[#0072FF] text-white px-6 py-3 rounded-full font-medium hover:bg-[#00C6FF] transition-colors"
+                  >
+                    חפשו עמותות להוסיף
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="profile-buttons">

@@ -11,7 +11,6 @@ const ContactCard = ({
 
   // Check if we have any contact details
   const hasContactDetails = contactInfo?.website || contactInfo?.email || contactInfo?.phoneNumbers?.length || contactInfo?.address;
-
   // Function to ensure website has proper format
   const formatLink = (url) => {
   if (!url) return '';
@@ -73,9 +72,11 @@ const ContactCard = ({
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">
                 ✉️
               </div>
-              <a href={`mailto:${contactInfo.email}`} className="text-gray-700 hover:text-[#45B5AA] transition-colors">
-                {contactInfo.email}
-              </a>
+              <span className="text-gray-700">
+                <strong>אמייל:</strong> <a href={`mailto:${contactInfo.email}`} className="hover:text-[#45B5AA] transition-colors">
+                  {contactInfo.email}
+                </a>
+              </span>
             </div>
           )}   
 
@@ -84,8 +85,8 @@ const ContactCard = ({
               <div className="w-9 h-9 bg-[#45B5AA] rounded-full flex items-center justify-center text-white">
                 📞
               </div>
-              <span className="text-gray-700 hover:text-[#45B5AA] transition-colors">
-                    {contactInfo.phoneNumbers.join(' | ')}
+              <span className="text-gray-700">
+                <strong>טלפון:</strong> {contactInfo.phoneNumbers.join(' | ')}
               </span>           
             </div>
           )}

@@ -46,24 +46,23 @@ const FavoriteButton = ({ association, userId }) => {
     <div className="">
       {favorite ? (
         <button
-          className="favorite-button flex gap-2 bg-[#e84949] hover:bg-[#c73131]"
+          className="favorite-button flex items-center justify-center gap-2 bg-[#2B4F71] hover:bg-[#1a3c5e] text-white font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border-2 border-[#2B4F71]"
           onClick={handleClick}
         >
-          <p>הסר מהמועדפים</p>
-          <span className="">{"  ❤️"}</span>
+          <p className="text-lg">הסר מהמועדפים</p>
+          <span className="text-xl">❤️</span>
         </button>
         
       ) : (
         <button
-          className="favorite-button flex gap-2"
+          className="favorite-button flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-gray-800 font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg border-2 border-gray-300 transform hover:-translate-y-0.5"
           onClick={handleClick}
         >
-           <p>הוסף למועדפים</p>
-          <span className="">{"  🤍"}</span>
+          <p className="text-lg">הוסף למועדפים</p>
+          <span className="text-xl">🤍</span>
         </button>
       )}
     </div>
   );
 };
 export default FavoriteButton;
-
