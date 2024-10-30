@@ -1,9 +1,5 @@
-// Load environment variables
-require
-
 // Import modules
 const express = require('express');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
@@ -36,22 +32,3 @@ app.listen(PORT, () => {
 	connectToMongoDB();
 	console.log(`Server Running on port ${PORT}`);
 });
-//const server = 
-// mongoose
-//   .connect(process.env.MONGODB_URI)
-//   .then(() => {
-//     console.log('App connected to database');
-//     const server = app.listen(PORT, () => {
-//       console.log(`App is listening to port: ${PORT}`);
-//     });
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//     console.error('Error connecting to database:', error);
-//   });
-
-// // Routes
-
-// app.get('/', (req, res) => {
-//   res.send('Hello World!');
-// });

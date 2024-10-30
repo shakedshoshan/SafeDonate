@@ -7,8 +7,8 @@ import "../styles/Login.css";
 const Login = () => {
   const [email, setEmail] = useState(""); // Email input state
   const [password, setPassword] = useState(""); // Password input state
-  const [showForgotPassword, setShowForgotPassword] = useState(false); // Modal state
-  const [confirmationMessage, setConfirmationMessage] = useState(""); // Confirmation state
+  // const [showForgotPassword, setShowForgotPassword] = useState(false); // Modal state
+  // const [confirmationMessage, setConfirmationMessage] = useState(""); // Confirmation state
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
@@ -23,26 +23,22 @@ const Login = () => {
     navigate("/signup");
   };
 
-  const handleForgotPassword = () => {
-    setShowForgotPassword(true);
-  };
+  // const handleSendResetEmail = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await axios.post("http://localhost:5000/users/reset-password", { email }); // API for password reset
+  //     setConfirmationMessage("אישור נשלח לדוא'ל שלך");
+  //   } catch (error) {
+  //     console.error("Error sending reset email:", error);
+  //     setConfirmationMessage("אירעה שגיאה, נסה שוב.");
+  //   }
+  // };
 
-  const handleSendResetEmail = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/users/reset-password", { email }); // API for password reset
-      setConfirmationMessage("אישור נשלח לדוא'ל שלך");
-    } catch (error) {
-      console.error("Error sending reset email:", error);
-      setConfirmationMessage("אירעה שגיאה, נסה שוב.");
-    }
-  };
-
-  const closeForgotPasswordModal = () => {
-    setShowForgotPassword(false);
-    setEmail(""); // Reset email input
-    setConfirmationMessage(""); // Reset confirmation message
-  };
+  // const closeForgotPasswordModal = () => {
+  //   setShowForgotPassword(false);
+  //   setEmail(""); // Reset email input
+  //   setConfirmationMessage(""); // Reset confirmation message
+  // };
 
   return (
     <div className="login-page">
@@ -83,7 +79,7 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Forgot Password Modal */}
+        {/* Forgot Password Modal
         {showForgotPassword && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -119,7 +115,7 @@ const Login = () => {
               {confirmationMessage && <p>{confirmationMessage}</p>}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

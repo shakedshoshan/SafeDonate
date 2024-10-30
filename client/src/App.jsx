@@ -14,7 +14,6 @@ import NotFound from "./pages/NotFound";
 import NotConnected from "./pages/NotConnected";
 import AdvancedSearch from "./components/AdvancedSearch";
 import FilteredResultsPage from "./pages/FilteredResultsPage";
-//import Loading from "./pages/Loading";
 
 const ROUTES = {
   HOME: "/",
@@ -25,16 +24,15 @@ const ROUTES = {
   ABOUT_US: "/about-us",
   ADVANCED_SEARCH: "/advanced-search",
   FILTERED_RESULTS: "/filtered-results",
-  //LOADING: "/loading",
   NOT_FOUND: "*",
   NOT_CONNECTED: "/not-connected",
 };
 
 const App = () => {
   const { authUser } = useAuthContext();
-  const [searchTerm, setSearchTerm] = useState(""); // Control search term in App
-  const [suggestions, setSuggestions] = useState([]); // This is important: make sure `setSuggestions` is defined
-  const [npoData, setNpoData] = useState([]); // This will store NPO data
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [npoData, setNpoData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
   const navigate = useNavigate();
@@ -56,9 +54,8 @@ const App = () => {
       {/* Pass searchTerm and suggestions to Header */}
       <Header
         onSearch={handleSearch}
-        suggestions={suggestions} // Pass suggestions here
+        suggestions={suggestions}
         handleLogin={handleLogin}
-        // userProfile={userProfile}
       />
       <Routes>
         <Route
@@ -69,11 +66,11 @@ const App = () => {
               setFilteredData={setFilteredData}
               searchTerm={searchTerm}
               setSuggestions={setSuggestions}
-              setNpoData={setNpoData} // Pass setNpoData here
+              setNpoData={setNpoData} 
             />
           }
         />
-        {/* <Route path={ROUTES.ASSOCIATION_PAGE} element={<AssociationPage />} /> */}
+    
         <Route
           path={ROUTES.ASSOCIATION_PAGE}
           element={
@@ -93,7 +90,7 @@ const App = () => {
           element={authUser ? <UserProfile /> : <Navigate to="/login" />}
         />
         <Route path={ROUTES.ABOUT_US} element={<AboutUs />} />
-        {/* <Route path={ROUTES.LOADING} element={<Loading />} /> */}
+    
         <Route
           path={ROUTES.ADVANCED_SEARCH}
           element={
@@ -101,7 +98,7 @@ const App = () => {
               npoData={npoData}
               setFilteredData={setFilteredData}
             />
-          } // Pass the NPO data here
+          } 
         />
         <Route
           path={ROUTES.FILTERED_RESULTS}

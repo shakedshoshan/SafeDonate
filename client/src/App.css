@@ -31,23 +31,7 @@
   justify-content: center; /* Center the navigation links 
 }
 
-.header-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
 
-.header-nav ul li {
-  margin: 0 10px;
-}
-
-.header-nav ul li a {
-  text-decoration: none;
-  color: #333;
-  font-size: 1em;
-}*/
 
 .hamburger {
   cursor: pointer;

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import { useLocation } from "react-router-dom";
 import "../styles/Loading.css";
 
-const Loding = () => {
-    // const location = useLocation();
-    // const [isRedirecting, setIsRedirecting] = useState(true);
-    // const [message, setMessage] = useState("");
+const Loading = () => {
 
     return (
         <div className="loading-container">
@@ -16,4 +12,4 @@ const Loding = () => {
 };
 
 
-export default Loding;
+export default Loading;

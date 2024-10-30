@@ -1,10 +1,9 @@
-/* Basic page styling */
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #E6F7FF; /* Light blue background */
+  background-color: #E6F7FF;
 }
 
 .login-container {

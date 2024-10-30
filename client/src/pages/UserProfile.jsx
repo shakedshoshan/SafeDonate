@@ -14,7 +14,6 @@ const UserProfile = () => {
   const { authUser } = useAuthContext();
   const { loading, logout } = useLogout();
 
-  //console.log(userId)
   useEffect(() => {
     const fetchUserData = async () => {
       if (authUser) {

@@ -7,7 +7,7 @@ import useContactInfo from "../hooks/useContactInfo.js";
 import useApprovals from "../hooks/useApprovals.js";
 import useScraping from "../hooks/useScraping.js";
 import DonationPopup from "../components/DonationPopup.jsx";
-import Loding from "../components/Loding";
+import Loading from "../components/Loading.jsx";
 import ContactCard from "../components/ContactCard.jsx";
 import "../styles/AssociationPage.css";
 
@@ -32,7 +32,6 @@ const AssociationPage = () => {
     window.open(`https://www.guidestar.org.il/organization/${associationNumber}`,"_blank");
   const handleDonateClick = () => setIsPopupOpen(true);
   const handleClosePopup = () => setIsPopupOpen(false);
-  const handleOpenLink = () => window.open(link);
   const handleContactClick = () => setIsCardOpen(true);
 
 
@@ -95,7 +94,6 @@ const AssociationPage = () => {
                 )}
               </div>
           
-
               <div>
                 <button className="donate-button" onClick={handleDonateClick}>
                   לתיעוד התרומה
@@ -132,7 +130,7 @@ const AssociationPage = () => {
                 <p>מחפש מידע על העמותה...</p>
               ) : categoryCounts === 0 ? (
                 <p className="safe-to-donate-message">
-                  לא נמצא כל מידע שלילי על העמותה. העמותה נראית בטוחה לתרומה.
+                  לא נמצא כל מידע שלילי על העמותה.
                 </p>
               ) : (
                 <div className="negative-info-summary">
@@ -156,11 +154,7 @@ const AssociationPage = () => {
                             <tr key={index1}>
                               <td>{result1.title}</td>
                               <td>
-                                <a
-                                  href={result1.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
+                                <a href={result1.link} target="_blank" rel="noopener noreferrer">
                                   קישור
                                 </a>
                               </td>
@@ -187,12 +181,11 @@ const AssociationPage = () => {
                 {loadingApprovals ? (
                   <p>טוען נתוני אישורים...</p>
                 ) : approvals && approvals.length > 0 ? (
-                  //   {/* Show the approval table only if it's toggled */}
                     <table className="approvals-table">
                       <thead>
                         <tr>
                           <th>שנת האישור</th>
-                          <th>האם מאושר</th>
+                          <th>סטטוס אישור</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -224,7 +217,7 @@ const AssociationPage = () => {
             </div>
           </>
         ) : (
-          <Loding />
+          <Loading />
         )}
       </div>
     </div>

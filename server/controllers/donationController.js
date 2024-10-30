@@ -126,9 +126,6 @@ module.exports.getAllDonationsData = async function getAllDonationsData(req, res
             return res.status(200).json({ message: "No donations found", associations: [] });
         }
         return res.status(200).json({ count: donations.length, data: donations });
-        //const associations = [...new Set(donations.map(donation => donation.association))];
-
-        //return res.status(200).json({ associations });
     } catch (error) {
         return res.status(500).json({ message: "Error fetching donation list", error });
     }
@@ -139,10 +136,6 @@ module.exports.getTotalDonationsAmount = async function getTotalDonationsAmount(
 
     try {
         const donations = await Donation.find();
-
-        // if (!donations || donations.length === 0) {
-        //     return res.status(200).json({ message: "No donations found", totalAmount: 0 });
-        // }
         if (!donations) {
             return res.status(200).json({ message: "No donations found"});
         }

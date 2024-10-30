@@ -4,8 +4,8 @@ import { useAuthContext } from "../context/AuthContext";
 import axios from "axios";
 import debounce from "lodash.debounce";
 import "../styles/Header.css";
-import logo from "../assets/logo11.png";
-import icon from "../assets/icon44.png";
+import logo from "../assets/logo.png";
+import icon from "../assets/icon-header.png";
 import profileIcon from "../assets/user-profile-icon.png";
 
 const Header = ({ handleLogin }) => {
@@ -92,7 +92,6 @@ const Header = ({ handleLogin }) => {
   return (
     <header className="header" aria-label="Main header">
       <div className="header-container">
-        {/* Logo Section */}
         <div className="header-title">
           <a href="/" className="header-icon-link">
             <img src={icon} alt="SafeDonate Icon" className="header-icon" />

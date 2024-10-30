@@ -19,7 +19,6 @@ module.exports.login = async function login(req, res) {
 			firstName: user.firstName,
 			lastName: user.lastName,
 			email: user.email,
-			//profilePic: user.profilePic,
 		});
 	} catch (error) {
 		console.log("Error in login controller", error.message);
@@ -42,16 +41,9 @@ module.exports.signup = async function signup(req, res) {
 			return res.status(400).json({ error: "קיים חשבון לכתובת מייל זו" });
 		}
 
-		
-
 		// HASH PASSWORD HERE
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(password, salt);
-		
-		// // https://avatar-placeholder.iran.liara.run/
-
-		// //const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-		// //const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
 		const newUser = new User({
 			firstName,
@@ -59,8 +51,6 @@ module.exports.signup = async function signup(req, res) {
 			email,
 			password: hashedPassword,
 			Association: []
-			//gender,
-			//profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
 		});
 		
 
@@ -77,7 +67,6 @@ module.exports.signup = async function signup(req, res) {
 				lastName: newUser.lastName,
 				email: newUser.email,
 				Association: newUser.Association,
-				//profilePic: newUser.profilePic,
 			});
 		} else {
 			res.status(400).json({ error: "Invalid user data" });

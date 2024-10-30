@@ -29,19 +29,13 @@ const fetchContactInfo = async (associationNumber) => {
         if (emailLink) contactInfo.email = emailLink.replace("mailto:", "");
         if (phoneNumbers) contactInfo.phoneNumbers = phoneNumbers;
         if (fullAddress) contactInfo.address = fullAddress;
-            //console.log(fullAddress)
+        
         return Object.keys(contactInfo).length > 0 ? contactInfo : "NO_CONTACT_INFO";
 
     } catch (error) {
         console.error('Error fetching association contact:', error);
         await browser.close();
         throw error;
-        // await browser.close();
-        // if (error.response) {
-        //     // If the error is due to a bad response from axios
-        //     throw { status: 500, message: 'Error fetching data from external source.' };
-        // }
-        // throw error; // Rethrow the original error if it's not from axios
     }
 };
 

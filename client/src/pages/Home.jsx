@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import AssociationCarousel from "../components/AssociationCarousel";
+import Loading from "../components/Loading";
 import "../styles/Home.css";
 
 const Home = ({ setSuggestions, setNpoData }) => {
@@ -53,28 +54,32 @@ const Home = ({ setSuggestions, setNpoData }) => {
     }
   }, [filteredNPOs, setSuggestions, setNpoData]);
 
-  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="home pb-5px">
-      <h1 className="home-title pb-5px">
-         ברוכים הבאים ל-SafeDonate
-      </h1>
+      {!loading ? (
+        <>
+          <h1 className="home-title pb-5px">
+            ברוכים הבאים ל-SafeDonate
+          </h1>
+          <AssociationCarousel 
+            dataList={randomNPOs} 
+            userId={authUser?.id} 
+          />
 
-      <AssociationCarousel 
-        dataList={randomNPOs} 
-        userId={authUser?.id} 
-      />
-
-      <div className="more-npos-button-container">
-        <button
-          className="more-npos-button"
-          onClick={() => navigate("/advanced-search")}
-        >
-          חפשו עוד עמותות
-        </button>
-      </div>
+          <div className="more-npos-button-container">
+            <button
+              className="more-npos-button"
+              onClick={() => navigate("/advanced-search")}
+            >
+              חפשו עוד עמותות
+            </button>
+          </div>
+      </>
+      ) : (
+        <Loading/>
+      )}
     </div>
   );
 };

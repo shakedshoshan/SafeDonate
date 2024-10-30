@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import useSignup from "../hooks/useSignup";
 import "../styles/NotConnected.css";
 
 const NotConnected = () => {
     const navigate = useNavigate();
 
     // Define the redirect function
-    const handleLoginRedirect = () => {
-        navigate("/login"); // Adjust "/login" to your actual login route
-    };
-
+    const handleLoginRedirect = () => navigate("/login");
 
     return (
         <div className="notconnected-page">
