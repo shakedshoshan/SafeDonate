@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAssociationData from "../hooks/useAssociationData.js";
 import "../styles/AdvancedSearch.css";
@@ -8,13 +8,14 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [npoNumber, setNpoNumber] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  const [showNotFoundError, setShowNotFoundError] = useState(false);
   const categories = Array.from(
     new Set(npoData.map((npo) => npo["סיווג פעילות ענפי"]))
   ).sort((a, b) => a.localeCompare(b, "he"));
 
   const navigate = useNavigate();
   const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
-  //const { searchResult, loading, error, searchByNumber } = useSearchByNumber();
 
   const handleCategoryClick = (category) => {
     setSelectedCategories(prev => {
@@ -40,19 +41,26 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
 
   const handleNumberSearch = async () => {
     setLoading(true);
+    setSearchError("");
+    setShowNotFoundError(true);
+    
     try {
       await fetchAssociation({ associationNumber: npoNumber });
-      if (association) {
-        navigate(`/AssociationPage/${npoNumber}`);
-      } else {
-        navigate("/not-found");
-      }
     } catch (err) {
-      navigate("/not-found");
+      setSearchError("אירעה שגיאה בחיפוש העמותה");
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (association) {
+      navigate(`/AssociationPage/${npoNumber}`);
+    } else if (error && showNotFoundError) {
+      setSearchError("לא נמצאה עמותה עם המספר הזה");
+    }
+  }, [association, error, npoNumber, showNotFoundError]);
+
 
   const handleSearch = () => {
     if (activeTab === "קטגוריות") {
@@ -66,6 +74,20 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
     setActiveTab(tab);
     setSelectedCategories([]);
     setNpoNumber("");
+    setSearchError("");
+    setShowNotFoundError(false);
+  };
+
+  const handleNpoNumberChange = (e) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (value === '' || /^\d+$/.test(value)) {
+      setNpoNumber(value);
+      setSearchError("");
+      setShowNotFoundError(false);
+    } else {
+      setSearchError("!נא להזין מספרים בלבד");
+    }
   };
 
   const isSearchDisabled = 
@@ -121,16 +143,21 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
               ))}
             </div>
           ) : (
-            <div className="npo-number-input w-full px-4">
+            <div className="npo-number-input w-full px-4 flex flex-col items-center">
               <input
                 type="text"
                 placeholder="הזן מספר עמותה"
                 value={npoNumber}
-                onChange={(e) => setNpoNumber(e.target.value)}
+                onChange={handleNpoNumberChange}
                 className="w-full px-6 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0072FF] shadow-sm transition-all duration-300 text-lg"
               />
-              {loading && <p className="text-gray-600 mt-2">טוען...</p>}
-              {error && <p className="text-red-500 mt-2">{error}</p>}
+              <div className="mt-2">
+                {loading ? (
+                  <p className="text-gray-600">טוען...</p>
+                ) : searchError ? (
+                  <p className="text-red-500">{searchError}</p>
+                ) : null}
+              </div>
             </div>
           )}
         </div>

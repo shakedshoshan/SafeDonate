@@ -7,6 +7,9 @@ const useAssociationData = () => {
     const [error, setError] = useState(null);
 
     const fetchAssociation = async ({ associationNumber }) => {
+        setLoadingAssociation(true);
+        setError(null);
+
         try {
             const cacheKey = `assoc_${associationNumber}`;
             const cachedData = sessionStorage.getItem(cacheKey);
@@ -23,30 +26,24 @@ const useAssociationData = () => {
                     {
                         params: {
                             resource_id: 'be5b7935-3922-45d4-9638-08871b17ec95',
-                            filters: filterQuery
+                            filters: filterQuery,
+                            limit: 1 
                         }
                     }
                 );
 
-                // if (response.data.error) {
-                //     setError("לא נמצאה עמותה");
-                //     throw new Error(res.data.error);
-                // }
-                // if (response.data.result.records.length > 0) {
-                //     // throw new Error(response.data.error);
-
-                if (response.data.result.records.length > 0) {
+                if (response.data.success && response.data.result.records.length > 0) {
                     const associationData = response.data.result.records[0];
                     sessionStorage.setItem(cacheKey, JSON.stringify(associationData));
                     setAssociation(associationData);
-                    setLoadingAssociation(false);
+                    //setLoadingAssociation(false);
                 } else {
                     setError("לא נמצאה עמותה");
                 }
 
             }
-        } catch (error) {
-            setError(err.message || "An error occurred while fetching data");
+        } catch (err) {
+            setError(err.message || "אירעה שגיאה בחיפוש העמותה");
         } finally {
             setLoadingAssociation(false);
         }
