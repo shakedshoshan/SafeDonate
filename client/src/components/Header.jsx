@@ -35,11 +35,7 @@ const Header = ({ handleLogin }) => {
           }
         );
 
-        const filtered = response.data.result.records.filter(association => 
-          (association["סטטוס עמותה"] === "רשומה" || association["סטטוס עמותה"] === "פעילה") &&
-          association["שם עמותה בעברית"].includes(searchTerm)
-        );
-
+        const filtered = response.data.result.records;
         setFilteredSuggestions(filtered);
         setShowSuggestions(true);
       } catch (error) {

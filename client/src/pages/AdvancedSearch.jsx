@@ -1,48 +1,76 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAssociationData from "../hooks/useAssociationData.js";
 import "../styles/AdvancedSearch.css";
 
 const AdvancedSearch = ({ npoData, setFilteredData }) => {
-  const [activeTab, setActiveTab] = useState("קטגוריות"); // Default tab is categories
+  const [activeTab, setActiveTab] = useState("קטגוריות");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [npoNumber, setNpoNumber] = useState("");
+  const [loading, setLoading] = useState(false);
   const categories = Array.from(
     new Set(npoData.map((npo) => npo["סיווג פעילות ענפי"]))
   ).sort((a, b) => a.localeCompare(b, "he"));
 
   const navigate = useNavigate();
+  const { loadingAssoc, association, error, fetchAssociation } = useAssociationData();
+  //const { searchResult, loading, error, searchByNumber } = useSearchByNumber();
 
   const handleCategoryClick = (category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter((c) => c !== category));
-    } else if (selectedCategories.length < 3) {
-      setSelectedCategories([...selectedCategories, category]);
+    setSelectedCategories(prev => {
+      if (prev.includes(category)) {
+        return prev.filter(c => c !== category);
+      }
+      if (prev.length < 3) {
+        return [...prev, category];
+      }
+      return prev;
+    });
+  };
+
+  const handleCategorySearch = () => {
+    const filteredNPOs = npoData.filter((npo) =>
+      selectedCategories.includes(npo["סיווג פעילות ענפי"])
+    );
+    setFilteredData(filteredNPOs);
+    navigate("/filtered-results", {
+      state: { filteredNPOs, selectedCategories },
+    });
+  };
+
+  const handleNumberSearch = async () => {
+    setLoading(true);
+    try {
+      await fetchAssociation({ associationNumber: npoNumber });
+      if (association) {
+        navigate(`/AssociationPage/${npoNumber}`);
+      } else {
+        navigate("/not-found");
+      }
+    } catch (err) {
+      navigate("/not-found");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSearch = () => {
     if (activeTab === "קטגוריות") {
-      const filteredNPOs = npoData.filter((npo) =>
-        selectedCategories.includes(npo["סיווג פעילות ענפי"])
-      );
-      setFilteredData(filteredNPOs);
-      navigate("/filtered-results", {
-        state: { filteredNPOs, selectedCategories },
-      });
+      handleCategorySearch();
     } else if (activeTab === "מספר עמותה" && npoNumber) {
-      const filteredNPOs = npoData.filter(
-        (npo) => npo["מספר עמותה"].toString() === npoNumber
-      );
-      if (filteredNPOs.length === 0) {
-        navigate("/not-found");
-      } else {
-        navigate(`/AssociationPage/${npoNumber}`);
-      }
+      handleNumberSearch();
     }
   };
 
-  const isSearchDisabled = (activeTab === "קטגוריות" && selectedCategories.length === 0) || 
-                          (activeTab === "מספר עמותה" && !npoNumber);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSelectedCategories([]);
+    setNpoNumber("");
+  };
+
+  const isSearchDisabled = 
+    (activeTab === "קטגוריות" && selectedCategories.length === 0) || 
+    (activeTab === "מספר עמותה" && !npoNumber)
 
   return (
     <div className="about-page">
@@ -58,10 +86,7 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
                 ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-lg"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            onClick={() => {
-              setActiveTab("קטגוריות");
-              setSelectedCategories([]);
-            }}
+            onClick={() => handleTabChange("קטגוריות")}
           >
             קטגוריות
           </button>
@@ -72,10 +97,7 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
                 ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-lg"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            onClick={() => {
-              setActiveTab("מספר עמותה");
-              setNpoNumber("");
-            }}
+            onClick={() => handleTabChange("מספר עמותה")}
           >
             מספר עמותה
           </button>
@@ -107,6 +129,8 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
                 onChange={(e) => setNpoNumber(e.target.value)}
                 className="w-full px-6 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0072FF] shadow-sm transition-all duration-300 text-lg"
               />
+              {loading && <p className="text-gray-600 mt-2">טוען...</p>}
+              {error && <p className="text-red-500 mt-2">{error}</p>}
             </div>
           )}
         </div>
@@ -116,9 +140,9 @@ const AdvancedSearch = ({ npoData, setFilteredData }) => {
             isSearchDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'
           }`}
           onClick={handleSearch}
-          disabled={isSearchDisabled}
+          disabled={isSearchDisabled || loading}
         >
-          חפש
+          {loading ? 'מחפש...' : 'חפש'}
         </button>
       </div>
     </div>

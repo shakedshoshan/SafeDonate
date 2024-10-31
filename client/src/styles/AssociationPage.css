@@ -70,6 +70,12 @@ body {
   margin-bottom: 20px;
 }
 
+.npo-status {
+  font-size: 1.1rem;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+}
+
 /* Action Buttons */
 .donate-button {
   display: flex;

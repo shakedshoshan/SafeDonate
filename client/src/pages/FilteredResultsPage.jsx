@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import AssociationCarousel from "../components/AssociationCarousel";
@@ -24,7 +24,7 @@ const FilteredResultsPage = () => {
   }, [filteredNPOs]);
 
   // Handle scroll event to load more NPOs
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (
       window.innerHeight + window.scrollY >= document.body.offsetHeight &&
       !loading &&
@@ -32,11 +32,11 @@ const FilteredResultsPage = () => {
     ) {
       setLoading(true);
       setTimeout(() => {
-        setVisibleCount((prev) => prev + 9); // Show 3 more NPOs
+        setVisibleCount((prev) => prev + 9); // Show 9 more NPOs
         setLoading(false);
-      }, 1000); // Simulate loading time
+      }, 500); // Reduce loading time
     }
-  };
+  }, [loading, displayedNPOs.length, filteredNPOs.length]);
 
   useEffect(() => {
     setDisplayedNPOs(filteredNPOs.slice(0, visibleCount));
@@ -49,9 +49,12 @@ const FilteredResultsPage = () => {
 
   return (
     <div className="filtered-results-page ">
-      <h2 className="filtered-results-page-title pb-5px">
-        {`סינון - ${selectedCategories.length > 0 ? selectedCategories.join(", ") : "לא נבחרו קטגוריות"}`}
+      <h2 className="filtered-results-page-title pb-5">
+        סינון
       </h2>
+      <h3 className="filtered-results-page-results-title pb-2 text-lg">
+        {selectedCategories.length > 0 ? selectedCategories.join(", ") : "לא נבחרו קטגוריות"}
+      </h3>
 
       <AssociationCarousel dataList={displayedNPOs} userId={authUser?.id} />
     

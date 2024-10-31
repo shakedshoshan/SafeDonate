@@ -80,6 +80,10 @@ const AssociationPage = () => {
                 מספר עמותה: {association["מספר עמותה"] || "מספר עמותה לא זמין"}
               </div>
 
+              <div className="npo-status">
+                סטטוס עמותה: {association["סטטוס עמותה"] || "סטטוס לא זמין"}
+              </div>
+
               <div>
                 <button className="donate-button" onClick={() => setIsCardOpen(true)}>
                     יצירת קשר
