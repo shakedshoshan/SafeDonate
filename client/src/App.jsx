@@ -12,7 +12,7 @@ import UserProfile from "./pages/UserProfile";
 import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 import NotConnected from "./pages/NotConnected";
-import AdvancedSearch from "./components/AdvancedSearch";
+import AdvancedSearch from "./pages/AdvancedSearch";
 import FilteredResultsPage from "./pages/FilteredResultsPage";
 
 const ROUTES = {
