@@ -31,7 +31,7 @@ const Header = ({ handleLogin }) => {
         const response = await axios.get(
           `https://data.gov.il/api/3/action/datastore_search?resource_id=be5b7935-3922-45d4-9638-08871b17ec95`,
           {
-            params: { q: searchTerm }
+            params: { q: searchTerm },
           }
         );
 
@@ -76,7 +76,10 @@ const Header = ({ handleLogin }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target)
+      ) {
         setShowSuggestions(false);
         setSearchInput("");
       }
@@ -104,22 +107,24 @@ const Header = ({ handleLogin }) => {
           <div className="search-bar-wrapper" ref={searchBarRef}>
             <input
               type="text"
-              placeholder={("חיפוש")}
+              placeholder={"חיפוש"}
               aria-label="Search NPOs"
               className="search-bar"
               value={searchInput}
               onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
+              // onKeyPress={handleKeyPress}
             />
-            
+
             {showSuggestions && (
               <div className="suggestions-dropdown">
                 {filteredSuggestions.length > 0 ? (
-                  filteredSuggestions.slice(0, 7).map(suggestion => (
+                  filteredSuggestions.slice(0, 7).map((suggestion) => (
                     <div
                       key={suggestion["מספר עמותה"]}
                       className="suggestion-item"
-                      onClick={() => handleSuggestionClick(suggestion["מספר עמותה"])}
+                      onClick={() =>
+                        handleSuggestionClick(suggestion["מספר עמותה"])
+                      }
                     >
                       {suggestion["שם עמותה בעברית"]}
                     </div>
@@ -132,7 +137,10 @@ const Header = ({ handleLogin }) => {
           </div>
 
           {/* Navigation Buttons */}
-          <button className="header-tab" onClick={() => navigate("/advanced-search")}>
+          <button
+            className="header-tab"
+            onClick={() => navigate("/advanced-search")}
+          >
             חיפוש מתקדם
           </button>
 
@@ -145,15 +153,16 @@ const Header = ({ handleLogin }) => {
             {loggedIn ? (
               <div className="profile-circle bg-[#2d6be7] hover:bg-[#264bae] hover:scale-110 transition cursor-pointer">
                 <span className="z-50 text-2xl text-white flex items-center justify-center">
-                  {authUser.firstName[0].toUpperCase()}{authUser.lastName[0].toUpperCase()}
+                  {authUser.firstName[0].toUpperCase()}
+                  {authUser.lastName[0].toUpperCase()}
                 </span>
               </div>
             ) : (
               <div>
-                <img 
-                  src={profileIcon} 
-                  alt="Profile" 
-                  className="w-14 h-14 bg-[#ffffff] rounded-full border-white" 
+                <img
+                  src={profileIcon}
+                  alt="Profile"
+                  className="w-14 h-14 bg-[#ffffff] rounded-full border-white"
                 />
               </div>
             )}
