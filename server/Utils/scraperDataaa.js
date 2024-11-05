@@ -1,11 +1,10 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const { checkCategory, getUserAgent, delay } = require('./scraperUtils')
-
+const { checkCategory, getUserAgent, delay } = require('./scraperUtils.js')
 puppeteer.use(StealthPlugin()); // Enable stealth mode
 
 // Function to scrape Google search results for a given association number and keywords
-const scrapeData = async (associationNumber, category, onScrapedResult) => {
+const scrapeDataaa = async (associationNumber, category, onScrapedResult) => {
     const results = [];
     let browser;
 
@@ -40,11 +39,9 @@ const scrapeData = async (associationNumber, category, onScrapedResult) => {
                 return Array.from(document.querySelectorAll(".g")).map((el) => {
                     const titleEl = el.querySelector("h3");  // Titles inside <h3> tags
                     const linkEl = el.querySelector('a');    // Links inside <a> tags
-                    //const contentEl = el.querySelector(".Hdw6tb");  // Snippet/content area
                     return {
                         title: titleEl ? titleEl.textContent : "No title found",
                         link: linkEl ? linkEl.href : "No link found",
-                        //content: contentEl ? contentEl.textContent : "No content found"
                     };
                 });
             });
@@ -72,4 +69,4 @@ const scrapeData = async (associationNumber, category, onScrapedResult) => {
 };
 
 // Run the scraping
-module.exports = { scrapeData }
+module.exports = { scrapeDataaa }

@@ -1,4 +1,4 @@
-const scraper = require('../utils/scraperData.js');
+const scraper = require('../utils/scraperDataaa.js');
 const { processScrapedResults } = require('../utils/filterResults.js');
 const { fetchContactInfo } = require('../utils/scrapeContactInfo.js');
 const { flaskAPIBaseUrl } = require("./../config");
@@ -18,7 +18,7 @@ const scrapeOnline = async (req, res) => {
         // // console.log('Final filtered results:', filteredResults);
         // return res.status(200).json({ results: filteredResults });
         
-        await scraper.scrapeData(associationNumber, category, (keyword, results) => {
+        await scraper.scrapeDataaa(associationNumber, category, (keyword, results) => {
             scrapedResults.push({
                 keyword,
                 results
@@ -27,11 +27,12 @@ const scrapeOnline = async (req, res) => {
 
         // Get filter from Flask server
         const analyzeResults = await generateAnalyzer({
-            results: scrapedResults
-            //associationNumber,
+            results: scrapedResults,
+            associationNumber,
         });
         console.log('Analyze Results:', analyzeResults);
-        return res.status(200).json({ analyzeResults });
+        //return res.status(200).json({ analyzeResults });
+        return res.status(200).json({ scrapedResults });
 
     } catch (error) {
         console.error('Error scraping online data:', error.message);
