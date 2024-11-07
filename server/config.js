@@ -1,3 +1,3 @@
-const flaskAPIBaseUrl = 'http://flask:9000';
+const flaskAPIBaseUrl = 'http://localhost:9000';
 
 module.exports = {flaskAPIBaseUrl};

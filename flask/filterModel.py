@@ -16,13 +16,17 @@ relevance_pipeline = pipeline("text-classification", model=relevance_model, toke
 # Function to fetch content from a URL
 def fetch_content(url):
     try:
-        response = requests.get(url, timeout=10)
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=10) 
         response.raise_for_status()
+        
         soup = BeautifulSoup(response.content, "html.parser")
         paragraphs = soup.find_all("p")
-        content = " ".join(p.get_text() for p in paragraphs)
-        print("rtrdgrd")
+        content = " ".join([p.get_text() for p in paragraphs])
         return content
+    
     except requests.RequestException as e:
         print(f"Failed to fetch content from URL: {e}")
         return None
@@ -34,7 +38,7 @@ def analyze_sentiment(content):
     return sentiment
 
 # Function to analyze relevance
-def analyze_relevance(content, query="association"):
+def analyze_relevance(content, query):
     relevance_result = relevance_pipeline(content[:512])
     relevance_score = relevance_result[0]['score']
     relevance_label = relevance_result[0]['label']
@@ -46,7 +50,7 @@ def analyze_relevance(content, query="association"):
 def analyze():
     data = request.get_json()
     results = data.get("results", [])
-    associationNumber = data.associationNumber
+    association_number = data.get("associationNumber")
     
     response_data = []
     
@@ -83,8 +87,13 @@ def analyze():
 
         response_data.append(keyword_data)
     
+     # Add the association number to the response
+    response = {
+        "results": response_data,
+        "associationNumber": association_number
+    }
     # Return the analysis results as JSON
-    return jsonify(response_data), 200
+    return jsonify(response), 200
 
 if __name__ == '__main__':
-    app.run(port=9000)
+    app.run(host='localhost', port=9000, debug=True)
